@@ -3,7 +3,7 @@ import {Button, Text, View} from "react-native";
 const NavigatorDummy = ({navigation}: any) => {
   return (
     <View>
-      <Text>Dummy Screen for Navigate</Text>
+      <Text>Dummy Screen for Navigate </Text>
       <Button title='Main' onPress={()=>navigation.navigate('Main')}/>
       <Button title='Chat' onPress={()=>navigation.navigate('Chat')}/>
       <Button title='ChatList' onPress={()=>navigation.navigate('ChatList')}/>
