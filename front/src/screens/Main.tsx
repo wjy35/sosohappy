@@ -37,7 +37,7 @@ const Main = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={MainStyle.boxWrap}>
+      <View>
         <View>
           <Text style={MainStyle.boxMainTitle}>
             사소함에 고민되셨나요?{"\n"}
