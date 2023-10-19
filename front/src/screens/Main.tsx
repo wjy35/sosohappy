@@ -38,7 +38,7 @@ const Main = () => {
       </View>
 
       <View>
-        <View>
+        <View style={MainStyle.boxWrap}>
           <Text style={MainStyle.boxMainTitle}>
             사소함에 고민되셨나요?{"\n"}
             소소한 도움을 얘기해주세요
