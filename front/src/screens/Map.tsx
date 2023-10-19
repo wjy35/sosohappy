@@ -5,20 +5,23 @@ import Footer from "@/components/Footer";
 
 import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 
+import MapStyle from "@/styles/MapStyle";
+
 const Map = () => {
   return (
     <CommonLayout>
       <Header/>
       <TouchableOpacity activeOpacity={0.7}>
-        <View>
+        <View style={MapStyle.createHelpWrap}>
           <Image
             source={ColorMegaphoneIcon}
+            style={MapStyle.megaphoneIcon}
           />
-          <View>
-            <Text>도움이 필요하신가요?</Text>
-            <Text>주변에 요청해보세요!</Text>
+          <View style={MapStyle.createHelpInfo}>
+            <Text style={MapStyle.helpSubTitle}>도움이 필요하신가요?</Text>
+            <Text style={MapStyle.helpMainTitle}>주변에 요청해보세요!</Text>
           </View>
-          <Text>도움요청</Text>
+          <Text style={MapStyle.helpButton}>도움요청</Text>
         </View>
       </TouchableOpacity>
       <Footer/>
