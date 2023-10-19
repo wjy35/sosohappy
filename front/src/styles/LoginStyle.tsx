@@ -72,7 +72,7 @@ const LoginStyle = StyleSheet.create({
         fontWeight:"500",
         color:"#5B5B5B",
         textAlign:"center",
-        marginTop:25,
+        marginTop:20,
     },
 })
 
