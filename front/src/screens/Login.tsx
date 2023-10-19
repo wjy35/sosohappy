@@ -30,7 +30,7 @@ const Login = () => {
         />
         <TouchableOpacity activeOpacity={0.7}>
           <View style={LoginStyle.loginButton}>
-            <Text style={LoginStyle.loginButtonText}>로그인</Text>
+            <Text style={[LoginStyle.loginButtonText]}>로그인</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity activeOpacity={0.7}>
