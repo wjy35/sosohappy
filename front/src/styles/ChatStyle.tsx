@@ -15,10 +15,6 @@ const ChatStyle = StyleSheet.create({
         backgroundColor:"#FFF",
         zIndex:999,
     },
-    preArrowIcon:{
-        width:32,
-        height:32,
-    },
     chatTitle:{
         marginRight:"auto",
     },
@@ -32,12 +28,6 @@ const ChatStyle = StyleSheet.create({
         fontWeight:"400",
         color:"#C3C0CB",
     },
-    hamburgerMenuIcon:{
-        width:30,
-        height:30,
-    },
-
-
 
     chatContentWrap:{
         height:responsiveHeight(56),
@@ -47,7 +37,6 @@ const ChatStyle = StyleSheet.create({
     },
 
 
-
     agreeWrap:{
         marginHorizontal:responsiveWidth(4),
         height:responsiveHeight(20),
@@ -55,10 +44,6 @@ const ChatStyle = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center",
         marginTop:"auto",
-    },
-    groupUserIcon:{
-        width:45,
-        height:45,
     },
     agreeInfoText:{
         marginTop:12,
@@ -79,7 +64,6 @@ const ChatStyle = StyleSheet.create({
         color:"#FFF",
     },
 
-
     controlWrap:{
         height:responsiveHeight(10),
         display:"flex",
@@ -93,10 +77,6 @@ const ChatStyle = StyleSheet.create({
         display:"flex",
         flexDirection:"row",
         alignItems:"center",
-    },
-    exitIcon:{
-        width:20,
-        height:20,
     },
     exitText:{
         fontSize:10,
