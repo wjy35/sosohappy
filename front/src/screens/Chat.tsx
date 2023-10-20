@@ -3,6 +3,9 @@ import { View, Text, Image, TouchableOpacity, TextInput } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import MyChat from "@/components/MyChat";
 
+import {SvgXml} from "react-native-svg";
+import {exit, people, send, hamburgerMenu, backIcon} from "@/assets/icons/icons";
+
 import PreArrowIcon from "@/assets/img/pre-arrow.png"
 import HamburgerMenuIcon from "@/assets/img/hamburger-menu.png"
 import GroupUserIcon from "@/assets/img/group-user-icon.png"
@@ -17,13 +20,12 @@ const Chat = () => {
     <CommonLayout>
       <View style={ChatStyle.heightWrap}>
 
-
-
         <View style={ChatStyle.chatTitleWrap}>
           <TouchableOpacity activeOpacity={0.7}>
-            <Image
-              source={PreArrowIcon}
-              style={ChatStyle.preArrowIcon}
+            <SvgXml
+              xml={backIcon}
+              width={32}
+              height={32}
             />
           </TouchableOpacity>
           <View style={ChatStyle.chatTitle}>
@@ -31,9 +33,10 @@ const Chat = () => {
             <Text style={ChatStyle.chatTitleRank}>나눔이</Text>
           </View>
           <TouchableOpacity activeOpacity={0.7}>
-            <Image
-              source={HamburgerMenuIcon}
-              style={ChatStyle.hamburgerMenuIcon}
+            <SvgXml
+              xml={hamburgerMenu}
+              width={30}
+              height={30}
             />
           </TouchableOpacity>
         </View>
@@ -46,9 +49,10 @@ const Chat = () => {
         </View>
 
         <View style={ChatStyle.agreeWrap}>
-          <Image
-            source={GroupUserIcon}
-            style={ChatStyle.groupUserIcon}
+          <SvgXml
+            xml={people}
+            width={45}
+            height={45}
           />
           <Text style={ChatStyle.agreeInfoText}>매칭하기 버튼을 통해 상대방의 요청을 승인해주세요.</Text>
           <TouchableOpacity activeOpacity={0.7}>
@@ -61,9 +65,10 @@ const Chat = () => {
         <View style={ChatStyle.controlWrap}>
           <TouchableOpacity activeOpacity={0.7}>
             <View style={ChatStyle.exitFlexWrap}>
-              <Image
-                source={ExitIcon}
-                style={ChatStyle.exitIcon}
+              <SvgXml
+                xml={exit}
+                width={20}
+                height={20}
               />
               <Text style={ChatStyle.exitText}>채팅방 나가기</Text>
             </View>
@@ -74,9 +79,14 @@ const Chat = () => {
           />
           <TouchableOpacity activeOpacity={0.7}>
             <View style={ChatStyle.sendButton}>
-              <Image
-                source={SendIcon}
-                style={ChatStyle.sendIcon}
+              {/*<Image*/}
+              {/*  source={SendIcon}*/}
+              {/*  style={ChatStyle.sendIcon}*/}
+              {/*/>*/}
+              <SvgXml
+                xml={send}
+                width={20}
+                height={20}
               />
             </View>
           </TouchableOpacity>
