@@ -1,16 +1,18 @@
-import { View, Text, Image, TouchableOpacity, TextInput } from "react-native";
+import { View, Text, Image, TouchableOpacity, TextInput, ScrollView } from "react-native";
 
 import CommonLayout from "@/components/CommonLayout";
 import MyChat from "@/components/MyChat";
+import ChatDate from "@/components/ChatDate";
 
 import PreArrowIcon from "@/assets/img/pre-arrow.png"
 import HamburgerMenuIcon from "@/assets/img/hamburger-menu.png"
 import GroupUserIcon from "@/assets/img/group-user-icon.png"
 import ExitIcon from "@/assets/img/exit-icon.png"
 import SendIcon from "@/assets/img/send-icon.png"
+import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 
 import ChatStyle from "@/styles/ChatStyle";
-import { ScrollView } from "react-native-gesture-handler";
+import YourChat from "@/components/YourCaht";
 
 const Chat = () => {
   return (
@@ -40,8 +42,16 @@ const Chat = () => {
 
         <View style={ChatStyle.chatContentWrap}>
           <ScrollView>
-            <Text>2023. 10. 16.</Text>
-            <MyChat content="네, 금방 갈게요 조금만 기다리세요." />
+            <ChatDate date="2023. 10. 15."/>
+
+            <MyChat content="네, 금방 갈게요 조금만 기다리세요."/>
+            <ChatDate date="2023. 10. 16."/>
+            <YourChat thumbnail={FishThumbnail} content="안녕하세요! 저는 7층에 있습니다.
+            건물에 들어오시면, 엘리베이터를 찾기가
+            어렵네요, 안쪽으로 들어오셔서 오른쪽에
+            있습니다."/>
+            <MyChat content="네, 금방 갈게요 조금만 기다리세요."/>
+
           </ScrollView>
         </View>
 

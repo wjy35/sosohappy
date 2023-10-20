@@ -3,15 +3,17 @@ import { responsiveWidth, responsiveHeight } from "react-native-responsive-dimen
 
 const ChatStyle = StyleSheet.create({
     heightWrap:{
-        height: responsiveHeight(96),
+        height:responsiveHeight(96),
     },
     chatTitleWrap:{
-        marginHorizontal:responsiveWidth(4),
-        height:80,
+        paddingHorizontal:responsiveWidth(4),
+        height:responsiveHeight(10),
         display:"flex",
         flexDirection:"row",
         justifyContent:"flex-start",
         alignItems:"center",
+        backgroundColor:"#FFF",
+        zIndex:999,
     },
     preArrowIcon:{
         width:32,
@@ -38,6 +40,8 @@ const ChatStyle = StyleSheet.create({
 
 
     chatContentWrap:{
+        height:responsiveHeight(56),
+        paddingTop:"auto",
         marginTop:"auto",
         marginHorizontal:responsiveWidth(4),
     },
@@ -46,10 +50,11 @@ const ChatStyle = StyleSheet.create({
 
     agreeWrap:{
         marginHorizontal:responsiveWidth(4),
+        height:responsiveHeight(20),
         display:"flex",
         justifyContent:"center",
         alignItems:"center",
-        paddingVertical:50,
+        marginTop:"auto",
     },
     groupUserIcon:{
         width:45,
@@ -76,12 +81,13 @@ const ChatStyle = StyleSheet.create({
 
 
     controlWrap:{
-        height:80,
+        height:responsiveHeight(10),
         display:"flex",
         flexDirection:"row",
         justifyContent:"flex-start",
         alignItems:"center",
-        marginHorizontal:responsiveWidth(4),
+        paddingHorizontal:responsiveWidth(4),
+        backgroundColor:"#FFF",
     },
     exitFlexWrap:{
         display:"flex",
