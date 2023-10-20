@@ -10,6 +10,7 @@ import GroupUserIcon from "@/assets/img/group-user-icon.png"
 import ExitIcon from "@/assets/img/exit-icon.png"
 import SendIcon from "@/assets/img/send-icon.png"
 import FishThumbnail from "@/assets/img/fish-thumbnail.png"
+
 import {SvgXml} from "react-native-svg";
 import {exit, people, send2, hamburgerMenu, backIcon} from "@/assets/icons/icons";
 
