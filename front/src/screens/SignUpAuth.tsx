@@ -5,7 +5,9 @@ import Footer from "@/components/Footer";
 import AuthTitle from "@/components/AuthTitle";
 import AuthButton from "@/components/AuthButton";
 
-import AddPlusIcon from "@/assets/img/add-plus-icon.png"
+import {SvgXml} from "react-native-svg";
+import {addPlus} from "@/assets/icons/icons";
+
 
 import SignUpAuthStyle from "@/styles/SignUpAuthStyle";
 
@@ -17,9 +19,10 @@ const SignUpAuth = () => {
         <View>
           <TouchableOpacity activeOpacity={0.7}>
             <View style={SignUpAuthStyle.uploadWrap}>
-              <Image
-                source={AddPlusIcon}
-                style={SignUpAuthStyle.addPlusImg}
+              <SvgXml
+                xml={addPlus}
+                width={40}
+                height={40}
               />
               <Text style={SignUpAuthStyle.uploadText}>사진 등록하기</Text>
             </View>
