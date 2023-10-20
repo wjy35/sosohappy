@@ -4,13 +4,7 @@ import CommonLayout from "@/components/CommonLayout";
 import MyChat from "@/components/MyChat";
 
 import {SvgXml} from "react-native-svg";
-import {exit, people, send, hamburgerMenu, backIcon} from "@/assets/icons/icons";
-
-import PreArrowIcon from "@/assets/img/pre-arrow.png"
-import HamburgerMenuIcon from "@/assets/img/hamburger-menu.png"
-import GroupUserIcon from "@/assets/img/group-user-icon.png"
-import ExitIcon from "@/assets/img/exit-icon.png"
-import SendIcon from "@/assets/img/send-icon.png"
+import {exit, people, send2, hamburgerMenu, backIcon} from "@/assets/icons/icons";
 
 import ChatStyle from "@/styles/ChatStyle";
 import { ScrollView } from "react-native-gesture-handler";
@@ -79,21 +73,14 @@ const Chat = () => {
           />
           <TouchableOpacity activeOpacity={0.7}>
             <View style={ChatStyle.sendButton}>
-              {/*<Image*/}
-              {/*  source={SendIcon}*/}
-              {/*  style={ChatStyle.sendIcon}*/}
-              {/*/>*/}
               <SvgXml
-                xml={send}
+                xml={send2}
                 width={20}
                 height={20}
               />
             </View>
           </TouchableOpacity>
         </View>
-
-
-
       </View>
     </CommonLayout>
   );
