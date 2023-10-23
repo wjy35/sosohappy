@@ -11,7 +11,12 @@ import RightArrowIcon from "@/assets/img/right-arrow-icon.png"
 
 import MainStyle from "@/styles/MainStyle";
 
-const Main = () => {
+import {observer} from 'mobx-react';
+import store from '@/store';
+
+const Main = observer(() => {
+  const {userStore} = store;
+
   return (
     <CommonLayout>
       <Header/>
@@ -106,6 +111,6 @@ const Main = () => {
       <Footer/>
     </CommonLayout>
   );
-};
+});
 
 export default Main;
