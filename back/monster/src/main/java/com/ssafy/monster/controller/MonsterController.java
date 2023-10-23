@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -32,4 +33,18 @@ public class MonsterController {
                 .message("Successfully loaded the representative monster")
                 .result(result).build();
     }
+
+    @GetMapping("/collection")
+    public FormattedResponse searchMonsterList(){
+        //멤버 전달받기
+        Long memberId = 1L;
+
+        Map<String, Object> result = monsterService.searchMonsterList(memberId);
+
+        return FormattedResponse.builder()
+                .status("success")
+                .message("Successfully loaded the monster list")
+                .result(result).build();
+    }
+
 }
