@@ -12,9 +12,7 @@ import CreateHelpStyle from "@/styles/CreateHelpStyle"
 
 const CreateHelp = () => {
   return (
-    <CommonLayout>
-      <Header/>
-
+    <CommonLayout footer={true} headerType={0}>
       <View style={CreateHelpStyle.createHelpTitleWrap}>
         <Text style={CreateHelpStyle.createHelpTitle}>
           반가워요!{"\n"}
@@ -55,8 +53,6 @@ const CreateHelp = () => {
         </View>
         <SimilarRecommendCategoryWrap/>
       </View>
-
-      <Footer/>
     </CommonLayout>
   );
 };

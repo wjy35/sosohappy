@@ -19,7 +19,7 @@ import YourChat from "@/components/YourCaht";
 
 const Chat = () => {
   return (
-    <CommonLayout>
+    <CommonLayout footer={false} headerType={1}>
       <View style={ChatStyle.heightWrap}>
 
         <View style={ChatStyle.chatTitleWrap}>

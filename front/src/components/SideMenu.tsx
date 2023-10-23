@@ -1,10 +1,12 @@
 import {View, Text, Image, TouchableOpacity} from "react-native"
-
 import CloseIcon from "@/assets/img/close-icon.png"
-
 import SideMenuStyle from "@/styles/SideMenuStyle";
 
-const SideMenu = () => {
+interface props {
+    closeSide: Function;
+}
+
+const SideMenu = ({closeSide}: props) => {
     return(
         <>
             <View style={SideMenuStyle.sideMenuWrap}>
@@ -12,7 +14,7 @@ const SideMenu = () => {
                     <View style={SideMenuStyle.logoBg}>
                         <Text style={SideMenuStyle.logo}>LOGO</Text>
                     </View>
-                    <TouchableOpacity activeOpacity={0.7}>
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => closeSide()}>
                         <Image
                             source={CloseIcon}
                             style={SideMenuStyle.closeIcon}

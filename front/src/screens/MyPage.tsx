@@ -14,8 +14,7 @@ import MyPageStyle from "@/styles/MyPageStyle";
 
 const MyPage = () => {
   return (
-    <CommonLayout>
-      <Header/>
+    <CommonLayout headerType={0} footer={true}>
         <View style={MyPageStyle.myProfileWrap}>
           <Image
             source={FishThumbnail}
@@ -103,9 +102,6 @@ const MyPage = () => {
               </View>
           </TouchableOpacity>
         </View>
-
-
-      <Footer/>
     </CommonLayout>
   );
 };
