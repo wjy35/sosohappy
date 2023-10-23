@@ -31,6 +31,7 @@ const HistoryItemStyle = StyleSheet.create({
         marginLeft:13,
     },
     historyItemContent:{
+        width:responsiveWidth(60),
         fontSize:14,
         fontWeight:"700",
         color:"#767C7A",

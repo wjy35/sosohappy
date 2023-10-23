@@ -21,6 +21,9 @@ const SignUpSeparateStyle = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center",
     },
+    selectedContent:{
+        borderColor:"#427CF9",
+    },
     selectImg:{
         width:responsiveWidth(25),
         height:responsiveWidth(25),
