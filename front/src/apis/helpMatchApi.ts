@@ -8,7 +8,7 @@ const PublicHelpMatchApi = axios.create({
 const PrivateHelpMatchApi = axios.create({
   baseURL: `${baseURL}/help-match/`,
   headers: {
-    Authorization: `Bearer ${}`
+    // Authorization: `Bearer ${}`
   }
 });
 
