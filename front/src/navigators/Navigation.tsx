@@ -18,7 +18,7 @@ const Stack = createStackNavigator();
 const Navigation = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false, animationEnabled: false }} initialRouteName='Dummy'>
+      <Stack.Navigator screenOptions={{ headerShown: false, animationEnabled: false }} initialRouteName='Main'>
         <Stack.Screen name="Dummy" component={NavigatorDummy}/>
         <Stack.Screen name="Chat" component={Chat}/>
         <Stack.Screen name="ChatList" component={ChatList}/>
