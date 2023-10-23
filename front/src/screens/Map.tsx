@@ -9,8 +9,7 @@ import MapStyle from "@/styles/MapStyle";
 
 const Map = () => {
   return (
-    <CommonLayout>
-      <Header/>
+    <CommonLayout footer={true} headerType={0}>
       <TouchableOpacity activeOpacity={0.7}>
         <View style={MapStyle.createHelpWrap}>
           <Image
@@ -24,7 +23,6 @@ const Map = () => {
           <Text style={MapStyle.helpButton}>도움요청</Text>
         </View>
       </TouchableOpacity>
-      <Footer/>
     </CommonLayout>
   );
 };

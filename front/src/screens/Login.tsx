@@ -7,8 +7,7 @@ import LoginStyle from "@/styles/LoginStyle"
 
 const Login = () => {
   return (
-    <CommonLayout>
-      <Header/>
+    <CommonLayout headerType={0} footer={true}>
       <View style={LoginStyle.loginTitleWrap}>
         <Text style={LoginStyle.loginCategory}>로그인</Text>
         <Text style={LoginStyle.loginTitle}>당신의 행운나눔이.</Text>
@@ -37,7 +36,6 @@ const Login = () => {
           <Text style={LoginStyle.authText}>회원이 아니신가요?</Text>
         </TouchableOpacity>
       </View>
-      <Footer/>
     </CommonLayout>
   );
 };

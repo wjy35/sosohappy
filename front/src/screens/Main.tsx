@@ -1,4 +1,4 @@
-import {View,Text,Image,TouchableOpacity} from "react-native";
+import {View, Text, Image, TouchableOpacity, ScrollView} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -18,8 +18,7 @@ const Main = observer(() => {
   const {userStore} = store;
 
   return (
-    <CommonLayout>
-      <Header/>
+    <CommonLayout footer={true} headerType={0}>
       <View style={MainStyle.mainWrap}>
         <Text style={MainStyle.mainTitle}>
           소소한 선행을{"\n"}
@@ -107,8 +106,6 @@ const Main = observer(() => {
           </View>
         </TouchableOpacity>
       </View>
-
-      <Footer/>
     </CommonLayout>
   );
 });

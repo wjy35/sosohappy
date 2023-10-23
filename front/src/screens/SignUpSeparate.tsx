@@ -34,10 +34,9 @@ const SignUpSeparate = () => {
     setNanumBorderState(false);
   }
   return (
-    <CommonLayout>
-      <Header/>
+    <CommonLayout headerType={0} footer={true}>
       <AuthTitle level="1" title="서비스가 필요하신가요?" description="해당되는 곳을 선택해주세요."/>
-      
+
       <View style={SignUpSeparateStyle.selectWrap}>
         <TouchableOpacity activeOpacity={0.7} onPress={activeNanum}>
           {
@@ -101,7 +100,6 @@ const SignUpSeparate = () => {
         </TouchableOpacity>
       </View>
       <AuthButton movePage="SignUpAuth"/>
-      <Footer/>
     </CommonLayout>
   );
 };

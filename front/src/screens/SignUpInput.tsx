@@ -9,10 +9,9 @@ import SignUpInputStyle from "@/styles/SignUpInputStyle";
 
 const SignUpInput = () => {
   return (
-    <CommonLayout>
-      <Header/>
+    <CommonLayout headerType={0} footer={true}>
       <AuthTitle level="3" title="회원가입을 진행합니다." description={`간편한 회원가입으로 소소한${"\n"}행운을 쌓습니다`}/>
-      
+
       <View style={SignUpInputStyle.signUpInputWrap}>
         <Text style={SignUpInputStyle.signUpInputText}>아이디를 입력해주세요.</Text>
         <TextInput
@@ -50,9 +49,8 @@ const SignUpInput = () => {
         <Text style={SignUpInputStyle.signUpInputText}>성별을 입력해주세요.</Text>
 
       </View>
-      
+
       <AuthButton movePage="Main"/>
-      <Footer/>
     </CommonLayout>
   );
 };
