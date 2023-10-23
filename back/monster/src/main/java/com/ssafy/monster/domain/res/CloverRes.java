@@ -6,6 +6,6 @@ import lombok.Getter;
 @Builder
 @Getter
 public class CloverRes {
-    int memberClover;
-    Long memberAccruedClover;
+    private int memberClover;
+    private Long memberAccruedClover;
 }

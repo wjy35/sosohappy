@@ -1,12 +1,13 @@
 package com.ssafy.monster.controller;
 
 import com.ssafy.monster.common.response.FormattedResponse;
+import com.ssafy.monster.domain.req.LevelUpReq;
 import com.ssafy.monster.domain.res.MonsterRes;
 import com.ssafy.monster.service.MonsterServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.cert.ocsp.Req;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,19 @@ public class MonsterController {
         return FormattedResponse.builder()
                 .status("success")
                 .message("Successfully loaded the monster list")
+                .result(result).build();
+    }
+
+    @PatchMapping("/level-up")
+    public FormattedResponse updateMonsterClover(@RequestBody LevelUpReq dto){
+        //memberMonsterId, clover를 전달
+
+        log.info("controller_updateMonsterClover_start -> memberMonsterId: " + dto.getMemberMonsterId() + "clover : " + dto.getClover());
+        Map<String, Object> result = monsterService.updateMonsterClover(dto.getMemberMonsterId(), dto.getClover());
+
+        return FormattedResponse.builder()
+                .status("success")
+                .message("Successfully reflected the clover")
                 .result(result).build();
     }
 

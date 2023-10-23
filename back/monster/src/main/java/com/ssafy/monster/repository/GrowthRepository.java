@@ -9,9 +9,8 @@ import java.util.Optional;
 
 public interface GrowthRepository extends JpaRepository<MemberMonsterGrowth, Long> {
 
+    Optional<MemberMonsterGrowth> findByMemberMonsterId(Long memberMonsterId);
     Optional<MemberMonsterGrowth> findByMemberMonsterProfile_MemberIdAndMonsterType_TypeId(Long memberId, Byte typeId);
-
     List<MemberMonsterGrowth> findAllByMemberMonsterProfile_MemberId(Long memberId);
-
 
 }
