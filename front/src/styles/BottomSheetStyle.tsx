@@ -134,6 +134,7 @@ const BottomSheetStyle = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center",
         marginTop:26,
+        marginBottom:20,
     },
     connectButtonText:{
         fontSize:18,
