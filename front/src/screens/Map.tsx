@@ -1,7 +1,6 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import BottomSheet from "@/components/BottomSheet";
 
 import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 
@@ -23,6 +22,7 @@ const Map = () => {
           <Text style={MapStyle.helpButton}>도움요청</Text>
         </View>
       </TouchableOpacity>
+      <BottomSheet/>
     </CommonLayout>
   );
 };
