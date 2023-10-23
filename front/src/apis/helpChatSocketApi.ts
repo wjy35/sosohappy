@@ -8,7 +8,7 @@ const PublicHelpChatSocketApi = axios.create({
 const PrivateHelpChatSocketApi = axios.create({
   baseURL: `${baseURL}/help-chat-socket/`,
   headers: {
-    Authorization: `Bearer ${}`
+    // Authorization: `Bearer ${}`
   }
 });
 
