@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import BottomSheet from "@/components/BottomSheet";
@@ -7,6 +8,10 @@ import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 import MapStyle from "@/styles/MapStyle";
 
 const Map = () => {
+  const [bottomSheetStatus, setBottomSheetStatus] = useState<Boolean>(true);
+  const updateBottomSheetStatus = (updateStatus: Boolean) => {
+    setBottomSheetStatus(updateStatus);
+  }
   return (
     <CommonLayout footer={true} headerType={0}>
       <TouchableOpacity activeOpacity={0.7}>
@@ -22,7 +27,12 @@ const Map = () => {
           <Text style={MapStyle.helpButton}>도움요청</Text>
         </View>
       </TouchableOpacity>
-      <BottomSheet/>
+      {
+        bottomSheetStatus ?
+        <BottomSheet updateBottomSheetStatus={(updateStatus:Boolean) => updateBottomSheetStatus(updateStatus)}/>
+        :
+        <></>
+      }
     </CommonLayout>
   );
 };
