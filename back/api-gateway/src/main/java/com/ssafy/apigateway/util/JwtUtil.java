@@ -1,44 +1,52 @@
 package com.ssafy.apigateway.util;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import io.jsonwebtoken.security.Keys;
 
-import java.sql.Date;
+import javax.annotation.PostConstruct;
+import java.security.Key;
+import java.util.Base64;
+import java.util.Date;
 
 @Component
 public class JwtUtil {
     @Value("${jwt.salt}")
-    private String SALT;
-
+    private final String SALT;
     @Value("${jwt.expire-min}")
-    private Long EXPIRE_MIN;
+    private final Long EXPIRE_MIN;
 
-    public String generateToken(Long memberId){
-        Claims claims = Jwts.claims()
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_MIN));
-        claims.put("memberId",memberId);
+    private final Key key;
 
-        String jwt = Jwts.builder()
-                .setHeaderParam("typ", "JWT")
-                .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS256, SALT.getBytes())
-                .compact();
+    @Autowired
+    public JwtUtil(
+            @Value("${jwt.salt}") String SALT,
+            @Value("${jwt.expire-min}") Long EXPIRE_MIN) {
+        this.SALT = SALT;
+        this.EXPIRE_MIN = EXPIRE_MIN;
 
-        return jwt;
+        byte[] keyBytes = Base64.getDecoder().decode(Base64.getEncoder().encode(SALT.getBytes()));
+        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public Long getMemberIdByToken(final String token){
+    public String generateToken(Long memberId){
+        return Jwts.builder()
+                .claim("memberId", memberId)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setExpiration(new Date(System.currentTimeMillis()+EXPIRE_MIN))
+                .compact();
+    }
 
-         Object memberId = Jwts.parser()
-                 .setSigningKey(SALT.getBytes())
-                 .parseClaimsJws(token)
-                 .getBody()
-                 .get("memberId");
-
-         return Long.parseLong(memberId.toString());
+    public Long getMemberIdByToken(String token){
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("memberId",Long.class);
     }
 
 }
