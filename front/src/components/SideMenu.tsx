@@ -25,7 +25,6 @@ const SideMenu = ({closeSide, nowPage}: props) => {
                         />
                     </TouchableOpacity>
                 </View>
-
                 <View style={SideMenuStyle.navWrap}>
                     <TouchableOpacity activeOpacity={0.7} onPress={()=>navigation.navigate("Main")}>
                         <View style={[SideMenuStyle.menuList, nowPage==="Main" && SideMenuStyle.menuListActive]}>
