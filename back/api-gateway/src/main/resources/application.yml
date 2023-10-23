@@ -14,10 +14,19 @@ spring:
             - Path=/member-sync/**
           filters:
             - RewritePath=/member-command/(?<path>.*),/$\{path}
+        - id: member-command-authorization
+          uri: lb://MEMBER-COMMAND-SERVICE/
+          predicates:
+            - Path=/member-command/**
+            - Method=GET,PUT,DELETE,PATCH
+          filters:
+            - RewritePath=/member-command/(?<path>.*),/$\{path}
+            - AuthorizationHeaderFilter
         - id: member-command
           uri: lb://MEMBER-COMMAND-SERVICE/
           predicates:
             - Path=/member-command/**
+            - Method=POST
           filters:
             - RewritePath=/member-command/(?<path>.*),/$\{path}
         - id: monster
