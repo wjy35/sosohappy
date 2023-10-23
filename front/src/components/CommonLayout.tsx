@@ -1,19 +1,22 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import {ScrollView, View} from "react-native"
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import SideMenu from "@/components/SideMenu";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 
 interface props {
   footer: boolean;
   headerType: number;
+  nowPage?: string;
   children: React.ReactNode;
 }
 
-const CommonLayout = ({footer, headerType, children} : props) => {
+const CommonLayout = ({footer, headerType, nowPage, children} : props) => {
     const [isVisible, setIsVisible] = useState(false);
+    const navigation = useNavigation();
 
     const closeSide = () => {
         setIsVisible(false);
@@ -22,6 +25,14 @@ const CommonLayout = ({footer, headerType, children} : props) => {
     const openSide = () => {
         setIsVisible(true);
     }
+
+    useEffect(() => {
+        const focusNav = navigation.addListener('focus', () => {
+            // do something
+            closeSide();
+        });
+        return focusNav;
+    }, [navigation]);
 
     return(
         <>
@@ -32,7 +43,7 @@ const CommonLayout = ({footer, headerType, children} : props) => {
             >
               <Header headerType={headerType} openSide={openSide}/>
               {
-                isVisible && (<SideMenu closeSide={closeSide}/>)
+                isVisible && (<SideMenu closeSide={closeSide} nowPage={nowPage}/>)
               }
               <ScrollView>
                 {children}

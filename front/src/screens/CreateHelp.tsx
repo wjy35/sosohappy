@@ -12,7 +12,7 @@ import CreateHelpStyle from "@/styles/CreateHelpStyle"
 
 const CreateHelp = () => {
   return (
-    <CommonLayout footer={true} headerType={0}>
+    <CommonLayout footer={true} headerType={0} nowPage={'Help'}>
       <View style={CreateHelpStyle.createHelpTitleWrap}>
         <Text style={CreateHelpStyle.createHelpTitle}>
           반가워요!{"\n"}
