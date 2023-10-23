@@ -18,7 +18,7 @@ const Main = observer(() => {
   const {userStore} = store;
 
   return (
-    <CommonLayout footer={true} headerType={0}>
+    <CommonLayout footer={true} headerType={0} nowPage={'Main'}>
       <View style={MainStyle.mainWrap}>
         <Text style={MainStyle.mainTitle}>
           소소한 선행을{"\n"}
