@@ -8,7 +8,7 @@ const PublicHelpHistoryApi = axios.create({
 const PrivateHelpHistoryApi = axios.create({
   baseURL: `${baseURL}/help-history/`,
   headers: {
-    Authorization: `Bearer ${}`
+    // Authorization: `Bearer ${}`
   }
 });
 
@@ -17,6 +17,30 @@ interface props {
 }
 
 const helpHistoryApi = {
+  getListFrom: async () => {
+    const res = PrivateHelpHistoryApi.get(
+      'list/from',
+    );
+    return res;
+  },
+  getListTo: async () => {
+    const res = PrivateHelpHistoryApi.get(
+      'list/to',
+    );
+    return res;
+  },
+  getHelpCount: async () => {
+    const res = PrivateHelpHistoryApi.get(
+      'count',
+    );
+    return res;
+  },
+  getCertificate: async () => {
+    const res = PrivateHelpHistoryApi.get(
+      'certificate',
+    );
+    return res;
+  }
 
 };
 
