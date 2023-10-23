@@ -13,8 +13,7 @@ import SignUpAuthStyle from "@/styles/SignUpAuthStyle";
 
 const SignUpAuth = () => {
   return (
-    <CommonLayout>
-      <Header/>
+    <CommonLayout headerType={0} footer={true}>
         <AuthTitle level="2" title="증명서를 인증해주세요. " description="사진 한 장으로 나를 증명할 수 있어요"/>
         <View>
           <TouchableOpacity activeOpacity={0.7}>
@@ -29,7 +28,6 @@ const SignUpAuth = () => {
           </TouchableOpacity>
         </View>
         <AuthButton movePage="SignUpInput"/>
-      <Footer/>
     </CommonLayout>
   );
 };
