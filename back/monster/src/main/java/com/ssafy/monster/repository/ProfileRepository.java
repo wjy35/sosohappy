@@ -1,8 +1,6 @@
 package com.ssafy.monster.repository;
 
-import com.ssafy.monster.domain.entity.MemberMonsterGrowth;
 import com.ssafy.monster.domain.entity.MemberMonsterProfile;
-import com.ssafy.monster.domain.entity.MonsterInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface MonsterRepository extends JpaRepository<MemberMonsterProfile, Long> {
+public interface ProfileRepository extends JpaRepository<MemberMonsterProfile, Long> {
 
     Optional<MemberMonsterProfile> findByMemberId(Long memberId);
 
