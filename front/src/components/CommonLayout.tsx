@@ -27,7 +27,7 @@ const CommonLayout = ({footer, headerType, nowPage, children} : props) => {
     }
 
     useEffect(() => {
-        const focusNav = navigation.addListener('focus', () => {
+        const focusNav = navigation.addListener('blur', () => {
             // do something
             closeSide();
         });
