@@ -1,5 +1,6 @@
 package com.ssafy.monster.service;
 
+import com.netflix.discovery.shared.Pair;
 import com.ssafy.monster.common.exception.CustomException;
 import com.ssafy.monster.common.exception.ErrorCode;
 import com.ssafy.monster.domain.entity.MemberMonsterGrowth;
@@ -45,35 +46,39 @@ public class MonsterServiceImpl implements MonsterService{
     /**
      * 경험치 구간 가져오기
      */
-    private double[] expArr;
-    private double[] prefixSum;
-    private ChoiceFormat cf;
+    private double[] expArr; //누적 경험치
 
     @PostConstruct
     private void getExpinfo() {
         List<Integer> expList = infoRepository.getMonsterCloverInfo();
-        expArr = expList.stream().mapToDouble(i -> i).toArray(); //구간별 경험치
-        prefixSum = new double[expArr.length]; //누적 경험치(클로버)
-        for(int i = 0; i < expArr.length; i++) {
-            for(int j = 0; j <= i; j++) {
-                prefixSum[i] += expArr[j];
-            }
-        }
-        List<Integer> levelList = infoRepository.getMonsterLevelInfo();
-        String[] levelArr = levelList.stream().map(i -> i.toString()).toArray(size -> new String[size]);
-
-        cf = new ChoiceFormat(prefixSum, levelArr);
+        expArr = expList.stream().mapToDouble(i -> i).toArray();
     }
 
-    private Double getCurrentPoint(int currentClover){
-        int currentLevel = Integer.parseInt(cf.format(currentClover));
-        int requiredClover = (int) expArr[currentLevel-1];
-        if(requiredClover == 0) {
-            requiredClover = (int) expArr[currentLevel];
+    private Pair<Integer, Double> getCurrentPoint(int currentClover){
+        int startIdx = 0;
+        int midIdx = 0;
+        int endIdx = expArr.length -1;
+
+        while(startIdx <= endIdx) {
+            midIdx = (startIdx+endIdx) / 2;
+            if(expArr[midIdx] == currentClover) {
+                break;
+            } else if(expArr[midIdx] > currentClover) {
+                endIdx = midIdx-1;
+            } else {
+                startIdx = midIdx+1;
+            }
         }
-        Double prevRequiredClover = prefixSum[currentLevel-1];
+
+        int currentLevel = (startIdx+endIdx) / 2 + 1;
+        if(currentLevel == 0) {
+            currentLevel += 1;
+        }
+        int requiredClover = (int) (expArr[currentLevel] - expArr[currentLevel-1]);
+        Double prevRequiredClover = expArr[currentLevel-1];
         Double currentPoint = (currentClover-prevRequiredClover) / requiredClover;
-        return currentPoint;
+
+        return new Pair<>(currentLevel, currentPoint);
     }
 
     /**
@@ -88,10 +93,9 @@ public class MonsterServiceImpl implements MonsterService{
 
         // exp 계산
         int currentClover = growth.getMonsterClover();
-        Double currentPoint = getCurrentPoint(currentClover);
-
+        Pair<Integer, Double> pair = getCurrentPoint(currentClover);
         // result
-        MonsterRes mosterRes = MonsterMapper.INSTANCE.toRepresentativeMonsterRes(profile, currentPoint);
+        MonsterRes mosterRes = MonsterMapper.INSTANCE.toRepresentativeMonsterRes(profile, pair.second());
 
         return mosterRes;
     }
@@ -105,7 +109,7 @@ public class MonsterServiceImpl implements MonsterService{
         List<MemberMonsterGrowth> monsterList = growthRepository.findAllByMemberMonsterProfile_MemberId(memberId);
 
         List<MonsterRes> resList = monsterList
-                .stream().map(m -> MonsterMapper.INSTANCE.toMonsterListRes(m, Integer.parseInt(cf.format(m.getMonsterClover())))
+                .stream().map(m -> MonsterMapper.INSTANCE.toMonsterListRes(m, getCurrentPoint(m.getMonsterClover()).first())
                 ).collect(Collectors.toList());
 
         return resList;
@@ -144,11 +148,10 @@ public class MonsterServiceImpl implements MonsterService{
 
         // exp 계산
         int currentClover = growth.getMonsterClover();
-        Double currentPoint = getCurrentPoint(currentClover);
+        Pair<Integer, Double> pair = getCurrentPoint(currentClover);
 
         //result
-        Integer level = Integer.parseInt(cf.format(growth.getMonsterClover()));
-        MonsterRes monsterRes = MonsterMapper.INSTANCE.toLevelUpMonsterRes(growth, level, currentPoint);
+        MonsterRes monsterRes = MonsterMapper.INSTANCE.toLevelUpMonsterRes(growth, pair.first(), pair.second());
 
         return monsterRes;
     }
