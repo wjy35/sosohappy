@@ -32,6 +32,11 @@ public class MonsterServiceImpl implements MonsterService{
     private final InfoRepository infoRepository;
     private final TypeRepository typeRepository;
 
+    // Todo 실행 시점에 구간 가져오기  - @PostConstruct
+
+    // ToDo private int getLevel(int nowExp) {} binarysearch
+
+
     @Autowired
     public MonsterServiceImpl(MonsterRepository monsterRepository, GrowthRepository growthRepository, InfoRepository infoRepository, TypeRepository typeRepository) {
         this.monsterRepository = monsterRepository;
@@ -65,8 +70,6 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     public Map<String, Object> searchRepresentativeMonster(Long memberId) {
 
-        log.info("service_searchRepresentativeMonster_start -> memberId: " + memberId);
-
         MemberMonsterProfile profile = monsterRepository.findByMemberId(memberId).get();
         MemberMonsterGrowth growth = growthRepository.findByMemberMonsterProfile_MemberIdAndMonsterType_TypeId(profile.getMemberId(), profile.getMonsterInfo().getMonsterType().getTypeId()).get();
         MonsterType type = profile.getMonsterInfo().getMonsterType(); //프로필 타입
@@ -99,7 +102,6 @@ public class MonsterServiceImpl implements MonsterService{
         resultMap.put("clover", clover);
         resultMap.put("monster", monster);
 
-        log.info("service_searchRepresentativeMonster_end: success");
         return resultMap;
     }
 
@@ -108,8 +110,6 @@ public class MonsterServiceImpl implements MonsterService{
      */
     @Override
     public Map<String, Object> searchMonsterList(Long memberId){
-
-        log.info("service_searchMonsterList_start -> memberId: " + memberId);
 
         // ChoiceFormat (level)
         ChoiceFormat cf = createChoiceFormat();
@@ -129,7 +129,6 @@ public class MonsterServiceImpl implements MonsterService{
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("monsterList", resList);
 
-        log.info("service_searchMonsterList_end: success");
         return resultMap;
     }
 
@@ -138,8 +137,6 @@ public class MonsterServiceImpl implements MonsterService{
      */
     @Override
     public Map<String, Object> updateMonsterClover(Long memberMonsterId, int clover) {
-
-        log.info("service_updateMonsterClover_start -> memberMonsterId: " + memberMonsterId + ", clover : " + clover);
 
         MemberMonsterGrowth growth = growthRepository.findByMemberMonsterId(memberMonsterId).get();
         MemberMonsterProfile profile = growth.getMemberMonsterProfile();
@@ -181,7 +178,6 @@ public class MonsterServiceImpl implements MonsterService{
         resultMap.put("clover", cloverRes);
         resultMap.put("monster", monster);
 
-        log.info("service_updateMonsterClover_end: success");
         return resultMap;
     }
 

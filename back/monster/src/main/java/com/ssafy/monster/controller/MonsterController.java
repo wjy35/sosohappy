@@ -24,11 +24,8 @@ public class MonsterController {
     }
 
     @GetMapping("/my")
-    public FormattedResponse searchRepresentativeMonster(){
-        //멤버 전달받기
-        Long memberId = 1L;
+    public FormattedResponse searchRepresentativeMonster(@RequestHeader Long memberId){
 
-        log.info("controller_searchRepresentativeMonster_start -> memberId: " + memberId);
         Map<String, Object> result = monsterService.searchRepresentativeMonster(memberId);
 
         return FormattedResponse.builder()
@@ -38,11 +35,8 @@ public class MonsterController {
     }
 
     @GetMapping("/collection")
-    public FormattedResponse searchMonsterList(){
-        //멤버 전달받기
-        Long memberId = 1L;
+    public FormattedResponse searchMonsterList(@RequestHeader Long memberId){
 
-        log.info("controller_searchMonsterList_start -> memberId: " + memberId);
         Map<String, Object> result = monsterService.searchMonsterList(memberId);
 
         return FormattedResponse.builder()
@@ -55,7 +49,6 @@ public class MonsterController {
     public FormattedResponse updateMonsterClover(@RequestBody LevelUpReq dto){
         //memberMonsterId, clover를 전달
 
-        log.info("controller_updateMonsterClover_start -> memberMonsterId: " + dto.getMemberMonsterId() + "clover : " + dto.getClover());
         Map<String, Object> result = monsterService.updateMonsterClover(dto.getMemberMonsterId(), dto.getClover());
 
         return FormattedResponse.builder()
