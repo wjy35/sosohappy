@@ -15,4 +15,9 @@ public class MemberInformationServiceImpl implements MemberInformationService {
     public MemberEntity getInformationByMemberId(Long memberId) {
         return memberEntityRepository.findByMemberId(memberId);
     }
+
+    @Override
+    public boolean isNicknameAvailable(String nickname) {
+        return memberEntityRepository.existsByNickname(nickname);
+    }
 }
