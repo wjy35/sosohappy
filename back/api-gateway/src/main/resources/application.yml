@@ -8,6 +8,7 @@ spring:
             - Path=/member-query/**
           filters:
             - RewritePath=/member-query/(?<path>.*),/$\{path}
+            - AuthorizationHeaderFilter
         - id: member-sync
           uri: lb://MEMBER-SYNC-SERVICE/
           predicates:
@@ -35,3 +36,4 @@ spring:
             - Path=/monster/**
           filters:
             - RewritePath=/monster/(?<path>.*),/$\{path}
+            - AuthorizationHeaderFilter
