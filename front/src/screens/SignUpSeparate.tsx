@@ -11,10 +11,12 @@ import MoeumImg from "@/assets/img/moeum-img.png"
 
 import SignUpSeparateStyle from "@/styles/SignUpSeparateStyle";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import {useNavigation} from "@react-navigation/native";
 
 const SignUpSeparate = () => {
   const [selectedType, setSelectedType] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const navigation = useNavigation();
 
   const activeNanum = () => {
     setSelectedType(1);
@@ -27,6 +29,11 @@ const SignUpSeparate = () => {
   }
 
   const goNext = () => {
+    if (selectedType === 1){
+      navigation.navigate("SignUpAuth", {selectedType: selectedType});
+    } else {
+      navigation.navigate("SignUpInput", {selectedType: selectedType});
+    }
 
   }
 
@@ -64,7 +71,7 @@ const SignUpSeparate = () => {
           </View>
         </TouchableOpacity>
       </View>
-      <AuthButton movePage={selectedType===1?"SignUpAuth":"SignUpInput"} isActive={isActive} buttonText={'다음단계 진행하기'}/>
+      <AuthButton isActive={isActive} buttonText={'다음단계 진행하기'} goNext={goNext}/>
     </CommonLayout>
   );
 };
