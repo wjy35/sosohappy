@@ -4,8 +4,47 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 import LoginStyle from "@/styles/LoginStyle"
+import useInput from "@/hooks/useInput";
+import PlainInput from "@/components/PlainInput";
+import memberApi from "@/apis/memberApi";
 
 const Login = () => {
+
+  const checkId = (newText: string) => {
+    inputId.updateIsValid(newText!=="");
+  };
+
+  const checkPassword = (newText: string) => {
+    // TODO: add password validation check
+    inputPassword.updateIsValid(newText!=="");
+  }
+
+  const inputId = useInput({
+    placeholder: "아이디를 입력해주세요",
+    initialIsValid: false,
+    onChange: checkId,
+  });
+  const inputPassword = useInput({
+    placeholder: "비밀번호를 입력해주세요",
+    initialIsValid: false,
+    onChange: checkPassword,
+  });
+
+  const login = async () => {
+    try {
+      const res = await memberApi.login({
+        memberSignId: inputId.text,
+        memberSignPassword: inputPassword.text,
+      });
+      if (res.status === 200){
+        console.log(res);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+
+  };
+
   return (
     <CommonLayout headerType={0} footer={true}>
       <View style={LoginStyle.loginTitleWrap}>
@@ -16,19 +55,11 @@ const Login = () => {
           전달합니다.
         </Text>
       </View>
-
       <View style={LoginStyle.loginContentWrap}>
-        <TextInput
-          placeholder="아이디를 입력해주세요."
-          style={LoginStyle.loginInput}
-        />
-        <TextInput
-          placeholder="비밀번호를 입력해주세요."
-          style={LoginStyle.passwordInput}
-          secureTextEntry={true}
-        />
-        <TouchableOpacity activeOpacity={0.7}>
-          <View style={LoginStyle.loginButton}>
+        <PlainInput {...inputId} />
+        <PlainInput {...inputPassword} secureTextEntry={true} />
+        <TouchableOpacity activeOpacity={0.7} onPress={()=>(inputId.isValid&&inputPassword.isValid)&&login()}>
+          <View style={[LoginStyle.loginButton, (inputId.isValid&&inputPassword.isValid)&&LoginStyle.loginButtonActive]}>
             <Text style={[LoginStyle.loginButtonText]}>로그인</Text>
           </View>
         </TouchableOpacity>
