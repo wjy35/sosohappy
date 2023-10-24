@@ -8,14 +8,22 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
 
+
 @Repository
 @RequiredArgsConstructor
 public class MemberEntityRepositoryImpl implements MemberEntityRepository {
     private final RedisTemplate<Long, Map<String,Object>> redisTemplate;
+    private final RedisTemplate<String, Object> feildSetRedisTemplate;
     private final ObjectMapper objectMapper;
 
     @Override
     public MemberEntity findByMemberId(Long memberId) {
         return objectMapper.convertValue(redisTemplate.opsForHash().entries(memberId), MemberEntity.class);
     }
+
+    @Override
+    public Boolean existsByNickname(String nickname) {
+        return feildSetRedisTemplate.opsForSet().isMember("nickname",nickname);
+    }
+
 }
