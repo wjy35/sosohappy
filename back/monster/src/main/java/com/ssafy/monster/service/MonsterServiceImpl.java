@@ -4,14 +4,16 @@ import com.ssafy.monster.common.exception.CustomException;
 import com.ssafy.monster.common.exception.ErrorCode;
 import com.ssafy.monster.domain.entity.MemberMonsterGrowth;
 import com.ssafy.monster.domain.entity.MemberMonsterProfile;
+import com.ssafy.monster.domain.entity.MonsterInfo;
 import com.ssafy.monster.domain.entity.MonsterType;
 import com.ssafy.monster.domain.res.CloverRes;
 import com.ssafy.monster.domain.res.MonsterRes;
 import com.ssafy.monster.repository.GrowthRepository;
+import com.ssafy.monster.repository.InfoRepository;
 import com.ssafy.monster.repository.MonsterRepository;
+import com.ssafy.monster.repository.TypeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,11 +29,15 @@ public class MonsterServiceImpl implements MonsterService{
 
     private final MonsterRepository monsterRepository;
     private final GrowthRepository growthRepository;
+    private final InfoRepository infoRepository;
+    private final TypeRepository typeRepository;
 
     @Autowired
-    public MonsterServiceImpl(MonsterRepository monsterRepository, GrowthRepository growthRepository) {
+    public MonsterServiceImpl(MonsterRepository monsterRepository, GrowthRepository growthRepository, InfoRepository infoRepository, TypeRepository typeRepository) {
         this.monsterRepository = monsterRepository;
         this.growthRepository = growthRepository;
+        this.infoRepository = infoRepository;
+        this.typeRepository = typeRepository;
     }
 
     /**
@@ -179,5 +185,38 @@ public class MonsterServiceImpl implements MonsterService{
         return resultMap;
     }
 
+    /**
+     * 초기 소소몬 등록
+     * - 회원가입 시 Growth에 레벨1 3개 세팅
+     */
+    @Override
+    public void setInitialMonster(Long memberId) {
+        // 회원에서 memberId 받아서 -> 정합성 체크..??..
+
+        // 프로필 저장
+        MonsterInfo info = infoRepository.findByMonsterId(1).get();
+
+        MemberMonsterProfile profile = MemberMonsterProfile.builder()
+                .memberId(memberId)
+                .memberClover(0)
+                .memberAccruedClover(0L)
+                .monsterInfo(info)
+                .build();
+
+        monsterRepository.save(profile);
+
+        // 타입마다 growth 생성
+        List<MonsterType> types = typeRepository.findAll();
+
+        for(MonsterType t : types) {
+            MemberMonsterGrowth growth = MemberMonsterGrowth.builder()
+                    .memberMonsterProfile(profile)
+                    .monsterType(t)
+                    .monsterClover(0)
+                    .build();
+            growthRepository.save(growth);
+        }
+
+    }
 
 }

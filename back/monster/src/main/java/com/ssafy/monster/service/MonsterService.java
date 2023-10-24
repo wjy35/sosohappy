@@ -13,5 +13,9 @@ public interface MonsterService {
     // 보유중인 캐릭터 불러오기(도감)
     Map<String, Object> searchMonsterList(Long memberId);
 
+    // 클로버 먹이기(레벨업)
     Map<String, Object> updateMonsterClover(Long memberMonsterId, int clover);
+
+    // 회원가입시 초기 지급 캐릭터
+    void setInitialMonster(Long memberId);
 }
