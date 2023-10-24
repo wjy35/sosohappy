@@ -1,5 +1,7 @@
 package com.ssafy.monster.service;
 
+import com.ssafy.monster.common.exception.CustomException;
+import com.ssafy.monster.common.exception.ErrorCode;
 import com.ssafy.monster.domain.entity.MemberMonsterGrowth;
 import com.ssafy.monster.domain.entity.MemberMonsterProfile;
 import com.ssafy.monster.domain.entity.MonsterType;
@@ -9,9 +11,11 @@ import com.ssafy.monster.repository.GrowthRepository;
 import com.ssafy.monster.repository.MonsterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.http.HttpClient;
 import java.text.ChoiceFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,20 +34,13 @@ public class MonsterServiceImpl implements MonsterService{
         this.growthRepository = growthRepository;
     }
 
-
     /**
-     * 대표 캐릭터 불러오기
-    */
-    @Override
-    public Map<String, Object> searchRepresentativeMonster(Long memberId) {
-
-        MemberMonsterProfile profile = monsterRepository.findByMemberId(memberId).get();
-        MemberMonsterGrowth growth = growthRepository.findByMemberMonsterProfile_MemberIdAndMonsterType_TypeId(profile.getMemberId(), profile.getMonsterInfo().getMonsterType().getTypeId()).get();
-        MonsterType type = profile.getMonsterInfo().getMonsterType(); //프로필 타입
-
-        // ChoiceFormat (level)
+     * ChoiceFormat (레벨확인용)
+     */
+    private double[] expArr;
+    private ChoiceFormat createChoiceFormat() {
         List<Integer> expList = monsterRepository.getMonsterCloverInfo();
-        double[] expArr = expList.stream().mapToDouble(i -> i).toArray();
+        expArr = expList.stream().mapToDouble(i -> i).toArray();
         double[] prefixSum = new double[expArr.length]; //누적 경험치(클로버)
         for(int i = 0; i < expArr.length; i++) {
             for(int j = 0; j <= i; j++) {
@@ -53,7 +50,24 @@ public class MonsterServiceImpl implements MonsterService{
         List<Integer> levelList = monsterRepository.getMonsterLevelInfo();
         String[] levelArr = levelList.stream().map(i -> i.toString()).toArray(size -> new String[size]);
 
-        ChoiceFormat cf= new ChoiceFormat(prefixSum, levelArr);
+        return new ChoiceFormat(prefixSum, levelArr);
+    }
+
+    /**
+     * 대표 캐릭터 불러오기
+    */
+    @Override
+    public Map<String, Object> searchRepresentativeMonster(Long memberId) {
+
+        log.info("service_searchRepresentativeMonster_start -> memberId: " + memberId);
+
+        MemberMonsterProfile profile = monsterRepository.findByMemberId(memberId).get();
+        MemberMonsterGrowth growth = growthRepository.findByMemberMonsterProfile_MemberIdAndMonsterType_TypeId(profile.getMemberId(), profile.getMonsterInfo().getMonsterType().getTypeId()).get();
+        MonsterType type = profile.getMonsterInfo().getMonsterType(); //프로필 타입
+
+        // ChoiceFormat (level)
+        ChoiceFormat cf = createChoiceFormat();
+        double[] prefixSum = cf.getLimits();
 
         // exp 계산용
         int currentLevel = Integer.parseInt(cf.format(growth.getMonsterClover()));
@@ -79,6 +93,7 @@ public class MonsterServiceImpl implements MonsterService{
         resultMap.put("clover", clover);
         resultMap.put("monster", monster);
 
+        log.info("service_searchRepresentativeMonster_end: success");
         return resultMap;
     }
 
@@ -88,19 +103,10 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     public Map<String, Object> searchMonsterList(Long memberId){
 
-        // ChoiceFormat (level)
-        List<Integer> expList = monsterRepository.getMonsterCloverInfo();
-        double[] expArr = expList.stream().mapToDouble(i -> i).toArray();
-        double[] prefixSum = new double[expArr.length]; //누적 경험치(클로버)
-        for(int i = 0; i < expArr.length; i++) {
-            for(int j = 0; j <= i; j++) {
-                prefixSum[i] += expArr[j];
-            }
-        }
-        List<Integer> levelList = monsterRepository.getMonsterLevelInfo();
-        String[] levelArr = levelList.stream().map(i -> i.toString()).toArray(size -> new String[size]);
+        log.info("service_searchMonsterList_start -> memberId: " + memberId);
 
-        ChoiceFormat cf= new ChoiceFormat(prefixSum, levelArr);
+        // ChoiceFormat (level)
+        ChoiceFormat cf = createChoiceFormat();
 
         // result
         List<MemberMonsterGrowth> monsterList = growthRepository.findAllByMemberMonsterProfile_MemberId(memberId);
@@ -117,6 +123,7 @@ public class MonsterServiceImpl implements MonsterService{
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("monsterList", resList);
 
+        log.info("service_searchMonsterList_end: success");
         return resultMap;
     }
 
@@ -126,11 +133,13 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     public Map<String, Object> updateMonsterClover(Long memberMonsterId, int clover) {
 
-        log.info("updateMonsterClover_start memberMonsterId: " + memberMonsterId + "clover : " + clover);
+        log.info("service_updateMonsterClover_start -> memberMonsterId: " + memberMonsterId + ", clover : " + clover);
+
         MemberMonsterGrowth growth = growthRepository.findByMemberMonsterId(memberMonsterId).get();
         MemberMonsterProfile profile = growth.getMemberMonsterProfile();
         if(profile.getMemberClover() < clover) {
             //클로버 부족
+            throw new CustomException(ErrorCode.SHORTAGE_OF_CLOVER);
         }
         growth.updateClover(growth.getMonsterClover() + clover);
         profile.updateClover(profile.getMemberClover() - clover);
@@ -138,18 +147,8 @@ public class MonsterServiceImpl implements MonsterService{
         monsterRepository.save(profile);
 
         // ChoiceFormat (level)
-        List<Integer> expList = monsterRepository.getMonsterCloverInfo();
-        double[] expArr = expList.stream().mapToDouble(i -> i).toArray();
-        double[] prefixSum = new double[expArr.length]; //누적 경험치(클로버)
-        for(int i = 0; i < expArr.length; i++) {
-            for(int j = 0; j <= i; j++) {
-                prefixSum[i] += expArr[j];
-            }
-        }
-        List<Integer> levelList = monsterRepository.getMonsterLevelInfo();
-        String[] levelArr = levelList.stream().map(i -> i.toString()).toArray(size -> new String[size]);
-
-        ChoiceFormat cf= new ChoiceFormat(prefixSum, levelArr);
+        ChoiceFormat cf = createChoiceFormat();
+        double[] prefixSum = cf.getLimits();
 
         // exp 계산용
         int currentLevel = Integer.parseInt(cf.format(growth.getMonsterClover()));
@@ -176,6 +175,7 @@ public class MonsterServiceImpl implements MonsterService{
         resultMap.put("clover", cloverRes);
         resultMap.put("monster", monster);
 
+        log.info("service_updateMonsterClover_end: success");
         return resultMap;
     }
 

@@ -27,6 +27,8 @@ public class MonsterController {
     public FormattedResponse searchRepresentativeMonster(){
         //멤버 전달받기
         Long memberId = 1L;
+
+        log.info("controller_searchRepresentativeMonster_start -> memberId: " + memberId);
         Map<String, Object> result = monsterService.searchRepresentativeMonster(memberId);
 
         return FormattedResponse.builder()
@@ -40,6 +42,7 @@ public class MonsterController {
         //멤버 전달받기
         Long memberId = 1L;
 
+        log.info("controller_searchMonsterList_start -> memberId: " + memberId);
         Map<String, Object> result = monsterService.searchMonsterList(memberId);
 
         return FormattedResponse.builder()
