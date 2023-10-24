@@ -7,28 +7,32 @@ import SignUpInputStyle from "@/styles/SignUpInputStyle";
 import {useEffect, useState} from "react";
 import PlainInput from "@/components/PlainInput";
 import useInput from "@/hooks/useInput";
+import {useRoute} from "@react-navigation/native";
+import memberApi from "@/apis/memberApi";
 
 const SignUpInput = () => {
+  const route = useRoute();
   const [isActive, setIsActive] = useState(false);
+  const [selectedGender, setSelectedGender] = useState(null);
 
   const checkMemberId = (newText: string) => {
-    memberId.updateIsValid(true);
+    memberId.updateIsValid(newText !== "");
   };
 
   const checkMemberPassword = (newText: string) => {
-    memberPassword.updateIsValid(true);
+    memberPassword.updateIsValid(newText !== "");
   };
 
   const checkMemberCheckPassword = (newText: string) => {
-    memberCheckPassword.updateIsValid(true);
+    memberCheckPassword.updateIsValid(newText === memberPassword.text);
   };
 
   const checkMemberName = (newText: string) => {
-    memberName.updateIsValid(true);
+    memberName.updateIsValid(newText !== "");
   };
 
   const checkMemberNickname = (newText: string) => {
-    memberNickname.updateIsValid(true);
+    memberNickname.updateIsValid(newText !== "");
   };
 
   const memberId = useInput({
@@ -70,8 +74,26 @@ const SignUpInput = () => {
   const memberType = useInput({
     placeholder: '등급을 입력해 주세요',
     title: '등급을 입력해 주세요',
-    initialState: '나눔이',
+    initialState: route.params.selectedType===1?'나눔이':'모음이',
   });
+
+  const signUp = async () => {
+    try {
+      const res = await memberApi.signUp({
+        memberSignId: memberId.text,
+        memberSignPassword: memberPassword.text,
+        memberName: memberName.text,
+        memberNickname: memberNickname.text,
+        disabled: route.params.selectedType===1?true:false,
+        gender: selectedGender,
+      })
+      if (res.status === 200){
+        console.log(res);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   return (
     <CommonLayout headerType={0} footer={true}>
@@ -79,8 +101,8 @@ const SignUpInput = () => {
 
       <View style={SignUpInputStyle.signUpInputWrap}>
         <PlainInput {...memberId}/>
-        <PlainInput {...memberPassword}/>
-        <PlainInput {...memberCheckPassword}/>
+        <PlainInput {...memberPassword} secureTextEntry={true}/>
+        <PlainInput {...memberCheckPassword} secureTextEntry={true}/>
         <PlainInput {...memberName}/>
         <PlainInput {...memberNickname}/>
         <PlainInput {...memberType} editable={false}/>
@@ -91,6 +113,7 @@ const SignUpInput = () => {
           movePage="Main"
           isActive={memberId.isValid&&memberPassword.isValid&&memberCheckPassword.isValid&&memberName.isValid&&memberNickname.isValid}
           buttonText={'회원가입 완료하기'}
+          goNext={signUp}
       />
     </CommonLayout>
   );
