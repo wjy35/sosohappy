@@ -4,22 +4,17 @@ import AuthButtonStyle from "@/styles/AuthButtonStyle";
 import {useNavigation} from "@react-navigation/native";
 
 interface propsType{
-    movePage: string;
     isActive: boolean;
     buttonText: string;
+    goNext: Function;
 }
 
-const AuthButton = ({movePage, isActive, buttonText}: propsType) => {
+const AuthButton = ({isActive, buttonText, goNext}: propsType) => {
     const navigation = useNavigation();
-    const goNext = () => {
-        if (isActive){
-            navigation.navigate(movePage);
-        }
-    }
 
     const goMain = () => {
-        navigation.navigate('Main')
-    }
+        navigation.navigate('Main');
+    };
 
     return(
         <>
@@ -31,7 +26,7 @@ const AuthButton = ({movePage, isActive, buttonText}: propsType) => {
                 </Text>
             </View>
             <View style={AuthButtonStyle.authButtonWrap}>
-                <TouchableOpacity activeOpacity={0.7} onPress={goNext}>
+                <TouchableOpacity activeOpacity={0.7} onPress={()=>isActive&&goNext()}>
                     <View style={[AuthButtonStyle.nextButton, isActive && AuthButtonStyle.nextButtonActive]}>
                         <Text style={AuthButtonStyle.nextButtonText}>{buttonText}</Text>
                     </View>

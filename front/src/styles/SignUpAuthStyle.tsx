@@ -13,6 +13,15 @@ const SignUpAuthStyle = StyleSheet.create({
         alignItems:"center",
         marginTop:27,
     },
+    uploadImageWrap:{
+        borderWidth:2,
+        borderColor:"#E5E5E5",
+        marginHorizontal:responsiveWidth(4),
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center",
+        marginTop:27,
+    },
     addPlusImg:{
         width:34,
         height:34,
@@ -22,6 +31,10 @@ const SignUpAuthStyle = StyleSheet.create({
         fontWeight:"500",
         color:"#97989A",
         marginTop:6,
+    },
+    uploadImage: {
+        height:132,
+        width: 20
     }
 })
 
