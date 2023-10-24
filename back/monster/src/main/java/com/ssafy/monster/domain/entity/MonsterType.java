@@ -17,6 +17,6 @@ public class MonsterType {
     @Id
     private Byte typeId;
     @NotNull
-    private int typeName;
+    private String typeName;
 
 }

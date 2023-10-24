@@ -28,4 +28,8 @@ public class MemberMonsterProfile {
     @ColumnDefault("1")
     private MonsterInfo monsterInfo;
 
+    public void updateClover(int memberClover){
+        this.memberClover = memberClover;
+    }
+
 }
