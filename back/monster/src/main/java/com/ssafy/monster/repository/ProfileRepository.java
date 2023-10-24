@@ -13,10 +13,4 @@ public interface ProfileRepository extends JpaRepository<MemberMonsterProfile, L
 
     Optional<MemberMonsterProfile> findByMemberId(Long memberId);
 
-    @Query(value = "SELECT required_clover FROM monster_info WHERE type_id = 1", nativeQuery = true)
-    List<Integer> getMonsterCloverInfo();
-
-    @Query(value = "SELECT monster_level FROM monster_info WHERE type_id = 1", nativeQuery = true)
-    List<Integer> getMonsterLevelInfo();
-
 }

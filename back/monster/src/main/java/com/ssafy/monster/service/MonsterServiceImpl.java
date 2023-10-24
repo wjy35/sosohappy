@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.text.ChoiceFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,11 +34,6 @@ public class MonsterServiceImpl implements MonsterService{
     private final InfoRepository infoRepository;
     private final TypeRepository typeRepository;
 
-    // Todo 실행 시점에 구간 가져오기  - @PostConstruct
-
-    // ToDo private int getLevel(int nowExp) {} binarysearch
-
-
     @Autowired
     public MonsterServiceImpl(ProfileRepository profileRepository, GrowthRepository growthRepository, InfoRepository infoRepository, TypeRepository typeRepository) {
         this.profileRepository = profileRepository;
@@ -47,22 +43,37 @@ public class MonsterServiceImpl implements MonsterService{
     }
 
     /**
-     * ChoiceFormat (레벨확인용)
+     * 경험치 구간 가져오기
      */
     private double[] expArr;
-    private ChoiceFormat createChoiceFormat() {
-        List<Integer> expList = profileRepository.getMonsterCloverInfo();
-        expArr = expList.stream().mapToDouble(i -> i).toArray();
-        double[] prefixSum = new double[expArr.length]; //누적 경험치(클로버)
+    private double[] prefixSum;
+    private ChoiceFormat cf;
+
+    @PostConstruct
+    private void getExpinfo() {
+        List<Integer> expList = infoRepository.getMonsterCloverInfo();
+        expArr = expList.stream().mapToDouble(i -> i).toArray(); //구간별 경험치
+        prefixSum = new double[expArr.length]; //누적 경험치(클로버)
         for(int i = 0; i < expArr.length; i++) {
             for(int j = 0; j <= i; j++) {
                 prefixSum[i] += expArr[j];
             }
         }
-        List<Integer> levelList = profileRepository.getMonsterLevelInfo();
+        List<Integer> levelList = infoRepository.getMonsterLevelInfo();
         String[] levelArr = levelList.stream().map(i -> i.toString()).toArray(size -> new String[size]);
 
-        return new ChoiceFormat(prefixSum, levelArr);
+        cf = new ChoiceFormat(prefixSum, levelArr);
+    }
+
+    private Double getCurrentPoint(int currentClover){
+        int currentLevel = Integer.parseInt(cf.format(currentClover));
+        int requiredClover = (int) expArr[currentLevel-1];
+        if(requiredClover == 0) {
+            requiredClover = (int) expArr[currentLevel];
+        }
+        Double prevRequiredClover = prefixSum[currentLevel-1];
+        Double currentPoint = (currentClover-prevRequiredClover) / requiredClover;
+        return currentPoint;
     }
 
     /**
@@ -75,19 +86,9 @@ public class MonsterServiceImpl implements MonsterService{
         MemberMonsterGrowth growth = growthRepository.findByMemberMonsterProfile_MemberIdAndMonsterType_TypeId(profile.getMemberId(), profile.getMonsterInfo().getMonsterType().getTypeId()).get();
         MonsterType type = profile.getMonsterInfo().getMonsterType(); //프로필 타입
 
-        // ChoiceFormat (level)
-        ChoiceFormat cf = createChoiceFormat();
-        double[] prefixSum = cf.getLimits();
-
-        // exp 계산용
-        int currentLevel = Integer.parseInt(cf.format(growth.getMonsterClover()));
-        int requiredClover = (int) expArr[currentLevel-1];
-        if(requiredClover == 0) {
-            requiredClover = (int) expArr[currentLevel];
-        }
-        Double prevRequiredClover = prefixSum[currentLevel-1];
+        // exp 계산
         int currentClover = growth.getMonsterClover();
-        Double currentPoint = (currentClover-prevRequiredClover) / requiredClover;
+        Double currentPoint = getCurrentPoint(currentClover);
 
         // result
         MonsterRes mosterRes = MonsterMapper.INSTANCE.toRepresentativeMonsterRes(profile, currentPoint);
@@ -101,10 +102,6 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     public List<MonsterRes> searchMonsterList(Long memberId){
 
-        // ChoiceFormat (level)
-        ChoiceFormat cf = createChoiceFormat();
-
-        // result
         List<MemberMonsterGrowth> monsterList = growthRepository.findAllByMemberMonsterProfile_MemberId(memberId);
 
         List<MonsterRes> resList = monsterList
@@ -119,8 +116,11 @@ public class MonsterServiceImpl implements MonsterService{
      */
     @Override
     public CloverRes searchCloverInfo(Long memberId) {
+
         MemberMonsterProfile profile = profileRepository.findByMemberId(memberId).get();
+
         CloverRes cloverRes = CloverMapper.INSTANCE.toCloverRes(profile);
+
         return cloverRes;
     }
 
@@ -142,19 +142,9 @@ public class MonsterServiceImpl implements MonsterService{
         growthRepository.save(growth);
         profileRepository.save(profile);
 
-        // ChoiceFormat (level)
-        ChoiceFormat cf = createChoiceFormat();
-        double[] prefixSum = cf.getLimits();
-
-        // exp 계산용
-        int currentLevel = Integer.parseInt(cf.format(growth.getMonsterClover()));
-        int requiredClover = (int) expArr[currentLevel-1];
-        if(requiredClover == 0) {
-            requiredClover = (int) expArr[currentLevel];
-        }
-        Double prevRequiredClover = prefixSum[currentLevel-1];
+        // exp 계산
         int currentClover = growth.getMonsterClover();
-        Double currentPoint = (currentClover-prevRequiredClover) / requiredClover;
+        Double currentPoint = getCurrentPoint(currentClover);
 
         //result
         Integer level = Integer.parseInt(cf.format(growth.getMonsterClover()));
