@@ -15,8 +15,17 @@ const SignUpInput = () => {
   const [isActive, setIsActive] = useState(false);
   const [selectedGender, setSelectedGender] = useState(null);
 
-  const checkMemberId = (newText: string) => {
-    memberId.updateIsValid(newText !== "");
+  const checkMemberId = async (newText: string) => {
+    try {
+      const res = await memberApi.checkIdDuplicate({
+        memberSignId: newText,
+      })
+      if (res.status === 200){
+        memberId.updateIsValid(res.data.result.availability);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const checkMemberPassword = (newText: string) => {
@@ -31,8 +40,17 @@ const SignUpInput = () => {
     memberName.updateIsValid(newText !== "");
   };
 
-  const checkMemberNickname = (newText: string) => {
-    memberNickname.updateIsValid(newText !== "");
+  const checkMemberNickname = async (newText: string) => {
+    try {
+      const res = await memberApi.checkNicknameDuplicate({
+        memberNickname: newText,
+      })
+      if (res.status === 200){
+        memberNickname.updateIsValid(res.data.result.availability);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const memberId = useInput({
@@ -55,6 +73,7 @@ const SignUpInput = () => {
     title: '비밀번호를 다시 입력해 주세요',
     initialIsValid: false,
     onChange: checkMemberCheckPassword,
+    errorMessage: '비밀번호가 일치하지 않습니다',
   });
 
   const memberName = useInput({
@@ -69,6 +88,7 @@ const SignUpInput = () => {
     title: '닉네임을 입력해 주세요',
     initialIsValid: false,
     onChange: checkMemberNickname,
+    errorMessage: '중복된 닉네임입니다',
   });
 
   const memberType = useInput({
