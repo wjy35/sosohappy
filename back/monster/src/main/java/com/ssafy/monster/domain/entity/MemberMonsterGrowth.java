@@ -28,4 +28,8 @@ public class MemberMonsterGrowth {
     @NotNull
     @ColumnDefault("0")
     private int monsterClover;
+
+    public void addMonsterClover(int clover){
+        this.monsterClover += clover;
+    }
 }
