@@ -25,4 +25,8 @@ public class MemberEntityRepositoryImpl implements MemberEntityRepository {
         return uniqueFieldValueSetRedisTemplate.opsForSet().isMember("nickname",nickname);
     }
 
+    @Override
+    public Boolean existsByMemberSignId(String memberSignId) {
+        return uniqueFieldValueSetRedisTemplate.opsForSet().isMember("memberSignId",memberSignId);
+    }
 }
