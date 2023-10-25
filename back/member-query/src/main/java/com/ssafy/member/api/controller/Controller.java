@@ -53,6 +53,18 @@ public class Controller {
         return new ResponseEntity<>(formattedResponse,HttpStatus.OK);
     }
 
+    @GetMapping("/availability/memberSignId/{memberSignId}")
+    ResponseEntity<FormattedResponse> isMemberSignIdAvailable(@PathVariable String memberSignId){
+        Boolean availability = memberInformationService.isMemberSignIdAvailable(memberSignId);
 
+        FormattedResponse formattedResponse = FormattedResponse
+                .builder()
+                .status("success")
+                .message("SUCCESS Sign ID DUPLICATE CHECK")
+                .result("availability",availability)
+                .build();
+
+        return new ResponseEntity<>(formattedResponse,HttpStatus.OK);
+    }
 
 }
