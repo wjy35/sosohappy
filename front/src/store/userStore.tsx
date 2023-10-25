@@ -1,5 +1,4 @@
 import {observable} from "mobx";
-import memberApi from "@/apis/memberApi";
 
 const userStore = observable({
   user: {name: 'gdsadgas'},

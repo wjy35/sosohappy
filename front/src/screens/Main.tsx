@@ -12,7 +12,7 @@ import RightArrowIcon from "@/assets/img/right-arrow-icon.png"
 import MainStyle from "@/styles/MainStyle";
 
 import {observer} from 'mobx-react';
-import store from '@/store';
+import store from '@/store/indexStore';
 
 const Main = observer(() => {
   const {userStore} = store;
