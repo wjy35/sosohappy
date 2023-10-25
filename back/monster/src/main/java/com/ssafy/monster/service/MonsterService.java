@@ -22,4 +22,7 @@ public interface MonsterService {
 
     // 회원가입시 초기 지급 캐릭터
     void setInitialMonster(Long memberId);
+
+    //도움 완료 시 나눔이 모음이 클로버 증가
+    void updateClover(Long fromMemberId, Long toMemberId, int clover);
 }

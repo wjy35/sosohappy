@@ -29,7 +29,7 @@ public class MemberMonsterGrowth {
     @ColumnDefault("0")
     private int monsterClover;
 
-    public void updateClover(int monsterClover){
-        this.monsterClover = monsterClover;
+    public void addMonsterClover(int clover){
+        this.monsterClover += clover;
     }
 }

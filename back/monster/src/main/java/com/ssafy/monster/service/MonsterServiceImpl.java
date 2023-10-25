@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.text.ChoiceFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -95,7 +94,7 @@ public class MonsterServiceImpl implements MonsterService{
         int currentClover = growth.getMonsterClover();
         Pair<Integer, Double> pair = getCurrentPoint(currentClover);
         // result
-        MonsterRes mosterRes = MonsterMapper.INSTANCE.toRepresentativeMonsterRes(profile, pair.second());
+        MonsterRes mosterRes = MonsterMapper.INSTANCE.toRepresentativeMonsterRes(profile, growth, pair.second());
 
         return mosterRes;
     }
@@ -141,8 +140,8 @@ public class MonsterServiceImpl implements MonsterService{
             //클로버 부족
             throw new CustomException(ErrorCode.SHORTAGE_OF_CLOVER);
         }
-        growth.updateClover(growth.getMonsterClover() + clover);
-        profile.updateClover(profile.getMemberClover() - clover);
+        growth.addMonsterClover(clover);
+        profile.removeMemberClover(clover);
         growthRepository.save(growth);
         profileRepository.save(profile);
 
@@ -187,6 +186,22 @@ public class MonsterServiceImpl implements MonsterService{
                     .build();
             growthRepository.save(growth);
         }
+
+    }
+
+    @Override
+    public void updateClover(Long fromMemberId, Long toMemberId, int clover) {
+
+        MemberMonsterProfile fromProfile = profileRepository.findByMemberId(fromMemberId).get();
+        MemberMonsterProfile toProfile = profileRepository.findByMemberId(toMemberId).get();
+
+        fromProfile.addMemberClover(clover);
+        fromProfile.addMemberAccruedClover(clover);
+        toProfile.addMemberClover(clover);
+        toProfile.addMemberAccruedClover(clover);
+
+        profileRepository.save(fromProfile);
+        profileRepository.save(toProfile);
 
     }
 

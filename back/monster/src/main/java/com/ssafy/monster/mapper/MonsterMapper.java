@@ -11,11 +11,11 @@ import org.mapstruct.factory.Mappers;
 public interface MonsterMapper {
     MonsterMapper INSTANCE = Mappers.getMapper(MonsterMapper.class);
 
-    @Mapping(source="profile.monsterInfo.monsterId", target="memberMonsterId")
+    @Mapping(source="growth.memberMonsterId", target="memberMonsterId")
     @Mapping(source="profile.monsterInfo.monsterType.typeId", target="typeId")
     @Mapping(source="profile.monsterInfo.monsterType.typeName", target="typeName")
     @Mapping(source="profile.monsterInfo.monsterLevel", target="level")
-    MonsterRes toRepresentativeMonsterRes(MemberMonsterProfile profile, Double currentPoint);
+    MonsterRes toRepresentativeMonsterRes(MemberMonsterProfile profile, MemberMonsterGrowth growth, Double currentPoint);
 
     @Mapping(source="growth.memberMonsterId", target="memberMonsterId")
     @Mapping(source="growth.monsterType.typeId", target="typeId")
