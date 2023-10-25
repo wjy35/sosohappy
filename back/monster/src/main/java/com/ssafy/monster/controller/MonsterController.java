@@ -5,6 +5,7 @@ import com.ssafy.monster.domain.req.LevelUpReq;
 import com.ssafy.monster.domain.res.CloverRes;
 import com.ssafy.monster.domain.res.MonsterRes;
 import com.ssafy.monster.service.MonsterServiceImpl;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,16 +14,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
 @RestController
+@RequiredArgsConstructor
 public class MonsterController {
 
     private final MonsterServiceImpl monsterService;
-
-    @Autowired
-    public MonsterController(MonsterServiceImpl monsterService) {
-        this.monsterService = monsterService;
-    }
 
     @GetMapping("/my")
     public ResponseEntity<FormattedResponse> searchRepresentativeMonster(@RequestHeader Long memberId){

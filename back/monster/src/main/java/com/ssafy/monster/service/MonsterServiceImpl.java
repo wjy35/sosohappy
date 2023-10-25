@@ -15,6 +15,7 @@ import com.ssafy.monster.repository.GrowthRepository;
 import com.ssafy.monster.repository.InfoRepository;
 import com.ssafy.monster.repository.ProfileRepository;
 import com.ssafy.monster.repository.TypeRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,23 +25,14 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class MonsterServiceImpl implements MonsterService{
 
     private final ProfileRepository profileRepository;
     private final GrowthRepository growthRepository;
     private final InfoRepository infoRepository;
     private final TypeRepository typeRepository;
-
-    @Autowired
-    public MonsterServiceImpl(ProfileRepository profileRepository, GrowthRepository growthRepository, InfoRepository infoRepository, TypeRepository typeRepository) {
-        this.profileRepository = profileRepository;
-        this.growthRepository = growthRepository;
-        this.infoRepository = infoRepository;
-        this.typeRepository = typeRepository;
-    }
 
     /**
      * 경험치 구간 가져오기
@@ -54,25 +46,14 @@ public class MonsterServiceImpl implements MonsterService{
     }
 
     private Pair<Integer, Double> getCurrentPoint(int currentClover){
-        int startIdx = 0;
-        int midIdx = 0;
-        int endIdx = expArr.length -1;
 
-        while(startIdx <= endIdx) {
-            midIdx = (startIdx+endIdx) / 2;
-            if(expArr[midIdx] == currentClover) {
-                break;
-            } else if(expArr[midIdx] > currentClover) {
-                endIdx = midIdx-1;
-            } else {
-                startIdx = midIdx+1;
-            }
-        }
-
-        int currentLevel = (startIdx+endIdx) / 2 + 1;
-        if(currentLevel == 0) {
+        int currentLevel = Arrays.binarySearch(expArr, currentClover);
+        if(currentLevel<0) {
+            currentLevel = Math.abs(currentLevel) -1;
+        } else {
             currentLevel += 1;
         }
+
         int requiredClover = (int) (expArr[currentLevel] - expArr[currentLevel-1]);
         Double prevRequiredClover = expArr[currentLevel-1];
         Double currentPoint = (currentClover-prevRequiredClover) / requiredClover;
@@ -127,11 +108,11 @@ public class MonsterServiceImpl implements MonsterService{
         return cloverRes;
     }
 
-
     /**
      * 경험치 등록하기
      */
     @Override
+    @Transactional
     public MonsterRes updateMonsterClover(Long memberMonsterId, int clover) {
 
         MemberMonsterGrowth growth = growthRepository.findByMemberMonsterId(memberMonsterId).get();
@@ -160,6 +141,7 @@ public class MonsterServiceImpl implements MonsterService{
      * - 회원가입 시 Growth에 레벨1 3개 세팅
      */
     @Override
+    @Transactional
     public void setInitialMonster(Long memberId) {
         // 회원에서 memberId 받아서 -> 정합성 체크..??..
 
@@ -190,6 +172,7 @@ public class MonsterServiceImpl implements MonsterService{
     }
 
     @Override
+    @Transactional
     public void updateClover(Long fromMemberId, Long toMemberId, int clover) {
 
         MemberMonsterProfile fromProfile = profileRepository.findByMemberId(fromMemberId).get();
