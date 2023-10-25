@@ -4,4 +4,7 @@ import com.ssafy.member.db.entity.MemberEntity;
 
 public interface MemberEntityRepository {
     MemberEntity findByMemberId(Long memberId);
+    Boolean existsByNickname(String nickname);
+    Boolean existsByMemberSignId(String memberSignId);
+
 }
