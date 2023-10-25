@@ -41,7 +41,7 @@ public class Controller {
 
     @GetMapping("/availability/nickname/{nickname}")
     ResponseEntity<FormattedResponse> isNicknameAvailable(@PathVariable String nickname){
-        Boolean availability = Optional.of(memberInformationService.isNicknameAvailable(nickname)).get();
+        Boolean availability = memberInformationService.isNicknameAvailable(nickname);
 
         FormattedResponse formattedResponse = FormattedResponse
                 .builder()

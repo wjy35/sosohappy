@@ -20,7 +20,7 @@ public class MemberInformationServiceImpl implements MemberInformationService {
 
     @Override
     public Boolean isNicknameAvailable(String nickname) {
-        return memberEntityRepository.existsByNickname(nickname);
+        return Optional.of(!memberEntityRepository.existsByNickname(nickname)).get();
     }
 
     @Override
