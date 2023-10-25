@@ -1,4 +1,4 @@
-package com.ssafy.helphistoryquery.api.request;
+package com.ssafy.helphistoryquery.db.entity;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -6,9 +6,10 @@ import lombok.Getter;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
+
 @Getter
 @Builder
-public class HelpHistoryRequest {
+public class HelpHistoryEntity {
     private long historyId;
     private long toMemberId;
     private long fromMemberId;
@@ -18,6 +19,3 @@ public class HelpHistoryRequest {
     private BigDecimal y;
     private Timestamp createdAt;
 }
-
-
-
