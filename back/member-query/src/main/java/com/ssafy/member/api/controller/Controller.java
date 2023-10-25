@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,6 +34,34 @@ public class Controller {
                 .status("success")
                 .message("GET MEMBER INFORMATION OK")
                 .result("member",memberInformationResponse)
+                .build();
+
+        return new ResponseEntity<>(formattedResponse,HttpStatus.OK);
+    }
+
+    @GetMapping("/availability/nickname/{nickname}")
+    ResponseEntity<FormattedResponse> isNicknameAvailable(@PathVariable String nickname){
+        Boolean availability = memberInformationService.isNicknameAvailable(nickname);
+
+        FormattedResponse formattedResponse = FormattedResponse
+                .builder()
+                .status("success")
+                .message("SUCCESS NICKNAME DUPLICATE CHECK")
+                .result("availability",availability)
+                .build();
+
+        return new ResponseEntity<>(formattedResponse,HttpStatus.OK);
+    }
+
+    @GetMapping("/availability/memberSignId/{memberSignId}")
+    ResponseEntity<FormattedResponse> isMemberSignIdAvailable(@PathVariable String memberSignId){
+        Boolean availability = memberInformationService.isMemberSignIdAvailable(memberSignId);
+
+        FormattedResponse formattedResponse = FormattedResponse
+                .builder()
+                .status("success")
+                .message("SUCCESS Sign ID DUPLICATE CHECK")
+                .result("availability",availability)
                 .build();
 
         return new ResponseEntity<>(formattedResponse,HttpStatus.OK);
