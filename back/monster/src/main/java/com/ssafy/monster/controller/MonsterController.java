@@ -52,7 +52,7 @@ public class MonsterController {
         return new ResponseEntity<>(formattedResponse, HttpStatus.OK);
     }
 
-    @GetMapping("clover")
+    @GetMapping("/clover")
     public ResponseEntity<FormattedResponse> searchCloverInfo(@RequestHeader Long memberId){
 
         CloverRes cloverRes = monsterService.searchCloverInfo(memberId);
