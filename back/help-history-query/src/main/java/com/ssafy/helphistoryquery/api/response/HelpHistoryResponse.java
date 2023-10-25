@@ -7,11 +7,10 @@ import java.sql.Timestamp;
 
 @Getter
 @Builder
-public class ReceiveHelpHistoryResponse {
+public class HelpHistoryResponse {
     private long historyId;
-    private long fromMemberId;
-    private String fromMemberName;
     private long categoryId;
+    private String categoryName;
     private String categoryImage;
     private String content;
     private Timestamp createdAt;
