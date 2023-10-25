@@ -2,18 +2,25 @@ import { useState } from "react"
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import BottomSheet from "@/components/BottomSheet";
+import MapView, {PROVIDER_GOOGLE} from "react-native-maps"
 
 import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 
 import MapStyle from "@/styles/MapStyle";
 
 const Map = () => {
-  const [bottomSheetStatus, setBottomSheetStatus] = useState<Boolean>(true);
+  const [bottomSheetStatus, setBottomSheetStatus] = useState<Boolean>(false);
   const updateBottomSheetStatus = (updateStatus: Boolean) => {
     setBottomSheetStatus(updateStatus);
   }
   return (
     <CommonLayout footer={true} headerType={0}>
+      <View style={{flex:1}}>
+        <MapView
+          style={{flex:1, width:400, height:400}}
+          provider={PROVIDER_GOOGLE}
+        />
+      </View>
       <TouchableOpacity activeOpacity={0.7}>
         <View style={MapStyle.createHelpWrap}>
           <Image
