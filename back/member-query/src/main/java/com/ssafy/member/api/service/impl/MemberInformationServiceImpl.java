@@ -25,6 +25,6 @@ public class MemberInformationServiceImpl implements MemberInformationService {
 
     @Override
     public Boolean isMemberSignIdAvailable(String memberSignId) {
-        return Optional.of(memberEntityRepository.existsByMemberSignId(memberSignId)).get();
+        return Optional.of(!memberEntityRepository.existsByMemberSignId(memberSignId)).get();
     }
 }
