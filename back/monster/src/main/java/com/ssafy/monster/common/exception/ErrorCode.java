@@ -16,7 +16,8 @@ public enum ErrorCode {
     /* 404 NOT_FOUND : Resource를 찾을 수 없음 */
     /* 409 : CONFLICT : Resource의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
 
-    SHORTAGE_OF_CLOVER(HttpStatus.BAD_REQUEST, "보유중인 클로버가 부족합니다.");
+    SHORTAGE_OF_CLOVER(HttpStatus.BAD_REQUEST, "보유중인 클로버가 부족합니다."),
+    FULL_OF_CLOVER(HttpStatus.BAD_REQUEST, "클로버가 이미 가득 차 있습니다.");
 
     private final HttpStatus status;
     private final String message;

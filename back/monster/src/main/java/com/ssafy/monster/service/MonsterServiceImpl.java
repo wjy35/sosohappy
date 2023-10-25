@@ -118,8 +118,11 @@ public class MonsterServiceImpl implements MonsterService{
         MemberMonsterGrowth growth = growthRepository.findByMemberMonsterId(memberMonsterId).get();
         MemberMonsterProfile profile = growth.getMemberMonsterProfile();
         if(profile.getMemberClover() < clover) {
-            //클로버 부족
             throw new CustomException(ErrorCode.SHORTAGE_OF_CLOVER);
+        } else if(growth.getMonsterClover() >= expArr[expArr.length -1]) {
+            throw new CustomException(ErrorCode.FULL_OF_CLOVER);
+        } else if(growth.getMonsterClover() + clover >= expArr[expArr.length -1]) {
+            clover = (int) expArr[expArr.length -1] - growth.getMonsterClover();
         }
         growth.addMonsterClover(clover);
         profile.removeMemberClover(clover);
