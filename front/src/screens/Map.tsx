@@ -8,15 +8,12 @@ import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 
 import MapStyle from "@/styles/MapStyle";
 
-import helpCategoryApi from "@/apis/helpCategoryApi";
-
 const Map = () => {
-  const [bottomSheetStatus, setBottomSheetStatus] = useState<Boolean>(false);
+  const [bottomSheetStatus, setBottomSheetStatus] = useState<Boolean>(true);
   const updateBottomSheetStatus = (updateStatus: Boolean) => {
     setBottomSheetStatus(updateStatus);
   }
 
-  
   return (
     <CommonLayout footer={true} headerType={0}>
       <View style={{flex:1}}>
