@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -25,18 +27,17 @@ public class MemberSignServiceImpl implements MemberSignService {
 
     @Override
     public AuthTokenDTO signIn(SignInRequest signInRequest) {
-        MemberEntity memberEntity = memberEntityRepository.findByMemberSignId(signInRequest.getInputId())
+        MemberEntity memberEntity = memberEntityRepository.findByMemberSignId(signInRequest.getId());
+        Optional.ofNullable(memberEntity)
                 .orElseThrow(()->{throw new CustomException(ErrorCode.WRONG_ID);});
 
         Long memberId = memberEntity.getMemberId();
         String memberSignPassword = memberEntity.getMemberSignPassword();
 
-        verifyPassword(signInRequest.getInputPassword(), memberSignPassword);
+        verifyPassword(signInRequest.getPassword(), memberSignPassword);
 
         return jwtUtil.generateAuthToken(memberId);
     }
-
-
 
     private void verifyPassword(String inputPassword,String storedPassword) {
         if(storedPassword.equals(hashUtil.hash(inputPassword))) return;

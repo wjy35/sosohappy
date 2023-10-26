@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class SignInRequest {
-    String inputId;
-    String inputPassword;
+    String id;
+    String password;
 }
