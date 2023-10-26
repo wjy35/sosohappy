@@ -1,16 +1,14 @@
 package com.ssafy.helphistoryquery.db.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.sql.Timestamp;
 
 
 @Getter
-@ToString
-@RequiredArgsConstructor
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class HelpHistoryEntity {
     private long historyId;
     private long toMemberId;
@@ -21,16 +19,5 @@ public class HelpHistoryEntity {
     private double y;
     private Timestamp createdAt;
 
-    @Builder
-    public HelpHistoryEntity(long historyId, long toMemberId, long fromMemberId, long categoryId, String content, double x, double y, Timestamp createdAt) {
-        this.historyId = historyId;
-        this.toMemberId = toMemberId;
-        this.fromMemberId = fromMemberId;
-        this.categoryId = categoryId;
-        this.content = content;
-        this.x = x;
-        this.y = y;
-        this.createdAt = createdAt;
-    }
 }
 

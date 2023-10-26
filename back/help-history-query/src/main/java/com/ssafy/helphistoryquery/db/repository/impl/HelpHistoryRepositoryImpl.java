@@ -1,52 +1,58 @@
 package com.ssafy.helphistoryquery.db.repository.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.helphistoryquery.db.entity.HelpHistoryEntity;
 import com.ssafy.helphistoryquery.db.repository.HelpHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
 public class HelpHistoryRepositoryImpl implements HelpHistoryRepository {
 
-    private final RedisTemplate<String, Object> redisTemplate;
     private final ListOperations<String, Object> listOps;
 
     private final ObjectMapper objectMapper;
 
     @Override
-    public Integer getHelpCount(Long memberId) throws JsonProcessingException {
-               return Math.toIntExact(Optional.ofNullable(listOps.size("histories:toMemberId:" + memberId))
+    public Integer getHelpCount(Long memberId) {
+        return Math.toIntExact(Optional.ofNullable(listOps.size("histories:fromMemberId:" + memberId))
                 .orElseThrow(RuntimeException::new));
     }
 
     @Override
     public List<HelpHistoryEntity> getHelpReceivedList(Long memberId) {
-        List<Object> objectList = listOps.getOperations().opsForList().range("histories:toMemberId:" + memberId, 0, -1);
-        return this.getHelpHistoryEntityList(objectList);
+        List<Object> objectList = listOps.getOperations().opsForList().range("histories:fromMemberId:" + memberId, 0, -1);
+
+        List<Object> result = Optional.ofNullable(objectList)
+                .orElse(Collections.emptyList());
+
+        return this.getHelpHistoryEntityList(result);
+
     }
 
     @Override
-    public List<HelpHistoryEntity> getHelpHistoryEntityList(List<Object> objectList){
-        List<HelpHistoryEntity> helpHistoryList = new ArrayList<>();
+    public List<HelpHistoryEntity> getHelpHistoryEntityList(List<Object> objectList) {
+        return objectList.stream()
+                .map(this::parseJsonToEntity)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
 
-        for (Object json : Objects.requireNonNull(objectList)) {
+    @Override
+    public HelpHistoryEntity parseJsonToEntity(Object json) {
+        if (json instanceof String) {
             try {
-                HelpHistoryEntity helpHistory = objectMapper.readValue((String) json, HelpHistoryEntity.class);
-                helpHistoryList.add(helpHistory);
+                return objectMapper.readValue((String) json, HelpHistoryEntity.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return helpHistoryList;
+
+        throw new RuntimeException();
     }
 }
