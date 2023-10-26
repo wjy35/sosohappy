@@ -13,9 +13,13 @@ const io = require('socket.io')(http, {
 });
 
 io.on('connection', (socket) => {
-    socket.on('send message', (msg) => {
+    socket.on('chat join', (roomNo) => {
+        socket.join(roomNo);
+        console.log('roomNo', roomNo);
+    })
+    socket.on('send message', ({roomNo, msg}) => {
         console.log(msg);
-        socket.broadcast.emit('upload chat', {
+        io.to(roomNo).emit('upload chat', {
             senderType: 'me',
             message: msg,
         });
