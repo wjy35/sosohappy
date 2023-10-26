@@ -24,7 +24,7 @@ public class MemberSignServiceImpl implements MemberSignService {
     private final HashUtil hashUtil;
 
     @Override
-    public SignInResponse signIn(SignInRequest signInRequest) {
+    public AuthTokenDTO signIn(SignInRequest signInRequest) {
         MemberEntity memberEntity = memberEntityRepository.findByMemberSignId(signInRequest.getInputId())
                 .orElseThrow(()->{throw new CustomException(ErrorCode.WRONG_ID);});
 
@@ -33,7 +33,7 @@ public class MemberSignServiceImpl implements MemberSignService {
 
         verifyPassword(signInRequest.getInputPassword(), memberSignPassword);
 
-        return AuthTokenMapper.INSTANCE.toResponse(jwtUtil.generateAuthToken(memberId));
+        return jwtUtil.generateAuthToken(memberId);
     }
 
 
