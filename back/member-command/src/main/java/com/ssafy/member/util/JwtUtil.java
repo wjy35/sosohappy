@@ -22,6 +22,14 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
+    public AuthTokenDTO generateAuthToken(Long memberId){
+        return AuthTokenDTO
+                .builder()
+                .accessToken(generateAccessToken(memberId))
+                .refreshToken(generateRefreshToken(memberId))
+                .build();
+    }
+
     private String generateToken(Long memberId,Long expireMin){
         return Jwts.builder()
                 .claim("memberId", memberId)
@@ -29,12 +37,11 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis()+expireMin))
                 .compact();
     }
-
-    public String generateAccessToken(Long memberId){
+    private String generateAccessToken(Long memberId){
         return generateToken(memberId,this.EXPIRE_MIN);
     }
 
-    public String generateRefreshToken(Long memberId){
+    private String generateRefreshToken(Long memberId){
         return generateToken(memberId,this.EXPIRE_MIN);
     }
 
