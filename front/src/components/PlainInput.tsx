@@ -36,7 +36,7 @@ const PlainInput = ({title, placeholder, onChangeText, onPressIn, text, isValid,
             }
             <View style={[]}>
                 <TextInput
-                    style={[InputStyle.Input]}
+                    style={[InputStyle.Input, (!isValid&&errorMessage&&text) && InputStyle.alertInput]}
                     placeholder={placeholder}
                     onChangeText={(newText) => onChangeText(newText)}
                     onPressIn={onPressIn&&onPressInFunction}
@@ -49,7 +49,7 @@ const PlainInput = ({title, placeholder, onChangeText, onPressIn, text, isValid,
             {
                 (!isValid&&errorMessage&&text) && (
                     <View>
-                        <Text>{errorMessage}</Text>
+                        <Text style={[InputStyle.alertText]}>{errorMessage}</Text>
                     </View>
                 )
             }

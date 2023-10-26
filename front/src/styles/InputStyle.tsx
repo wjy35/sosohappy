@@ -19,6 +19,12 @@ const InputStyle = StyleSheet.create({
         fontSize:14,
         fontWeight:"900",
         color:"#535353",
+    },
+    alertInput: {
+        borderColor: 'red',
+    },
+    alertText: {
+        color: 'red',
     }
 });
 
