@@ -16,7 +16,7 @@ public class JwtUtil {
     private final Key key;
 
     @Autowired
-    public JwtUtil(@Value("JWT_SALT")String salt,@Value("JWT_EXPIRE_MIN")Long expireMin) {
+    public JwtUtil(@Value("${JWT_SALT}")String salt,@Value("${JWT_EXPIRE_MIN}")Long expireMin) {
         this.EXPIRE_MIN = expireMin;
         byte[] keyBytes = Base64.getDecoder().decode(Base64.getEncoder().encode(salt.getBytes()));
         this.key = Keys.hmacShaKeyFor(keyBytes);
