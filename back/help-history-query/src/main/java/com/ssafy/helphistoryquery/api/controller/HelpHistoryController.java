@@ -35,7 +35,7 @@ public class HelpHistoryController {
         List<HelpHistoryResponse> helpHistoryResponseList = helpHistoryService.getHelpReceivedList(memberId);
         FormattedResponse response = FormattedResponse.builder()
                 .status("success")
-                .message("GET HelpReceive List")
+                .message("GET Help Given List")
                 .result("historyList",helpHistoryResponseList)
                 .build();
 
