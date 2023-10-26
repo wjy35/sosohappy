@@ -1,21 +1,23 @@
 package com.ssafy.helphistoryquery.db.entity;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 
 @Getter
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class HelpHistoryEntity {
     private long historyId;
     private long toMemberId;
     private long fromMemberId;
     private long categoryId;
     private String content;
-    private BigDecimal x;
-    private BigDecimal y;
+    private double x;
+    private double y;
     private Timestamp createdAt;
+
 }
+
