@@ -1,16 +1,7 @@
-import axios from 'axios';
-import {baseURL} from "@/apis/BASEURL";
+import {PrivateInstance, PublicInstance} from "@/apis/AXIOSUTILS";
 
-const PublicHelpChatSocketApi = axios.create({
-  baseURL: `${baseURL}/help-chat-socket/`,
-});
+const domain = 'help-chat-socket';
 
-const PrivateHelpChatSocketApi = axios.create({
-  baseURL: `${baseURL}/help-chat-socket/`,
-  headers: {
-    // Authorization: `Bearer ${}`
-  }
-});
 
 interface props {
 

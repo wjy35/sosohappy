@@ -1,16 +1,6 @@
-import axios from 'axios';
-import {baseURL} from "@/apis/BASEURL";
+import {PrivateInstance, PublicInstance} from "@/apis/AXIOSUTILS";
 
-const PublicMonsterApi = axios.create({
-  baseURL: `${baseURL}/monster/`,
-});
-
-const PrivateMonsterApi = axios.create({
-  baseURL: `${baseURL}/monster/`,
-  headers: {
-    // Authorization: `Bearer ${}`
-  }
-});
+const domain = 'monster';
 
 interface props {
   memberMonsterId?: number;
@@ -19,20 +9,20 @@ interface props {
 
 const monsterApi = {
   getMyDetail: async () => {
-    const res = PrivateMonsterApi.get(
-      'my',
+    const res = PrivateInstance.get(
+        `${domain}/my`,
     );
     return res;
   },
   getMyDict: async () => {
-    const res = PrivateMonsterApi.get(
-      'collection',
+    const res = PrivateInstance.get(
+      `${domain}/collection`,
     );
     return res;
   },
   levelUp: async ({memberMonsterId, clover}: props) => {
-    const res = PrivateMonsterApi.patch(
-      'level-up',
+    const res = PrivateInstance.patch(
+      `${domain}/level-up`,
       {
         memberMonsterId: memberMonsterId,
         clover: clover
