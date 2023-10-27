@@ -1,6 +1,5 @@
 package com.ssafy.helphistoryquery.api.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.helphistoryquery.api.response.FormattedResponse;
 import com.ssafy.helphistoryquery.api.response.HelpHistoryResponse;
 import com.ssafy.helphistoryquery.service.impl.HelpHistoryServiceImpl;
@@ -18,7 +17,7 @@ public class HelpHistoryController {
     private final HelpHistoryServiceImpl helpHistoryService;
 
     @GetMapping("/count")
-    public ResponseEntity<?> getHelpCount (@RequestHeader("memberId") long memberId) throws JsonProcessingException {
+    public ResponseEntity<?> getHelpCount (@RequestHeader("memberId") long memberId) {
         int count = helpHistoryService.getHelpCount(memberId);
         FormattedResponse response = FormattedResponse.builder()
                 .status("success")
@@ -31,7 +30,7 @@ public class HelpHistoryController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<?> getHelpReceivedList (@RequestHeader("memberId") long memberId) throws JsonProcessingException {
+    public ResponseEntity<?> getHelpReceivedList (@RequestHeader("memberId") long memberId) {
         List<HelpHistoryResponse> helpHistoryResponseList = helpHistoryService.getHelpReceivedList(memberId);
         FormattedResponse response = FormattedResponse.builder()
                 .status("success")
