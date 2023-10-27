@@ -1,22 +1,14 @@
-import axios from 'axios';
-import {baseURL} from "@/apis/BASEURL";
+import {PrivateInstance, PublicInstance} from "@/apis/AXIOSUTILS";
 
-const PublicHelpCategoryApi = axios.create({
-  baseURL: `${baseURL}/help-category/`,
-});
-
-const PrivateHelpCategoryApi = axios.create({
-  baseURL: `${baseURL}/help-category/`,
-  headers: {
-    Authorization: `Bearer ${}`
-  }
-});
-
-interface props {
-
-}
+const domain = 'help-category';
 
 const helpCategoryApi = {
+  getCategory: async () => {
+    const res = PrivateInstance.get(
+      `${domain}/categories`,
+    );
+    return res;
+  }
 
 };
 
