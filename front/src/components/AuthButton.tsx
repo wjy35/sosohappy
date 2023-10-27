@@ -1,12 +1,21 @@
 import {View, Text, TouchableOpacity} from "react-native"
 
 import AuthButtonStyle from "@/styles/AuthButtonStyle";
+import {useNavigation} from "@react-navigation/native";
 
 interface propsType{
-    movePage: string,
+    isActive: boolean;
+    buttonText: string;
+    goNext: Function;
 }
 
-const AuthButton = ({movePage}: propsType) => {
+const AuthButton = ({isActive, buttonText, goNext}: propsType) => {
+    const navigation = useNavigation();
+
+    const goMain = () => {
+        navigation.navigate('Main');
+    };
+
     return(
         <>
             <View style={AuthButtonStyle.authInfoWrap}>
@@ -17,12 +26,12 @@ const AuthButton = ({movePage}: propsType) => {
                 </Text>
             </View>
             <View style={AuthButtonStyle.authButtonWrap}>
-                <TouchableOpacity activeOpacity={0.7}>
-                    <View style={AuthButtonStyle.nextButton}>
-                        <Text style={AuthButtonStyle.nextButtonText}>다음단계 진행하기</Text>
+                <TouchableOpacity activeOpacity={0.7} onPress={()=>isActive&&goNext()}>
+                    <View style={[AuthButtonStyle.nextButton, isActive && AuthButtonStyle.nextButtonActive]}>
+                        <Text style={AuthButtonStyle.nextButtonText}>{buttonText}</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity activeOpacity={0.7} onPress={goMain}>
                     <View style={AuthButtonStyle.moveMainButton}>
                         <Text style={AuthButtonStyle.moveMainButtonText}>메인으로 돌아가기</Text>
                     </View>

@@ -11,6 +11,7 @@ import SignUpAuth from '@/screens/SignUpAuth';
 import SignUpInput from '@/screens/SignUpInput';
 import SignUpSeparate from '@/screens/SignUpSeparate';
 import NavigatorDummy from '@/screens/NavigatorDummy';
+import Character from '@/screens/Character';
 
 
 const Stack = createStackNavigator();
@@ -30,6 +31,7 @@ const Navigation = () => {
         <Stack.Screen name="SignUpAuth" component={SignUpAuth}/>
         <Stack.Screen name="SignUpInput" component={SignUpInput}/>
         <Stack.Screen name="SignUpSeparate" component={SignUpSeparate}/>
+        <Stack.Screen name="Character" component={Character}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

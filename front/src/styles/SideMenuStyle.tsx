@@ -5,9 +5,10 @@ const SideMenuStyle = StyleSheet.create({
     sideMenuWrap:{
         width:responsiveWidth(60),
         height:"100%",
-        backgroundColor:"#FFF",
+        backgroundColor:"#FFFFFF",
         position:"absolute",
         paddingHorizontal:20,
+        zIndex: 2
     },
     logoWrap:{
         display:"flex",
