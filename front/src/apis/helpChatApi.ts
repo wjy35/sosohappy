@@ -1,6 +1,6 @@
 import {PrivateInstance, PublicInstance} from "@/apis/AXIOSUTILS";
 
-const domain = 'help-chat';
+const domain = 'http://10.0.2.2:4002/';
 
 interface props {
   memberId?: number;
