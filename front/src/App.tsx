@@ -5,6 +5,7 @@ import {AppState} from "react-native";
 
 function App(): JSX.Element {
     const location = useLocation({});
+
     useEffect(() => {
         console.log('gdgd')
         const appState = AppState.addEventListener('change', ()=>{
