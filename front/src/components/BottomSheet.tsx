@@ -6,6 +6,9 @@ import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 
 import BottomSheetStyle from "@/styles/BottomSheetStyle";
 
+import axios from "axios"
+import { useNavigation } from "@react-navigation/native";
+
 enum matchingStatus {
     Wait,
     Matching,
@@ -18,6 +21,7 @@ interface propsType{
 
 const BottomSheet = ({updateBottomSheetStatus}: propsType) => {
     const [currentMatchingStatus, setCurrentMatchingStatus] = useState<matchingStatus>(matchingStatus.Wait);
+    const navigation = useNavigation();
     return(
         <>
             <Modal
@@ -99,7 +103,7 @@ const BottomSheet = ({updateBottomSheetStatus}: propsType) => {
                     
                     {
                         currentMatchingStatus === matchingStatus.Wait ?
-                        <TouchableOpacity activeOpacity={0.7}>
+                        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Chat')}>
                             <View style={BottomSheetStyle.connectButton}>
                                 <Text style={BottomSheetStyle.connectButtonText}>연결하기</Text>
                             </View>
