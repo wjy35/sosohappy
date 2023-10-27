@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,8 +23,8 @@ public class Controller {
     private final FirebaseMessaging firebaseMessaging;
 
     @PostMapping("/")
-    ResponseEntity<FormattedResponse> save(@RequestBody MemberDeviceSaveRequest memberDeviceSaveRequest){
-        memberDeviceManageService.save(MemberDeviceMapper.INSTANCE.toEntity(memberDeviceSaveRequest));
+    ResponseEntity<FormattedResponse> save(@RequestHeader Long memberId, @RequestBody String deviceToken){
+        memberDeviceManageService.save(MemberDeviceMapper.INSTANCE.toEntity(memberId, deviceToken));
 
         FormattedResponse response = FormattedResponse
                 .builder()
@@ -40,7 +41,7 @@ public class Controller {
 
         Message message = Message
                 .builder()
-                .setToken(memberDeviceSaveRequest.getDeviceToken())
+                .setToken(deviceToken)
                 .setNotification(notification)
                 .build();
         try {
