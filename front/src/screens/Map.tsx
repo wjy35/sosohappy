@@ -1,12 +1,17 @@
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import BottomSheet from "@/components/BottomSheet";
 import MapView, {PROVIDER_GOOGLE, Marker} from "react-native-maps"
+import messaging from '@react-native-firebase/messaging'
 
 import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 
 import MapStyle from "@/styles/MapStyle";
+
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('[Background Remote Message]', remoteMessage);
+});
 
 const Map = () => {
   const mapWidth = Dimensions.get("window").width;
@@ -22,6 +27,21 @@ const Map = () => {
   const updateBottomSheetStatus = (updateStatus: Boolean) => {
     setBottomSheetStatus(updateStatus);
   }
+
+  const getFcmToken = async () => {
+    const fcmToken = await messaging().getToken();
+    console.log('[FCM Token] ', fcmToken);
+  };
+ 
+  useEffect(() => {
+    getFcmToken();
+
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('[Remote Message] ', JSON.stringify(remoteMessage));
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     <CommonLayout footer={true} headerType={0}>
