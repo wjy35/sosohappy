@@ -19,5 +19,6 @@ public class Category {
     private String categoryName;
 
     @NotNull
+    @Column(columnDefinition="TEXT")
     private String categoryImage;
 }
