@@ -1,8 +1,12 @@
 package com.ssafy.category.service;
 
-import com.ssafy.category.domain.entity.Category;
+import com.ssafy.category.domain.res.CategoryRes;
+
+import java.util.List;
 
 public interface CategoryService {
 
-    Category getCategoryInfo(Long categoryId);
+    CategoryRes getCategoryInfo(Long categoryId);
+
+    List<CategoryRes> getdefaultCategoryList();
 }
