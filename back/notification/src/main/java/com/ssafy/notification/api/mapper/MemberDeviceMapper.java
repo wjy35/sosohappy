@@ -9,5 +9,5 @@ import org.mapstruct.factory.Mappers;
 public interface MemberDeviceMapper {
     MemberDeviceMapper INSTANCE = Mappers.getMapper(MemberDeviceMapper.class);
 
-    MemberDeviceEntity toEntity(MemberDeviceSaveRequest memberDeviceSaveRequest);
+    MemberDeviceEntity toEntity(Long memberId, String deviceToken);
 }
