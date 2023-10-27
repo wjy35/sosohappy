@@ -1,5 +1,7 @@
 package com.ssafy.member.api.controller;
 
+import com.ssafy.member.api.mapper.MemberMapper;
+import com.ssafy.member.api.request.MemberSignUpRequest;
 import com.ssafy.member.api.request.SignInRequest;
 import com.ssafy.member.api.response.FormattedResponse;
 import com.ssafy.member.api.service.MemberSignService;
@@ -25,6 +27,19 @@ public class Controller {
                 .status("success")
                 .message("Sign In Success")
                 .result("authorization",authTokenDTO)
+                .build();
+
+        return new ResponseEntity<>(formattedResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/")
+    ResponseEntity<FormattedResponse> signUp(@RequestBody MemberSignUpRequest memberSignUpRequest){
+        memberSignService.singUp(MemberMapper.INSTANCE.toEntity(memberSignUpRequest));
+
+        FormattedResponse formattedResponse = FormattedResponse
+                .builder()
+                .status("success")
+                .message("Sign Up Success")
                 .build();
 
         return new ResponseEntity<>(formattedResponse, HttpStatus.OK);

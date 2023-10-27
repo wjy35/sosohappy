@@ -26,6 +26,13 @@ public class MemberSignServiceImpl implements MemberSignService {
     private final HashUtil hashUtil;
 
     @Override
+    public void singUp(MemberEntity memberEntity) {
+        String hashedPassword = hashUtil.hash(memberEntity.getMemberSignPassword());
+        memberEntity.setMemberSignPassword(hashedPassword);
+        memberEntityRepository.save(memberEntity);
+    }
+
+    @Override
     public AuthTokenDTO signIn(SignInRequest signInRequest) {
         MemberEntity memberEntity = memberEntityRepository.findByMemberSignId(signInRequest.getId());
         Optional.ofNullable(memberEntity)
