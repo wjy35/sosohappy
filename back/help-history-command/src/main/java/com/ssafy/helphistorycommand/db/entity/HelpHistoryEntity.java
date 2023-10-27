@@ -17,24 +17,24 @@ public class HelpHistoryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long historyId;
 
-    @Column(name = "to_member_id")
+    @Column(name = "to_member_id", nullable = false)
     long toMemberId;
 
-    @Column(name = "from_member_id")
+    @Column(name = "from_member_id", nullable = false)
     long fromMemberId;
 
-    @Column(name = "category_id")
+    @Column(name = "category_id", nullable = false)
     long categoryId;
 
-    @Column(name = "content")
+    @Column(name = "content", nullable = false)
     String content;
 
-    @Column(name = "x")
+    @Column(name = "x", columnDefinition = "decimal(18,10)", nullable = false)
     long x;
 
-    @Column(name = "y")
+    @Column(name = "y", columnDefinition = "decimal(18,10)", nullable = false)
     long y;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
     Timestamp createdAt;
 }
