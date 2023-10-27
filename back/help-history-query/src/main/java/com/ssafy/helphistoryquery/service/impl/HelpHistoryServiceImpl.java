@@ -1,6 +1,5 @@
 package com.ssafy.helphistoryquery.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.helphistoryquery.api.mapper.HelpHistoryMapper;
 import com.ssafy.helphistoryquery.api.response.HelpHistoryResponse;
 import com.ssafy.helphistoryquery.db.entity.HelpHistoryEntity;
@@ -25,13 +24,13 @@ public class HelpHistoryServiceImpl implements HelpHistoryService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public Integer getHelpCount(Long memberId) throws JsonProcessingException {
+    public Integer getHelpCount(Long memberId){
 
        return helpHistoryRepository.getHelpCount(memberId);
     }
 
     @Override
-    public List<HelpHistoryResponse> getHelpReceivedList(Long memberId) throws JsonProcessingException {
+    public List<HelpHistoryResponse> getHelpReceivedList(Long memberId){
         List<HelpHistoryEntity> helpHistoryEntityList = helpHistoryRepository.getHelpReceivedList(memberId);
 
         List<HelpHistoryResponse> helpHistoryResponseList = new ArrayList<>();
