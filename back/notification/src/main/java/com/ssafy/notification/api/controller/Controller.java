@@ -23,8 +23,8 @@ public class Controller {
     private final FirebaseMessaging firebaseMessaging;
 
     @PostMapping("/")
-    ResponseEntity<FormattedResponse> save(@RequestHeader Long memberId, @RequestBody String deviceToken){
-        memberDeviceManageService.save(MemberDeviceMapper.INSTANCE.toEntity(memberId, deviceToken));
+    ResponseEntity<FormattedResponse> save(@RequestHeader Long memberId, @RequestBody  MemberDeviceSaveRequest memberDeviceSaveRequest){
+        memberDeviceManageService.save(MemberDeviceMapper.INSTANCE.toEntity(memberId, memberDeviceSaveRequest.getDeviceToken()));
 
         FormattedResponse response = FormattedResponse
                 .builder()
@@ -41,7 +41,7 @@ public class Controller {
 
         Message message = Message
                 .builder()
-                .setToken(deviceToken)
+                .setToken(memberDeviceSaveRequest.getDeviceToken())
                 .setNotification(notification)
                 .build();
         try {
