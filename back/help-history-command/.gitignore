@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Credentials ###
+**/src/main/resources/env.properties
+**/src/main/resources/application-local.properties
+**/src/main/resources/application-dev.properties
+.DS_Store
