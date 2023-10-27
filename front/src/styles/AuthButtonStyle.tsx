@@ -27,10 +27,13 @@ const AuthButtonStyle = StyleSheet.create({
     nextButton:{
         width:"100%",
         height:50,
-        backgroundColor:"#427CF9",
+        backgroundColor:"#B6B2C0",
         display:"flex",
         justifyContent:"center",
         paddingLeft:22,
+    },
+    nextButtonActive: {
+        backgroundColor:"#427CF9",
     },
     nextButtonText:{
         fontSize:14,

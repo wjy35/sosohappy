@@ -1,14 +1,11 @@
-import { View, Text, Image, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { useState, useEffect } from "react"
+import { View, Text, TouchableOpacity, TextInput, ScrollView } from "react-native";
 
 import CommonLayout from "@/components/CommonLayout";
 import MyChat from "@/components/MyChat";
 import ChatDate from "@/components/ChatDate";
+import io from "socket.io-client"
 
-import PreArrowIcon from "@/assets/img/pre-arrow.png"
-import HamburgerMenuIcon from "@/assets/img/hamburger-menu.png"
-import GroupUserIcon from "@/assets/img/group-user-icon.png"
-import ExitIcon from "@/assets/img/exit-icon.png"
-import SendIcon from "@/assets/img/send-icon.png"
 import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 
 import {SvgXml} from "react-native-svg";
@@ -18,8 +15,26 @@ import ChatStyle from "@/styles/ChatStyle";
 import YourChat from "@/components/YourCaht";
 
 const Chat = () => {
+  const socket = io('http://10.0.2.2:4002');
+  const [msg, setMsg] = useState<string>();
+  const [msgList, setMsgList] = useState<Object[]>([]);
+  const [roomNo, setroomNo] = useState<number>(1);
+
+  const sendMsg = () => {
+    socket.emit('send message', {roomNo, msg});
+    setMsg('');
+  }
+
+  socket.on('upload chat', (data:Object) => {
+    setMsgList([...msgList, data]);
+  });
+
+  useEffect(() => {
+    socket.emit('chat join', roomNo);
+  }, [])
+
   return (
-    <CommonLayout>
+    <CommonLayout footer={false} headerType={0}>
       <View style={ChatStyle.heightWrap}>
 
         <View style={ChatStyle.chatTitleWrap}>
@@ -55,6 +70,21 @@ const Chat = () => {
             있습니다."/>
             <MyChat content="네, 금방 갈게요 조금만 기다리세요."/>
 
+            {
+              msgList.map((msg, index) => {
+                return(
+                  <>
+                    {
+                      msg.senderType === 'you' ?
+                      <YourChat thumbnail={FishThumbnail} content={msg.message} key={index}/>
+                      :
+                      <MyChat content={msg.message} key={index}/>
+                    }
+                  </>
+                );
+              })
+            }
+
           </ScrollView>
         </View>
 
@@ -86,8 +116,10 @@ const Chat = () => {
           <TextInput
             placeholder="메시지 내용을 입력하세요."
             style={ChatStyle.chanMsgInput}
+            onChangeText={(text) => setMsg(text)}
+            value={msg}
           />
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity activeOpacity={0.7} onPress={sendMsg}>
             <View style={ChatStyle.sendButton}>
               <SvgXml
                 xml={send2}

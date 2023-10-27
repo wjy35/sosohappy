@@ -1,16 +1,6 @@
-import axios from 'axios';
-import {baseURL} from "@/apis/BASEURL";
+import {PrivateInstance, PublicInstance} from "@/apis/AXIOSUTILS";
 
-const PublicHelpMatchApi = axios.create({
-  baseURL: `${baseURL}/help-match/`,
-});
-
-const PrivateHelpMatchApi = axios.create({
-  baseURL: `${baseURL}/help-match/`,
-  headers: {
-    Authorization: `Bearer ${}`
-  }
-});
+const domain = 'help-match';
 
 interface props {
 

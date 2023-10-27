@@ -14,6 +14,7 @@ const NavigatorDummy = ({navigation}: any) => {
       <Button title='SignUpAuth' onPress={()=>navigation.navigate('SignUpAuth')}/>
       <Button title='SignUpInput' onPress={()=>navigation.navigate('SignUpInput')}/>
       <Button title='SignUpSeparate' onPress={()=>navigation.navigate('SignUpSeparate')}/>
+      <Button title='Character' onPress={() => navigation.navigate('Character')} />
     </View>
   );
 };

@@ -55,12 +55,15 @@ const LoginStyle = StyleSheet.create({
     loginButton:{
         width:responsiveWidth(92),
         height:50,
-        backgroundColor:"#427CF9",
+        backgroundColor:"#B6B2C0",
         borderRadius:15,
         display:"flex",
         justifyContent:"center",
         alignItems:"center",
         marginTop:12,
+    },
+    loginButtonActive:{
+        backgroundColor:"#427CF9",
     },
     loginButtonText:{
         fontSize:16,

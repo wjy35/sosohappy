@@ -1,4 +1,5 @@
-import {Text,View,Image} from "react-native";
+import { useState } from "react"
+import { Text, View, Image} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -10,16 +11,39 @@ import MoeumImg from "@/assets/img/moeum-img.png"
 
 import SignUpSeparateStyle from "@/styles/SignUpSeparateStyle";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import {useNavigation} from "@react-navigation/native";
 
 const SignUpSeparate = () => {
+  const [selectedType, setSelectedType] = useState(0);
+  const [isActive, setIsActive] = useState(false);
+  const navigation = useNavigation();
+
+  const activeNanum = () => {
+    setSelectedType(1);
+    if (!isActive) setIsActive(true);
+  }
+
+  const activeMoeum = () => {
+    setSelectedType(2);
+    if (!isActive) setIsActive(true);
+  }
+
+  const goNext = () => {
+    if (selectedType === 1){
+      navigation.navigate("SignUpAuth", {selectedType: selectedType});
+    } else {
+      navigation.navigate("SignUpInput", {selectedType: selectedType});
+    }
+
+  }
+
   return (
-    <CommonLayout>
-      <Header/>
+    <CommonLayout headerType={0} footer={true}>
       <AuthTitle level="1" title="서비스가 필요하신가요?" description="해당되는 곳을 선택해주세요."/>
-      
+
       <View style={SignUpSeparateStyle.selectWrap}>
-        <TouchableOpacity activeOpacity={0.7}>
-          <View style={SignUpSeparateStyle.selectContent}>
+        <TouchableOpacity activeOpacity={0.7} onPress={activeNanum}>
+          <View style={[SignUpSeparateStyle.selectContent, selectedType===1 && SignUpSeparateStyle.selectedContent]}>
             <Image
               source={NanumImg}
               style={SignUpSeparateStyle. selectImg}
@@ -33,8 +57,8 @@ const SignUpSeparate = () => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity activeOpacity={0.7}>
-          <View style={SignUpSeparateStyle.selectContent}>
+        <TouchableOpacity activeOpacity={0.7} onPress={activeMoeum}>
+          <View style={[SignUpSeparateStyle.selectContent, selectedType===2 && SignUpSeparateStyle.selectedContent]}>
             <Image
               source={MoeumImg}
               style={SignUpSeparateStyle. selectImg}
@@ -47,8 +71,7 @@ const SignUpSeparate = () => {
           </View>
         </TouchableOpacity>
       </View>
-      <AuthButton movePage="SignUpAuth"/>
-      <Footer/>
+      <AuthButton isActive={isActive} buttonText={'다음단계 진행하기'} goNext={goNext}/>
     </CommonLayout>
   );
 };
