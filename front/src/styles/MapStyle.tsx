@@ -19,6 +19,9 @@ const MapStyle = StyleSheet.create({
     createHelpInfo:{
         marginLeft:7,
     },
+    mapContainer:{
+        flex:1,
+    },
     helpSubTitle:{
         fontSize:10,
         fontWeight:"400",
