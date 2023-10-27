@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class MemberModifyRequest {
-    String name;
     String nickname;
     String memberSignPassword;
     Boolean disabled;
