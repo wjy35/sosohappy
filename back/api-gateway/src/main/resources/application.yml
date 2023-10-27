@@ -1,0 +1,52 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: member-query
+          uri: lb://MEMBER-QUERY-SERVICE/
+          predicates:
+            - Path=/member-query/availability/**
+          filters:
+            - RewritePath=/member-query/(?<path>.*),/$\{path}
+        - id: member-query-authorization
+          uri: lb://MEMBER-QUERY-SERVICE/
+          predicates:
+            - Path=/member-query/
+          filters:
+            - RewritePath=/member-query/(?<path>.*),/$\{path}
+            - AuthorizationHeaderFilter
+        - id: member-sync
+          uri: lb://MEMBER-SYNC-SERVICE/
+          predicates:
+            - Path=/member-sync/**
+          filters:
+            - RewritePath=/member-command/(?<path>.*),/$\{path}
+        - id: member-command-authorization
+          uri: lb://MEMBER-COMMAND-SERVICE/
+          predicates:
+            - Path=/member-command/**
+            - Method=GET,PUT,DELETE,PATCH
+          filters:
+            - RewritePath=/member-command/(?<path>.*),/$\{path}
+            - AuthorizationHeaderFilter
+        - id: member-command
+          uri: lb://MEMBER-COMMAND-SERVICE/
+          predicates:
+            - Path=/member-command/**
+            - Method=POST
+          filters:
+            - RewritePath=/member-command/(?<path>.*),/$\{path}
+        - id: monster
+          uri: lb://MONSTER-SERVICE/
+          predicates:
+            - Path=/monster/**
+          filters:
+            - RewritePath=/monster/(?<path>.*),/$\{path}
+            - AuthorizationHeaderFilter
+        - id: notification
+          uri: lb://NOTIFICATION-SERVICE/
+          predicates:
+            - Path=/notification/**
+          filters:
+            - RewritePath=/notification/(?<path>.*),/$\{path}
+            - AuthorizationHeaderFilter
