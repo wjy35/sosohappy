@@ -43,3 +43,10 @@ spring:
           filters:
             - RewritePath=/monster/(?<path>.*),/$\{path}
             - AuthorizationHeaderFilter
+        - id: notification
+          uri: lb://NOTIFICATION-SERVICE/
+          predicates:
+            - Path=/notification/**
+          filters:
+            - RewritePath=/notification/(?<path>.*),/$\{path}
+            - AuthorizationHeaderFilter
