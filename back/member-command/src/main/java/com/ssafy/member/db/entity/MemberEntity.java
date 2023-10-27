@@ -1,6 +1,9 @@
 package com.ssafy.member.db.entity;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -10,6 +13,8 @@ import java.sql.Timestamp;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@DynamicInsert
+@DynamicUpdate
 public class MemberEntity {
 
     @Id
@@ -43,4 +48,7 @@ public class MemberEntity {
     @Column(name = "memberSignPassword")
     String memberSignPassword;
 
+    public void setMemberSignPassword(String memberSignPassword) {
+        this.memberSignPassword = memberSignPassword;
+    }
 }
