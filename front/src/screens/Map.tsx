@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react"
 import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import BottomSheet from "@/components/BottomSheet";
-import MapView, {PROVIDER_GOOGLE, Marker} from "react-native-maps"
+import MapView, {PROVIDER_GOOGLE, Marker, Polyline} from "react-native-maps"
 import messaging from '@react-native-firebase/messaging'
 
 import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
@@ -30,6 +30,16 @@ const Map = () => {
       longitude: 127.036841,
     },
   ]);
+
+  const drawPolylineDirections = () => {
+
+    const pathCoordinates = [
+      { latitude: 37.501409, longitude: 127.039681 },
+      { latitude: 37.500069, longitude: 127.036841 },
+    ];
+  
+    return <Polyline coordinates={pathCoordinates} strokeWidth={2} strokeColor="red"/>;
+  };
 
   const updateBottomSheetStatus = (updateStatus: Boolean) => {
     setBottomSheetStatus(updateStatus);
@@ -81,7 +91,9 @@ const Map = () => {
               );
             })
           }
+          {drawPolylineDirections()}
         </MapView>
+        
       </View>
       <TouchableOpacity activeOpacity={0.7}>
         <View style={MapStyle.createHelpWrap}>
