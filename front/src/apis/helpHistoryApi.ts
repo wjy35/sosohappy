@@ -8,15 +8,9 @@ interface props {
 }
 
 const helpHistoryApi = {
-  getListFrom: async () => {
+  getHistoryList: async () => {
     const res = PrivateInstance.get(
-      `${queryDomain}/list/from`,
-    );
-    return res;
-  },
-  getListTo: async () => {
-    const res = PrivateInstance.get(
-      `${queryDomain}/list/to`,
+      `${queryDomain}/`,
     );
     return res;
   },
