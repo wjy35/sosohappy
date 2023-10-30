@@ -6,6 +6,7 @@ import com.ssafy.member.db.repository.MemberEntityRepository;
 import com.ssafy.member.util.HashUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -14,12 +15,37 @@ import java.util.Optional;
 public class MemberManageServiceImpl implements MemberManageService {
     private final MemberEntityRepository memberEntityRepository;
     private final HashUtil hashUtil;
+
     @Override
+    @Transactional
     public void modify(MemberEntity memberEntity) {
-        Optional.ofNullable(memberEntity.getMemberSignPassword())
-                .ifPresent((password)->{
-                    memberEntity.setMemberSignPassword(hashUtil.hash(password));
-                });
-        memberEntityRepository.save(memberEntity);
+        MemberEntity target = memberEntityRepository.findById(memberEntity.getMemberId()).get();
+
+        setMemberEntity(memberEntity,target);
     }
+
+    private void setMemberEntity(MemberEntity source,MemberEntity target){
+        Optional.ofNullable(source.getNickname())
+                .ifPresent((nickname)->{target.setNickname(nickname);});
+
+        Optional.ofNullable(source.getMemberSignPassword())
+                .ifPresent((newPassword)->{
+                    target.setMemberSignPassword(hashUtil.hash(newPassword));
+                });
+
+        Optional.ofNullable(source.getDisabled())
+                .ifPresent((disabled)->{target.setDisabled(disabled);});
+
+        Optional.ofNullable(source.getGender())
+                .ifPresent((gender)->{target.setGender(gender);});
+
+        Optional.ofNullable(source.getProfileMonsterId())
+                .ifPresent((profileMonsterId)->{target.setProfileMonsterId(profileMonsterId);});
+
+        Optional.ofNullable(source.getProfileBackgroundId())
+                .ifPresent((profileBackgroundId)->{target.setProfileBackgroundId(profileBackgroundId);});
+    }
+
+
 }
+
