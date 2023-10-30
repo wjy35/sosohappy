@@ -9,4 +9,5 @@ public interface CategoryService {
     CategoryRes getCategoryInfo(Long categoryId);
 
     List<CategoryRes> getdefaultCategoryList();
+    List<CategoryRes> getRecentCategoryList(Long memberId);
 }
