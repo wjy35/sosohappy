@@ -9,15 +9,13 @@ import com.ssafy.monster.domain.entity.MonsterInfo;
 import com.ssafy.monster.domain.entity.MonsterType;
 import com.ssafy.monster.domain.res.CloverRes;
 import com.ssafy.monster.domain.res.MonsterRes;
-import com.ssafy.monster.mapper.CloverMapper;
-import com.ssafy.monster.mapper.MonsterMapper;
+import com.ssafy.monster.domain.mapper.CloverMapper;
+import com.ssafy.monster.domain.mapper.MonsterMapper;
 import com.ssafy.monster.repository.GrowthRepository;
 import com.ssafy.monster.repository.InfoRepository;
 import com.ssafy.monster.repository.ProfileRepository;
 import com.ssafy.monster.repository.TypeRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MonsterServiceImpl implements MonsterService{
 
     private final ProfileRepository profileRepository;
@@ -67,8 +66,11 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     public MonsterRes searchRepresentativeMonster(Long memberId) {
 
-        MemberMonsterProfile profile = profileRepository.findByMemberId(memberId).get();
-        MemberMonsterGrowth growth = growthRepository.findByMemberMonsterProfile_MemberIdAndMonsterType_TypeId(profile.getMemberId(), profile.getMonsterInfo().getMonsterType().getTypeId()).get();
+        MemberMonsterProfile profile = profileRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        MemberMonsterGrowth growth = growthRepository
+                .findByMemberMonsterProfile_MemberIdAndMonsterType_TypeId(profile.getMemberId(), profile.getMonsterInfo().getMonsterType().getTypeId())
+                .orElseThrow(() -> new CustomException(ErrorCode.GROWTH_NOT_FOUND));
         MonsterType type = profile.getMonsterInfo().getMonsterType(); //프로필 타입
 
         // exp 계산
@@ -101,7 +103,8 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     public CloverRes searchCloverInfo(Long memberId) {
 
-        MemberMonsterProfile profile = profileRepository.findByMemberId(memberId).get();
+        MemberMonsterProfile profile = profileRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         CloverRes cloverRes = CloverMapper.INSTANCE.toCloverRes(profile);
 
@@ -115,7 +118,8 @@ public class MonsterServiceImpl implements MonsterService{
     @Transactional
     public MonsterRes updateMonsterClover(Long memberMonsterId, int clover) {
 
-        MemberMonsterGrowth growth = growthRepository.findByMemberMonsterId(memberMonsterId).get();
+        MemberMonsterGrowth growth = growthRepository.findByMemberMonsterId(memberMonsterId)
+                .orElseThrow(() -> new CustomException(ErrorCode.GROWTH_NOT_FOUND));
         MemberMonsterProfile profile = growth.getMemberMonsterProfile();
         if(profile.getMemberClover() < clover) {
             throw new CustomException(ErrorCode.SHORTAGE_OF_CLOVER);
@@ -178,8 +182,10 @@ public class MonsterServiceImpl implements MonsterService{
     @Transactional
     public void updateClover(Long fromMemberId, Long toMemberId, int clover) {
 
-        MemberMonsterProfile fromProfile = profileRepository.findByMemberId(fromMemberId).get();
-        MemberMonsterProfile toProfile = profileRepository.findByMemberId(toMemberId).get();
+        MemberMonsterProfile fromProfile = profileRepository.findByMemberId(fromMemberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        MemberMonsterProfile toProfile = profileRepository.findByMemberId(toMemberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         fromProfile.addMemberClover(clover);
         fromProfile.addMemberAccruedClover(clover);
@@ -189,6 +195,21 @@ public class MonsterServiceImpl implements MonsterService{
         profileRepository.save(fromProfile);
         profileRepository.save(toProfile);
 
+    }
+
+    /**
+     * 프로필 변경
+     */
+    @Override
+    @Transactional
+    public void updateMemberMonsterProfile(Long memberId, int profileMonsterId) {
+        MonsterInfo info = infoRepository.findByMonsterId(profileMonsterId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MONSTER_NOT_FOUND));
+        MemberMonsterProfile profile = profileRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        profile.setMonsterInfo(info);
+        profileRepository.save(profile);
     }
 
 }

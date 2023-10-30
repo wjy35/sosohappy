@@ -1,4 +1,4 @@
-package com.ssafy.monster.mapper;
+package com.ssafy.monster.domain.mapper;
 
 import com.ssafy.monster.domain.entity.MemberMonsterGrowth;
 import com.ssafy.monster.domain.entity.MemberMonsterProfile;

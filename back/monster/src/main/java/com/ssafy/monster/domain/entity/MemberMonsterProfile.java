@@ -38,4 +38,8 @@ public class MemberMonsterProfile {
         this.memberAccruedClover += clover;
     }
 
+    public void setMonsterInfo(MonsterInfo monsterInfo) {
+        this.monsterInfo = monsterInfo;
+    }
+
 }
