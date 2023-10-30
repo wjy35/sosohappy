@@ -48,6 +48,30 @@ public class MemberEntity {
     @Column(name = "memberSignPassword")
     String memberSignPassword;
 
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
+
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public void setGender(Integer gender) {
+        this.gender = gender;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setProfileMonsterId(Integer profileMonsterId) {
+        this.profileMonsterId = profileMonsterId;
+    }
+
+    public void setProfileBackgroundId(Integer profileBackgroundId) {
+        this.profileBackgroundId = profileBackgroundId;
+    }
+
     public void setMemberSignPassword(String memberSignPassword) {
         this.memberSignPassword = memberSignPassword;
     }
