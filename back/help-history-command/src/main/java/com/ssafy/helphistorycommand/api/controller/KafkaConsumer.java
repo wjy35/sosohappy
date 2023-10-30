@@ -1,15 +1,22 @@
 package com.ssafy.helphistorycommand.api.controller;
 
 
+import com.ssafy.helphistorycommand.api.request.HelpHistoryRequest;
+import com.ssafy.helphistorycommand.service.HelpHistoryService;
+import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Controller;
 
 
 @Controller
+@RequiredArgsConstructor
 public class KafkaConsumer {
 
+    private final HelpHistoryService helpHistoryService;
     @KafkaListener(topics = "help-history-command-mysql.help_history.help_history")
-    public void consume(String message) {
-        System.out.println("message = " + message);
+    public void consume(ConsumerRecord<String,String> message) {
+//        helpHistoryService.addHelpHistory(message);
+        System.out.println("message = " + message.value());
     }
 }
