@@ -8,4 +8,6 @@ public class MemberModifyRequest {
     String memberSignPassword;
     Boolean disabled;
     Integer gender;
+    Integer profileMonsterId;
+    Integer profileBackgroundId;
 }
