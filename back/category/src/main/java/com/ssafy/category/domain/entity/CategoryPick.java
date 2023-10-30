@@ -2,9 +2,11 @@ package com.ssafy.category.domain.entity;
 
 import com.sun.istack.NotNull;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.ws.rs.DefaultValue;
 import java.sql.Timestamp;
 
 @Entity
@@ -25,6 +27,7 @@ public class CategoryPick {
     private Long memberId;
 
     @NotNull
+    @ColumnDefault("1")
     private int pickCount;
 
     @UpdateTimestamp
