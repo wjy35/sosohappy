@@ -7,8 +7,11 @@ import LoginStyle from "@/styles/LoginStyle"
 import useInput from "@/hooks/useInput";
 import PlainInput from "@/components/PlainInput";
 import memberApi from "@/apis/memberApi";
+import RNSecureStorage, {ACCESSIBLE} from "rn-secure-storage";
+import {useNavigation} from "@react-navigation/native";
 
 const Login = () => {
+  const navigation = useNavigation();
 
   const checkId = (newText: string) => {
     inputId.updateIsValid(newText!=="");
@@ -37,7 +40,9 @@ const Login = () => {
         memberSignPassword: inputPassword.text,
       });
       if (res.status === 200){
-        console.log(res);
+        await RNSecureStorage.set("accessToken", res.data.result.authorization.accessToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
+        await RNSecureStorage.set("refreshToken", res.data.result.authorization.refreshToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
+        navigation.replace('Main');
       }
     } catch (err) {
       console.log(err);

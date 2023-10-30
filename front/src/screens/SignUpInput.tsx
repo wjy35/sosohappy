@@ -9,11 +9,12 @@ import PlainInput from "@/components/PlainInput";
 import useInput from "@/hooks/useInput";
 import {useRoute} from "@react-navigation/native";
 import memberApi from "@/apis/memberApi";
+import axios from "axios";
 
 const SignUpInput = () => {
   const route = useRoute();
   const [isActive, setIsActive] = useState(false);
-  const [selectedGender, setSelectedGender] = useState(null);
+  const [selectedGender, setSelectedGender] = useState(1);
 
   const checkMemberId = async (newText: string) => {
     try {
@@ -37,6 +38,7 @@ const SignUpInput = () => {
   };
 
   const checkMemberName = (newText: string) => {
+    // TODO: 글자수제한 필요 5글자 넘어가면 에러남
     memberName.updateIsValid(newText !== "");
   };
 
@@ -111,7 +113,9 @@ const SignUpInput = () => {
         console.log(res);
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.response.data);
+      console.log(err.response.status);
+      console.log(err.response.headers);
     }
   }
 

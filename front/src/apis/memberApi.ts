@@ -18,18 +18,18 @@ interface props {
 const memberApi = {
     getMember: async () => {
         const res = PrivateInstance.get(
-          `${queryDomain}`,
+          `${queryDomain}/`,
         )
         return res;
     },
     signUp: async ({memberSignId, memberSignPassword, memberName, memberNickname, disabled, gender}: props) => {
         const res = PublicInstance.post(
-          `${commandDomain}`,
+          `${commandDomain}/`,
           {
             memberSignId: memberSignId,
             memberSignPassword: memberSignPassword,
-            memberName: memberName,
-            memberNickname: memberNickname,
+            name: memberName,
+            nickname: memberNickname,
             disabled: disabled,
             gender: gender,
           }
@@ -38,7 +38,7 @@ const memberApi = {
     },
     checkDisabled: async ({documentNumber}: props) => {
         const res = PublicInstance.post(
-          `${queryDomain}/disabled-member`,
+          `${queryDomain}/disabled-member/`,
           {
             documentNumber: documentNumber,
           }
@@ -47,17 +47,17 @@ const memberApi = {
     },
     login: async ({memberSignId, memberSignPassword}: props) => {
         const res = PublicInstance.post(
-          `${queryDomain}/login`,
+          `${commandDomain}/sign-in/`,
           {
-            memberSignId: memberSignId,
-            memberSignPassword: memberSignPassword,
+            id: memberSignId,
+            password: memberSignPassword,
           }
         );
         return res;
     },
     updateMember: async ({memberName, memberNickname, memberSignPassword, disabled, gender}: props) => {
         const res = PrivateInstance.patch(
-          `${commandDomain}`,
+          `${commandDomain}/`,
           {
             memberName: memberName,
             memberNickname: memberNickname,
@@ -69,37 +69,27 @@ const memberApi = {
         );
         return res;
     },
-    updateProfile: async ({profileMonsterId, profileBackgroundId}: props) => {
-        const res = PrivateInstance.patch(
-          `${commandDomain}/profile`,
-          {
-            profileMonsterId: profileMonsterId,
-            profileBackgroundId: profileBackgroundId,
-          }
-        );
-        return res;
-    },
     deleteMember: async () => {
         const res = PrivateInstance.delete(
-          `${commandDomain}`,
+          `${commandDomain}/`,
         );
         return res;
     },
     logout: async () => {
         const res = PrivateInstance.delete(
-          `${queryDomain}`,
+          `${queryDomain}/sign-out/`,
         );
         return res;
     },
     checkNicknameDuplicate: async ({memberNickname}: props) => {
         const res = PublicInstance.get(
-            `${queryDomain}/availability/nickname/${memberNickname}`
+            `${queryDomain}/availability/nickname/${memberNickname}/`
         );
         return res;
     },
     checkIdDuplicate: async ({memberSignId}: props) => {
         const res = PublicInstance.get(
-            `${queryDomain}/availability/memberSignId/${memberSignId}`
+            `${queryDomain}/availability/memberSignId/${memberSignId}/`
         );
         return res;
     }
