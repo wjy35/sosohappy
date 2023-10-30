@@ -29,10 +29,10 @@ public class HelpHistoryEntity {
     @Column(name = "content", nullable = false)
     String content;
 
-    @Column(name = "x", columnDefinition = "decimal(18,10)", nullable = false)
+    @Column(name = "x", columnDefinition = "decimal(9,6)", nullable = false)
     long x;
 
-    @Column(name = "y", columnDefinition = "decimal(18,10)", nullable = false)
+    @Column(name = "y", columnDefinition = "decimal(9,6)", nullable = false)
     long y;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
