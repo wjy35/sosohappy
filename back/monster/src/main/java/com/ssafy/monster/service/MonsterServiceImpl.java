@@ -9,15 +9,13 @@ import com.ssafy.monster.domain.entity.MonsterInfo;
 import com.ssafy.monster.domain.entity.MonsterType;
 import com.ssafy.monster.domain.res.CloverRes;
 import com.ssafy.monster.domain.res.MonsterRes;
-import com.ssafy.monster.mapper.CloverMapper;
-import com.ssafy.monster.mapper.MonsterMapper;
+import com.ssafy.monster.domain.mapper.CloverMapper;
+import com.ssafy.monster.domain.mapper.MonsterMapper;
 import com.ssafy.monster.repository.GrowthRepository;
 import com.ssafy.monster.repository.InfoRepository;
 import com.ssafy.monster.repository.ProfileRepository;
 import com.ssafy.monster.repository.TypeRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
