@@ -18,7 +18,10 @@ public enum ErrorCode {
 
     SHORTAGE_OF_CLOVER(HttpStatus.BAD_REQUEST, "보유중인 클로버가 부족합니다."),
     FULL_OF_CLOVER(HttpStatus.BAD_REQUEST, "클로버가 이미 가득 차 있습니다."),
-    JSON_PARSE_ERROR(HttpStatus.CONFLICT, "Topic을 변환하는 과정에서 오류가 발생했습니다.");
+    JSON_PARSE_ERROR(HttpStatus.CONFLICT, "Topic을 변환하는 과정에서 오류가 발생했습니다."),
+    MONSTER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 monsterId로 조회된 정보가 없습니다."),
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 memberId로 조회된 profile이 없습니다."),
+    GROWTH_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 memberMonsetId로 조회된 growth 정보가 없습니다.");
 
     private final HttpStatus status;
     private final String message;
