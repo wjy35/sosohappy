@@ -10,7 +10,7 @@ import javax.persistence.*;
 import javax.ws.rs.DefaultValue;
 import java.sql.Timestamp;
 
-@QueryEntity
+@Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
