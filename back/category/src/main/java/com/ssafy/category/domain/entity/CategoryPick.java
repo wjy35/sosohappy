@@ -1,5 +1,6 @@
 package com.ssafy.category.domain.entity;
 
+import com.querydsl.core.annotations.QueryEntity;
 import com.sun.istack.NotNull;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -9,7 +10,7 @@ import javax.persistence.*;
 import javax.ws.rs.DefaultValue;
 import java.sql.Timestamp;
 
-@Entity
+@QueryEntity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
