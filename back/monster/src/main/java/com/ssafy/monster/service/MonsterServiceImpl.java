@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MonsterServiceImpl implements MonsterService{
 
     private final ProfileRepository profileRepository;
