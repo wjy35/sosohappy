@@ -189,4 +189,16 @@ public class MonsterServiceImpl implements MonsterService{
 
     }
 
+    /**
+     * 프로필 변경
+     */
+    @Override
+    @Transactional
+    public void updateMemberMonsterProfile(Long memberId, int profileMonsterId) {
+        MonsterInfo info = infoRepository.findByMonsterId(profileMonsterId).get();
+        MemberMonsterProfile profile = profileRepository.findByMemberId(memberId).get();
+        profile.setMonsterInfo(info);
+        profileRepository.save(profile);
+    }
+
 }
