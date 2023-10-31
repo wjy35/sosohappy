@@ -218,11 +218,13 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     @Transactional
     public void deleteMemberMonsterProfile(Long memberId) {
-        profileRepository.delete(
-                profileRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND))
-        );
-
+        Optional<MemberMonsterProfile> profile = profileRepository.findByMemberId(memberId);
+        if(profile.isEmpty()){
+            throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
+        } else {
+            growthRepository.deleteByMemberMonsterProfile_MemberId(memberId);
+            profileRepository.deleteByMemberId(memberId);
+        }
     }
 
 }

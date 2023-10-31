@@ -22,8 +22,7 @@ public enum ErrorCode {
     MONSTER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 monsterId로 조회된 정보가 없습니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 memberId로 조회된 profile이 없습니다."),
     GROWTH_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 memberMonsetId로 조회된 growth 정보가 없습니다."),
-    MEMBER_EXIST_ERROR(HttpStatus.CONFLICT, "해당 memberId에 profile 정보가 이미 존재합니다."),
-    EVENT_CONTENT_ERROR(HttpStatus.NOT_FOUND, "회원 이벤트에서 content가 null인 값이 존재합니다.");
+    MEMBER_EXIST_ERROR(HttpStatus.CONFLICT, "해당 memberId에 profile 정보가 이미 존재합니다.");
 
     private final HttpStatus status;
     private final String message;

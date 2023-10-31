@@ -32,21 +32,12 @@ public class KafkaConsumer {
             MemberDTO after = memberUpdateEvent.getAfter();
 
             if(memberUpdateEvent.getOp().equals("c")){
-                if(after == null) {
-                    throw new CustomException(ErrorCode.EVENT_CONTENT_ERROR);
-                }
                 monsterService.setInitialMonster(after.getMemberId());
             } else if(memberUpdateEvent.getOp().equals("u")) {
-                if(before == null || after == null) {
-                    throw new CustomException(ErrorCode.EVENT_CONTENT_ERROR);
-                }
                 if(before.getProfileMonsterId() != after.getProfileMonsterId()){
                     monsterService.updateMemberMonsterProfile(after.getMemberId(), after.getProfileMonsterId());
                 }
             } else if (memberUpdateEvent.getOp().equals("d")) {
-                if(before == null) {
-                    throw new CustomException(ErrorCode.EVENT_CONTENT_ERROR);
-                }
                 monsterService.deleteMemberMonsterProfile(before.getMemberId());
             }
         } catch (IOException e) {
