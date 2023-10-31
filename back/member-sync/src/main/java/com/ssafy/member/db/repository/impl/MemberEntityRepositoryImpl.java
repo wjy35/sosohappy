@@ -44,4 +44,14 @@ public class MemberEntityRepositoryImpl implements MemberEntityRepository {
         entityOperations.putAll(after.getMemberId(),objectMapper.convertValue(after, Map.class));
     }
 
+    @Override
+    @Transactional
+    public void delete(MemberEntity memberEntity) {
+        entityOperations.entries(memberEntity.getMemberId()).keySet().forEach((hashKey)->{
+            entityOperations.delete(memberEntity.getMemberId(),hashKey);
+        });
+
+        uniqueFieldValueSetOperations.remove("memberSignId",memberEntity.getMemberSignId());
+        uniqueFieldValueSetOperations.remove("nickname",memberEntity.getNickname());
+    }
 }
