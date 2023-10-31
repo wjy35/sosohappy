@@ -14,7 +14,6 @@ import javax.persistence.*;
 public class MemberMonsterProfile {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
 
     @NotNull

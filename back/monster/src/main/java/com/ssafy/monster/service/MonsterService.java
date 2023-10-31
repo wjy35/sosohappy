@@ -27,4 +27,6 @@ public interface MonsterService {
     void updateClover(Long fromMemberId, Long toMemberId, int clover);
 
     void updateMemberMonsterProfile(Long memberId, int profileMonsterId);
+
+    void deleteMemberMonsterProfile(Long memberId);
 }

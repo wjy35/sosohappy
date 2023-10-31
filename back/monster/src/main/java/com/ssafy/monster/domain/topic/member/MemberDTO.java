@@ -3,25 +3,16 @@ package com.ssafy.monster.domain.topic.member;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 @Getter
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "member_id",
-        "member_sign_id",
-        "member_sign_password",
-        "nickname",
-        "name",
-        "profile_monster_id",
-        "profile_background_id",
-        "disabled",
-        "gender",
-        "created_at"
-})
-public class Before {
+@NoArgsConstructor
+@AllArgsConstructor
+public class MemberDTO {
 
     @JsonProperty("member_id")
     public Long memberId;

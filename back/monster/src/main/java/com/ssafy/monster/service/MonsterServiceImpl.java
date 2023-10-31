@@ -150,9 +150,12 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     @Transactional
     public void setInitialMonster(Long memberId) {
-        // 회원에서 memberId 받아서 -> 정합성 체크..??..
+        Optional<MemberMonsterProfile> existingProfile = profileRepository.findByMemberId(memberId);
+        if(existingProfile.isPresent()){
+            throw new CustomException(ErrorCode.MEMBER_EXIST_ERROR);
+        }
 
-        // 프로필 저장
+        //프로필 저장
         MonsterInfo info = infoRepository.findByMonsterId(1).get();
 
         MemberMonsterProfile profile = MemberMonsterProfile.builder()
@@ -210,6 +213,16 @@ public class MonsterServiceImpl implements MonsterService{
 
         profile.setMonsterInfo(info);
         profileRepository.save(profile);
+    }
+
+    @Override
+    @Transactional
+    public void deleteMemberMonsterProfile(Long memberId) {
+        profileRepository.delete(
+                profileRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND))
+        );
+
     }
 
 }

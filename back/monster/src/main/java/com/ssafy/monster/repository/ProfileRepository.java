@@ -12,5 +12,6 @@ import java.util.Optional;
 public interface ProfileRepository extends JpaRepository<MemberMonsterProfile, Long> {
 
     Optional<MemberMonsterProfile> findByMemberId(Long memberId);
+    void delete(MemberMonsterProfile profile);
 
 }
