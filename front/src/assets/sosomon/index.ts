@@ -20,19 +20,38 @@ export const type1 = [
     require('./type1/Pig.png'),
     require('./type1/Buffalo.png'),
     require('./type1/Ox.png'),
-    require('./type2/Jellyfish.png'),
     require('./type1/Elephant.png'),
+    require('./type2/Jellyfish.png'),
     require('./type2/Tuna.png'),
     require('./type2/Turtle.png'),
-    // FennecFox,
-    // Rabbit,
-    // Dog,
-    // Fox,
-    // Gazelle,
-    // Zebra,
-    // Pig,
-    // Buffalo,
-    // Ox,
-    // Elephant,
 ];
 
+export const type2 = [
+    require('./type2/Jellyfish.png'),
+    require('./type2/Tuna.png'),
+    require('./type2/Turtle.png'),
+    require('./type2/Alligator.png'),
+    require('./type2/Catfish.png'),
+    require('./type2/Prawn.png'),
+    require('./type2/RiverDolphin.png'),
+    require('./type2/SeaLion.png'),
+    require('./type2/Tortoise.png'),
+    require('./type2/Walrus.png'),
+];
+
+export const type3 = [
+    require('./type3/Chick.png'),
+    require('./type3/Dove.png'),
+    require('./type3/Flamingo.png'),
+    require('./type3/Hen.png'),
+    require('./type3/Kakapo.png'),
+    require('./type3/Macaw.png'),
+    require('./type3/Ostrich.png'),
+    require('./type3/Owl.png'),
+    require('./type3/Penguin.png'),
+    require('./type3/Shoebill.png'),
+];
+
+export const type4 = [
+    require('./type4/Whale.png'),
+];
