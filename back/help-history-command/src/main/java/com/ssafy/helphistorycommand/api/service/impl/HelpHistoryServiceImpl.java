@@ -26,7 +26,7 @@ public class HelpHistoryServiceImpl implements HelpHistoryService {
         try {
             JsonNode jsonNode = objectMapper.readTree(message.value());
             HelpHistoryRequest request = objectMapper.treeToValue(jsonNode.get("after"), HelpHistoryRequest.class);
-            helpHistoryRepository.save(helpHistoryMapper.requestToEntity(request));
+//            helpHistoryRepository.save(helpHistoryMapper.requestToEntity(request));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
