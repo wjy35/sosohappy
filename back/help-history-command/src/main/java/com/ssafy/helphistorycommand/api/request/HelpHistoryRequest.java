@@ -9,12 +9,13 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
+@ToString
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class HelpHistoryRequest {
     private long toMemberId;
     private long fromMemberId;
     private long categoryId;
     private String content;
-    private String x;
-    private String y;
+    private double x;
+    private double y;
 }
