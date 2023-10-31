@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import BottomSheet from "@/components/BottomSheet";
-import MapView, {PROVIDER_GOOGLE, Marker, Polyline} from "react-native-maps"
-import messaging from '@react-native-firebase/messaging'
+import MapView, {PROVIDER_GOOGLE, Marker, Polyline} from "react-native-maps";
+import {MAP_LINE_API_KEY} from "@env"
 
 import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 
@@ -26,6 +26,7 @@ const Map = () => {
       longitude: 127.036841,
     },
   ]);
+  const [points, setPoints] = useState<any>();
 
   const drawPolylineDirections = () => {
 
@@ -40,6 +41,48 @@ const Map = () => {
   const updateBottomSheetStatus = (updateStatus: Boolean) => {
     setBottomSheetStatus(updateStatus);
   }
+
+  //Todo : 현재는 파이낸셜센터 - 멀티캠퍼스 정적 위경도 넣어줌 (추후 GPS에 따른 위경도 변경)
+  const getArrivalToDesinationPointLine = async () => {
+    const options = {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        appKey: MAP_LINE_API_KEY,
+      },
+      body: JSON.stringify({
+        startX: 127.039681,
+        startY: 37.501409,
+        angle: 20,
+        speed: 30,
+        endPoiId: '10001',
+        endX: 127.036841,
+        endY: 37.500069,
+        passList: '127.039681,37.501409_127.036841,37.500069',
+        reqCoordType: 'WGS84GEO',
+        startName: '%EC%B6%9C%EB%B0%9C',
+        endName: '%EB%8F%84%EC%B0%A9',
+        searchOption: '0',
+        resCoordType: 'WGS84GEO',
+        sort: 'index'
+      })
+    };
+    
+    fetch('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&callback=function', options)
+      .then(response => response.json())
+      .then(response => setPoints(response))
+      .catch(err => console.error(err));
+  }
+
+  useEffect(() => {
+    const getApi = async () => {
+      await getArrivalToDesinationPointLine();
+      console.log(points.features[0].geometry);
+    }
+    
+    getApi();
+  }, [])
 
   return (
     <CommonLayout footer={true} headerType={0}>
@@ -72,7 +115,28 @@ const Map = () => {
               );
             })
           }
-          {drawPolylineDirections()}
+          {/* {drawPolylineDirections()} */}
+          {
+            points?.features?.map((point, index) => {
+                console.log(point);
+                if(point.geometry.type === "LineString"){
+                  const pathCoordinates = [];
+
+                  for(let i=0; i<point.geometry.coordinates.length; i++){
+                    pathCoordinates.push({latitude: point.geometry.coordinates[i][1], longitude: point.geometry.coordinates[i][0]});
+                  }
+                  return(
+                    <>
+                      <Polyline
+                        coordinates={pathCoordinates}
+                        strokeColor="red"
+                        strokeWidth={2}
+                      />
+                    </>
+                  );
+                }
+            })
+          }
         </MapView>
         
       </View>
