@@ -6,5 +6,6 @@ import java.util.Map;
 
 public interface MemberEntityRepository {
     void save(MemberEntity memberEntity);
+    void update(MemberEntity before,MemberEntity after);
 }
 
