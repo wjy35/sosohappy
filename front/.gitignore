@@ -66,5 +66,5 @@ yarn-error.log
 /coverage
 
 
-# google-service
+# google-service ignore
 /android/app/google-services.json
