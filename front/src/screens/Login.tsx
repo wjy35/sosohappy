@@ -1,12 +1,15 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 
 import LoginStyle from "@/styles/LoginStyle"
 import useInput from "@/hooks/useInput";
 import PlainInput from "@/components/PlainInput";
 import memberApi from "@/apis/memberApi";
+import pushAlarmApi from "@/apis/pushAlarmApi";
 import RNSecureStorage, {ACCESSIBLE} from "rn-secure-storage";
 import {useNavigation} from "@react-navigation/native";
+import axios from "axios";
+import messaging from '@react-native-firebase/messaging'
 
 const Login = () => {
   const navigation = useNavigation();
@@ -31,21 +34,34 @@ const Login = () => {
     onChange: checkPassword,
   });
 
+  const getFcmToken = async () => {
+    const fcmToken = await messaging().getToken();
+    return fcmToken;
+  };
+
   const login = async () => {
     try {
       const res = await memberApi.login({
         memberSignId: inputId.text,
         memberSignPassword: inputPassword.text,
       });
+
       if (res.status === 200){
         await RNSecureStorage.set("accessToken", res.data.result.authorization.accessToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
         await RNSecureStorage.set("refreshToken", res.data.result.authorization.refreshToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
+      }
+
+      const fcmToken = await getFcmToken();
+
+      const insertFcmTokenApi = await pushAlarmApi.insertFcmToken({fcmToken});
+
+      if(insertFcmTokenApi.status === 200){
         navigation.replace('Main');
       }
-    } catch (err) {
-      console.log(err);
-    }
 
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
