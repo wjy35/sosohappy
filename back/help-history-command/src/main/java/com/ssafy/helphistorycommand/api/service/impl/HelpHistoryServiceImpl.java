@@ -1,12 +1,14 @@
-package com.ssafy.helphistorycommand.service.impl;
+package com.ssafy.helphistorycommand.api.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.helphistorycommand.api.mapper.HelpHistoryMapper;
 import com.ssafy.helphistorycommand.api.request.HelpHistoryRequest;
 import com.ssafy.helphistorycommand.db.repository.HelpHistoryRepository;
-import com.ssafy.helphistorycommand.service.HelpHistoryService;
+import com.ssafy.helphistorycommand.api.service.HelpHistoryService;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,20 +19,16 @@ public class HelpHistoryServiceImpl implements HelpHistoryService {
 
     private final ObjectMapper objectMapper;
 
-    @Override
-    public void addHelpHistory(String message) {
-        try {
-            JsonNode jsonNode = objectMapper.readTree(message);
-            HelpHistoryRequest request = objectMapper.treeToValue(jsonNode.get("after"), HelpHistoryRequest.class);
+    private final HelpHistoryMapper helpHistoryMapper;
 
-//            System.out.println(request.toString());
+    @Override
+    public void addHelpHistory(ConsumerRecord<String,String> message) {
+        try {
+            JsonNode jsonNode = objectMapper.readTree(message.value());
+            HelpHistoryRequest request = objectMapper.treeToValue(jsonNode.get("after"), HelpHistoryRequest.class);
+            helpHistoryRepository.save(helpHistoryMapper.requestToEntity(request));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
-        // 글고 그걸 HelpHistoryEntity로 만들어
-
-        // 저장해
-//        helpHistoryRepository.save(helpHistoryEntity);
     }
 }
