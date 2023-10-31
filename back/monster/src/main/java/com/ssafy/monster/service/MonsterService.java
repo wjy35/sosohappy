@@ -25,4 +25,8 @@ public interface MonsterService {
 
     //도움 완료 시 나눔이 모음이 클로버 증가
     void updateClover(Long fromMemberId, Long toMemberId, int clover);
+
+    void updateMemberMonsterProfile(Long memberId, int profileMonsterId);
+
+    void deleteMemberMonsterProfile(Long memberId);
 }

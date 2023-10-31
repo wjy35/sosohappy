@@ -13,5 +13,6 @@ public interface GrowthRepository extends JpaRepository<MemberMonsterGrowth, Lon
     Optional<MemberMonsterGrowth> findByMemberMonsterId(Long memberMonsterId);
     Optional<MemberMonsterGrowth> findByMemberMonsterProfile_MemberIdAndMonsterType_TypeId(Long memberId, Byte typeId);
     List<MemberMonsterGrowth> findAllByMemberMonsterProfile_MemberId(Long memberId);
+    void deleteByMemberMonsterProfile_MemberId(Long memberId);
 
 }

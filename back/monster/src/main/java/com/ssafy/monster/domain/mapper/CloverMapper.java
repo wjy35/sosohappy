@@ -1,11 +1,8 @@
-package com.ssafy.monster.mapper;
+package com.ssafy.monster.domain.mapper;
 
-import com.ssafy.monster.domain.entity.MemberMonsterGrowth;
 import com.ssafy.monster.domain.entity.MemberMonsterProfile;
 import com.ssafy.monster.domain.res.CloverRes;
-import com.ssafy.monster.domain.res.MonsterRes;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
