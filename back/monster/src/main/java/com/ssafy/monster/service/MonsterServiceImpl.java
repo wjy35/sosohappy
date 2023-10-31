@@ -150,8 +150,7 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     @Transactional
     public void setInitialMonster(Long memberId) {
-        Optional<MemberMonsterProfile> existingProfile = profileRepository.findByMemberId(memberId);
-        if(existingProfile.isPresent()){
+        if(!profileRepository.existsByMemberId(memberId)){
             throw new CustomException(ErrorCode.MEMBER_EXIST_ERROR);
         }
 
@@ -207,21 +206,6 @@ public class MonsterServiceImpl implements MonsterService{
     @Transactional
     public void updateMemberMonsterProfile(Long memberId, int profileMonsterId) {
 
-        System.out.println(profileMonsterId);
-        System.out.println(profileMonsterId);
-        System.out.println(profileMonsterId);
-        System.out.println(profileMonsterId);
-        System.out.println(profileMonsterId);
-        System.out.println(profileMonsterId);
-        System.out.println(profileMonsterId);
-        System.out.println(profileMonsterId);
-        System.out.println(profileMonsterId);
-        System.out.println(profileMonsterId);
-        System.out.println(profileMonsterId);
-        System.out.println(profileMonsterId);
-
-
-
         MonsterInfo info = infoRepository.findByMonsterId(profileMonsterId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MONSTER_NOT_FOUND));
         MemberMonsterProfile profile = profileRepository.findByMemberId(memberId)
@@ -234,8 +218,7 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     @Transactional
     public void deleteMemberMonsterProfile(Long memberId) {
-        Optional<MemberMonsterProfile> profile = profileRepository.findByMemberId(memberId);
-        if(profile.isEmpty()){
+        if(!profileRepository.existsByMemberId(memberId)){
             throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
         } else {
             growthRepository.deleteByMemberMonsterProfile_MemberId(memberId);

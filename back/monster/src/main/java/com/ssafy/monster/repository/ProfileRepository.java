@@ -11,6 +11,7 @@ public interface ProfileRepository extends JpaRepository<MemberMonsterProfile, L
 
     Optional<MemberMonsterProfile> findByMemberId(Long memberId);
 
+    boolean existsByMemberId(Long memberId);
     void deleteByMemberId(Long memberId);
 
 }
