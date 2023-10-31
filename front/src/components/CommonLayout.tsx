@@ -31,11 +31,6 @@ const CommonLayout = ({footer, headerType, nowPage, children} : props) => {
         setIsVisible(true);
     }
 
-    const getFcmToken = async () => {
-      const fcmToken = await messaging().getToken();
-      console.log('[FCM Token] ', fcmToken);
-    };
-
     useEffect(() => {
         const focusNav = navigation.addListener('blur', () => {
             // do something
@@ -45,8 +40,6 @@ const CommonLayout = ({footer, headerType, nowPage, children} : props) => {
     }, [navigation]);
 
     useEffect(() => {
-      getFcmToken();
-  
       const unsubscribe = messaging().onMessage(async remoteMessage => {
         console.log('[Remote Message] ', JSON.stringify(remoteMessage));
       });

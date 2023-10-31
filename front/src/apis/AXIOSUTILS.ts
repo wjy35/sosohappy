@@ -2,7 +2,6 @@ import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import {Alert} from "react-native";
 import {baseURL} from "@/apis/BASEURL";
 import RNSecureStorage, {ACCESSIBLE} from "rn-secure-storage";
-import { logout } from "@/apis/logout";
 
 const CONTENT_TYPE = "application/json; charset=utf-8";
 const TIMEOUT = 1000;
@@ -22,7 +21,7 @@ const getValueFor = async (key: string) => {
 };
 
 const getAuthorizationHeader = async (tokenKey: string) => {
-    return `Bearer ${await getValueFor(tokenKey)}`;
+    return await getValueFor(tokenKey);
 };
 
 const setPublicHeaders = async (config: any) => {
@@ -34,7 +33,7 @@ const setPublicHeaders = async (config: any) => {
 const setPrivateHeaders = async (config: any) => {
     // default header 설정
     config.headers["Content-Type"] = CONTENT_TYPE;
-    config.headers["Authorization"] = await getAuthorizationHeader("accessToken");
+    config.headers["authorization"] = await getAuthorizationHeader("accessToken");
     return config;
 };
 
