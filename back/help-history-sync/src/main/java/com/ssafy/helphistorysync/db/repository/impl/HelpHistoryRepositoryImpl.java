@@ -17,17 +17,11 @@ public class HelpHistoryRepositoryImpl implements HelpHistoryRepository {
     private final ObjectMapper objectMapper;
 
     private final ListOperations<String, Object> listOperations;
+
     @Override
-    public void addHelpHistory(HelpHistoryEntity helpHistoryEntity) {
-        try {
-            String json = objectMapper.writeValueAsString(objectMapper.convertValue(helpHistoryEntity, Map.class));
-
-            listOperations.rightPush("histories:toMemberId:"+helpHistoryEntity.getToMemberId(), json);
-            listOperations.rightPush("histories:fromMemberId:"+helpHistoryEntity.getFromMemberId(),json);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-
+    public void addHelpHistory(HelpHistoryEntity helpHistoryEntity) throws JsonProcessingException {
+        String json = objectMapper.writeValueAsString(objectMapper.convertValue(helpHistoryEntity, Map.class));
+        listOperations.rightPush("histories:toMemberId:" + helpHistoryEntity.getToMemberId(), json);
+        listOperations.rightPush("histories:fromMemberId:" + helpHistoryEntity.getFromMemberId(), json);
     }
 }

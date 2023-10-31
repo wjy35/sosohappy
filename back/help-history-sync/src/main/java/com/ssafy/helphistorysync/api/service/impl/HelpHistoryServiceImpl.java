@@ -23,7 +23,7 @@ public class HelpHistoryServiceImpl implements HelpHistoryService {
     private final HelpHistoryRepository helpHistoryRepository;
 
     @Override
-    public void addHelpHistory(ConsumerRecord<String, String> message) {
+    public void addHelpHistory(ConsumerRecord<String, String> message) throws JsonProcessingException {
 
         HelpHistoryRequest helpHistoryRequest = getAfter(message);
 
@@ -33,12 +33,8 @@ public class HelpHistoryServiceImpl implements HelpHistoryService {
     }
 
     @Override
-    public HelpHistoryRequest getAfter(ConsumerRecord<String, String> message) {
-        try {
-            JsonNode jsonNode = objectMapper.readTree(message.value());
-            return objectMapper.treeToValue(jsonNode.get("after"), HelpHistoryRequest.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    public HelpHistoryRequest getAfter(ConsumerRecord<String, String> message) throws JsonProcessingException {
+        JsonNode jsonNode = objectMapper.readTree(message.value());
+        return objectMapper.treeToValue(jsonNode.get("after"), HelpHistoryRequest.class);
     }
 }
