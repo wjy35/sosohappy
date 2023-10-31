@@ -206,6 +206,22 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     @Transactional
     public void updateMemberMonsterProfile(Long memberId, int profileMonsterId) {
+
+        System.out.println(profileMonsterId);
+        System.out.println(profileMonsterId);
+        System.out.println(profileMonsterId);
+        System.out.println(profileMonsterId);
+        System.out.println(profileMonsterId);
+        System.out.println(profileMonsterId);
+        System.out.println(profileMonsterId);
+        System.out.println(profileMonsterId);
+        System.out.println(profileMonsterId);
+        System.out.println(profileMonsterId);
+        System.out.println(profileMonsterId);
+        System.out.println(profileMonsterId);
+
+
+
         MonsterInfo info = infoRepository.findByMonsterId(profileMonsterId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MONSTER_NOT_FOUND));
         MemberMonsterProfile profile = profileRepository.findByMemberId(memberId)

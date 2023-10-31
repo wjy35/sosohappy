@@ -9,9 +9,11 @@ import com.ssafy.monster.service.MonsterServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,8 +22,8 @@ public class KafkaConsumer {
     private final MonsterServiceImpl monsterService;
     @KafkaListener(topics = "member-command-mysql.member.member")
     public void consume(ConsumerRecord<String,String> consumerRecord) {
+        if(isEmptyEvent(consumerRecord)) return;
         String message = consumerRecord.value();
-        System.out.println("message = " + message);
 
         ObjectMapper objMapper = new ObjectMapper();
 
@@ -43,5 +45,9 @@ public class KafkaConsumer {
         } catch (IOException e) {
             throw new CustomException(ErrorCode.JSON_PARSE_ERROR);
         }
+    }
+
+    private boolean isEmptyEvent(ConsumerRecord<?,?> consumerRecord){
+        return Optional.ofNullable(consumerRecord.value()).isEmpty();
     }
 }
