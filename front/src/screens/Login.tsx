@@ -1,7 +1,5 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 import LoginStyle from "@/styles/LoginStyle"
 import useInput from "@/hooks/useInput";
