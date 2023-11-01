@@ -11,6 +11,7 @@ import lombok.*;
 @ToString
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class HelpHistoryRequest {
+    private long historyId;
     private long toMemberId;
     private long fromMemberId;
     private long categoryId;
