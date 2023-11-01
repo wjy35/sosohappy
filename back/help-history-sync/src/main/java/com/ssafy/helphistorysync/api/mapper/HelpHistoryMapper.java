@@ -20,6 +20,7 @@ public interface HelpHistoryMapper {
     @Mapping(target = "toMemberId", source = "helpHistoryRequest.toMemberId")
     @Mapping(target = "fromMemberId", source = "helpHistoryRequest.fromMemberId")
     @Mapping(target = "historyId", source = "helpHistoryRequest.historyId")
+    @Mapping(target = "createdAt", source = "helpHistoryRequest.createdAt")
     HelpHistoryEntity requestToEntity(HelpHistoryRequest helpHistoryRequest, CategoryRequest categoryRequest);
 
 }
