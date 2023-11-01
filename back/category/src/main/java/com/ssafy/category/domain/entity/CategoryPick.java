@@ -28,7 +28,7 @@ public class CategoryPick {
     private Long memberId;
 
     @NotNull
-    @ColumnDefault("1")
+    @ColumnDefault("0")
     private int pickCount;
 
     @UpdateTimestamp

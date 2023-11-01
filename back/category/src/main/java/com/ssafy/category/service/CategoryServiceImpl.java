@@ -7,7 +7,7 @@ import com.ssafy.category.domain.entity.CategoryPick;
 import com.ssafy.category.domain.mapper.CategoryMapper;
 import com.ssafy.category.domain.res.CategoryRes;
 import com.ssafy.category.repository.CategoryRepository;
-import com.ssafy.category.repository.PickQueryRepository;
+import com.ssafy.category.repository.PickRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService{
 
     private final CategoryRepository categoryRepository;
-    private final PickQueryRepository pickQueryRepository;
+    private final PickRepository pickRepository;
 
     /**
      * categoryId로 찾기 카테고리 정보 찾기 (1개)
@@ -52,7 +52,7 @@ public class CategoryServiceImpl implements CategoryService{
      */
     @Override
     public List<CategoryRes> getRecentCategoryList(Long memberId) {
-        List<CategoryPick> pickList = pickQueryRepository.findRecentListByMemberId(memberId);
+        List<CategoryPick> pickList = pickRepository.findRecentListByMemberId(memberId);
 
         List<CategoryRes> categoryResList = pickList
                 .stream().map(m -> CategoryMapper.INSTANCE.toCategoryRes(m.getCategory()))
