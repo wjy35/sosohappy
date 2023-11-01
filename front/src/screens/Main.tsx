@@ -12,10 +12,11 @@ import RightArrowIcon from "@/assets/img/right-arrow-icon.png"
 import MainStyle from "@/styles/MainStyle";
 
 import {observer} from 'mobx-react';
-import store from '@/store/indexStore';
+import useStore from "@/hooks/useStore";
 
-const Main = observer(() => {
-  const {userStore} = store;
+const Main = observer(({user}) => {
+  const {userStore} = useStore();
+  console.log(userStore.user);
 
   return (
     <CommonLayout footer={true} headerType={0} nowPage={'Main'}>
