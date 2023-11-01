@@ -66,7 +66,7 @@ spring:
         - id: category
           uri: lb://CATEGORY-SERVICE/
           predicates:
-            - Path=/category/default, /category/getCategoryInfo
+            - Path=/category/default,/category/getCategoryInfo/**
           filters:
             - RewritePath=/category/(?<path>.*),/$\{path}
         - id: category-authorization
