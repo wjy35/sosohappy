@@ -77,6 +77,7 @@ const MyPageStyle = StyleSheet.create({
 
     ThumbnailCharacterWrap:{
         width:responsiveWidth(92),
+        height: responsiveWidth(80),
         marginHorizontal:responsiveWidth(4),
         marginTop:26,
         position:"relative",
@@ -95,7 +96,7 @@ const MyPageStyle = StyleSheet.create({
     bookIcon:{
         width:24,
         height:24,
-        
+
     },
 
 

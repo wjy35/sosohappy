@@ -1,7 +1,5 @@
 import {View, Text, Image, TouchableOpacity, ImageBackground} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import History from "@/components/History";
 
 import FishThumbnail from "@/assets/img/fish-thumbnail.png"
@@ -11,9 +9,7 @@ import BookIcon from "@/assets/img/book-icon.png"
 import GrayMoreIcon from "@/assets/img/gray-more-icon.png"
 
 import MyPageStyle from "@/styles/MyPageStyle";
-
-import test from "@/assets/sosomon/type1/FennecFox.png";
-import SosomonDictionary from "@/components/SosomonDictionary";
+import { WebView } from "react-native-webview";
 
 const MyPage = () => {
   return (
@@ -55,10 +51,7 @@ const MyPage = () => {
 
 
       <View style={MyPageStyle.ThumbnailCharacterWrap}>
-        <Image
-          source={FishThumbnail}
-          style={MyPageStyle.MySelectedCharImg}
-        />
+        <WebView source={{uri: 'http://10.0.2.2:5173/sosomon/1/1'}}/>
         <TouchableOpacity activeOpacity={0.7} style={MyPageStyle.bookIconWrap}>
           <Image
             source={BookIcon}
@@ -91,9 +84,6 @@ const MyPage = () => {
           <Text style={MyPageStyle.expInfo}>진화까지 얼마 안남았어요! 새로운 행운력을 모아보세요!</Text>
         </View>
       </View>
-
-      <SosomonDictionary />
-
       <View style={MyPageStyle.historyTitleWrap}>
         <Text style={MyPageStyle.historyTitle}>나의 최근 행운</Text>
         <History/>
