@@ -19,6 +19,16 @@ const SosomonDictionaryStyle = StyleSheet.create({
         backgroundColor:"#E8F3FE",
         zIndex:9999,
     },
+    closeIconWrap:{
+        display:"flex",
+        flexDirection:"row",
+        justifyContent:"flex-end",
+        alignItems:"center",
+    },
+    closeIcon:{
+        width:16,
+        height:16,
+    },
     collectionTitleWrap:{
         paddingTop:14,
     },
@@ -35,9 +45,6 @@ const SosomonDictionaryStyle = StyleSheet.create({
         color:"#9FA8AF",
     },
 
-    characterCard:{
-        
-    },
     characterScrollView:{
         width:responsiveWidth(50),
     },
@@ -65,6 +72,9 @@ const SosomonDictionaryStyle = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center",
     },
+    categoryActiveWrap:{
+        backgroundColor:"#989898"
+    },
     categoryImg:{
         width:30,
         height:30,
@@ -75,6 +85,9 @@ const SosomonDictionaryStyle = StyleSheet.create({
         fontWeight:"500",
         color:"#989898",
         marginTop:2,
+    },
+    categoryActiveText:{
+        color:"#FFF",
     },
 });
 

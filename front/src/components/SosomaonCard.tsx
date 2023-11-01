@@ -1,12 +1,15 @@
-import { View, Text, Image, TouchableOpacity, ImageBackground } from "react-native"
+import { View, Text, TouchableOpacity, ImageBackground } from "react-native"
+import { lock } from "@/assets/icons/icons";
+import { SvgXml } from "react-native-svg";
 
 import SosomonCardStyle from "@/styles/SosomonCardStyle"
 
 interface propsType{
     src: HTMLImageElement,
+    isLocked: Boolean,
 }
 
-const SosomonCard = ({src}: propsType) => {
+const SosomonCard = ({src, isLocked}: propsType) => {
     return(
         <>
             <View style={SosomonCardStyle.cardWrap}>
@@ -16,6 +19,13 @@ const SosomonCard = ({src}: propsType) => {
                         resizeMode="cover"
                         style={SosomonCardStyle.characterRoom}
                     />
+                    {
+                        isLocked &&
+                        <SvgXml
+                            xml={lock}
+                            style={SosomonCardStyle.lockIcon}
+                        />
+                    }
                 </View>
                 <View style={SosomonCardStyle.cardInfoFlexWrap}>
                     <View style={SosomonCardStyle.cardInfoWrap}>
@@ -24,9 +34,16 @@ const SosomonCard = ({src}: propsType) => {
                     </View>
                     <View>
                         <TouchableOpacity activeOpacity={0.7}>
-                            <View style={SosomonCardStyle.activeButton}>
-                                <Text style={SosomonCardStyle.activeButtonText}>커밍순</Text>
-                            </View>
+                            {
+                                isLocked ?
+                                <View style={SosomonCardStyle.inActiveButton}>
+                                    <Text style={SosomonCardStyle.inActiveButtonText}>커밍순</Text>
+                                </View>
+                                :
+                                <View style={SosomonCardStyle.activeButton}>
+                                    <Text style={SosomonCardStyle.activeButtonText}>프로필 변경</Text>
+                                </View>
+                            }
                         </TouchableOpacity>
                     </View>
                 </View>
