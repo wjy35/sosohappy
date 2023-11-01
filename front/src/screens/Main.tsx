@@ -1,8 +1,5 @@
 import {View, Text, Image, TouchableOpacity, ScrollView} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-
 import MainImg from "@/assets/img/main-img.png"
 import HandShakeIcon from "@/assets/img/handshake-icon.png"
 import MegaphoneIcon from "@/assets/img/megaphone-icon.png"
@@ -12,10 +9,16 @@ import RightArrowIcon from "@/assets/img/right-arrow-icon.png"
 import MainStyle from "@/styles/MainStyle";
 
 import {observer} from 'mobx-react';
-import store from '@/store/indexStore';
+import useStore from "@/hooks/useStore";
+import {useNavigation} from "@react-navigation/native";
 
 const Main = observer(() => {
-  const {userStore} = store;
+  const {userStore} = useStore();
+  const navigation =  useNavigation();
+
+  const goto = (next: string) => {
+    userStore.user?(navigation.navigate(next)):(navigation.navigate('Login'));
+  }
 
   return (
     <CommonLayout footer={true} headerType={0} nowPage={'Main'}>
@@ -36,9 +39,13 @@ const Main = observer(() => {
             <Text style={MainStyle.helpButtonText}>도움 찾아가기</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.7}>
-          <Text style={MainStyle.signUpText}>회원이 아니신가요?</Text>
-        </TouchableOpacity>
+        {
+          !userStore.user && (
+                <TouchableOpacity activeOpacity={0.7}>
+                  <Text style={MainStyle.signUpText}>회원이 아니신가요?</Text>
+                </TouchableOpacity>
+            )
+        }
       </View>
 
       <View>

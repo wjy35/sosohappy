@@ -2,12 +2,13 @@ import React, {useEffect} from 'react';
 import Navigation from '@/navigators/Navigation';
 import useLocation from "@/hooks/useLocation";
 import {AppState} from "react-native";
+import {Provider} from "mobx-react";
+import userStore from "@/store/userStore";
 
 function App(): JSX.Element {
     const location = useLocation({});
 
     useEffect(() => {
-        console.log('gdgd')
         const appState = AppState.addEventListener('change', ()=>{
             if (AppState.currentState === 'active'){
                 location.setForeground();
@@ -21,9 +22,9 @@ function App(): JSX.Element {
     }, []);
 
     return (
-    <>
+    <Provider userStore={userStore}>
       <Navigation/>
-    </>
+    </Provider>
     );
 }
 export default App;
