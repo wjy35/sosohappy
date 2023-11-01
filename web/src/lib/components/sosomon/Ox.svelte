@@ -64,7 +64,7 @@
                 <T.SkinnedMesh
                         name="Mesh"
                         geometry={gltf.nodes.Mesh.geometry}
-                        material={gltf.materials.M_Ox}
+                        material={gltf.materials["M_Ox"]}
                         material.color="white"
                         skeleton={gltf.nodes.Mesh.skeleton}
                         on:click={onEvent}
