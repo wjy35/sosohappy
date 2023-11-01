@@ -31,16 +31,27 @@ public class CategoryController {
         return new ResponseEntity<>(formattedResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/categories")
+    @GetMapping("/default")
     public ResponseEntity<FormattedResponse> getCategoryList(@RequestHeader Long memberId) {
         List<CategoryRes> defaultCategoryResList = categoryServiceImpl.getdefaultCategoryList();
-        List<CategoryRes> recentCategoryResList = categoryServiceImpl.getRecentCategoryList(memberId);
 
         FormattedResponse formattedResponse = FormattedResponse.builder()
                 .status("success")
                 .message("카테고리 정보를 성공적으로 불러왔습니다.")
                 .result("defaultCategoryList",defaultCategoryResList)
-                .result("recentCategoryResList",recentCategoryResList)
+                .build();
+
+        return new ResponseEntity<>(formattedResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/recent")
+    public ResponseEntity<FormattedResponse> getRecentCategoryList(@RequestHeader Long memberId) {
+        List<CategoryRes> recentCategoryResList = categoryServiceImpl.getRecentCategoryList(memberId);
+
+        FormattedResponse formattedResponse = FormattedResponse.builder()
+                .status("success")
+                .message("카테고리 정보를 성공적으로 불러왔습니다.")
+                .result("recentCategoryList", recentCategoryResList)
                 .build();
 
         return new ResponseEntity<>(formattedResponse, HttpStatus.OK);

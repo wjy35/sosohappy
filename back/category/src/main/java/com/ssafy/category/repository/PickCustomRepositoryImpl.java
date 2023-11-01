@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class PickQueryRepository {
+public class PickCustomRepositoryImpl implements PickCustomRepository {
 
     private final JPAQueryFactory queryFactory;
     public List<CategoryPick> findRecentListByMemberId(Long memberId) {
