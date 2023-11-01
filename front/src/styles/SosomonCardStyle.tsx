@@ -11,10 +11,19 @@ const SosomonCardStyle = StyleSheet.create({
     characterRoomWrap:{
         width:responsiveWidth(40),
         height:responsiveWidth(30),
+        position:"relative",
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center",
     },
     characterRoom:{
         width:"100%",
         height:"100%",
+    },
+    lockIcon:{
+        width:46,
+        height:46,
+        position:"absolute",
     },
     cardInfoFlexWrap:{
         padding:20,
@@ -32,17 +41,29 @@ const SosomonCardStyle = StyleSheet.create({
         fontWeight:"400",
         color:"#898D90",
     },
-    activeButton:{
+    inActiveButton:{
         padding:4,
         backgroundColor:"#F1F1F1",
         marginTop:8,
         borderRadius:8,
     },
-    activeButtonText:{
+    activeButton:{
+        padding:4,
+        backgroundColor:"#9D9AF9",
+        marginTop:8,
+        borderRadius:8,
+    },
+    inActiveButtonText:{
         textAlign:"center",
         fontSize:12,
         fontWeight:"500",
         color:"#B2B2B2",
+    },
+    activeButtonText:{
+        textAlign:"center",
+        fontSize:12,
+        fontWeight:"500",
+        color:"#FFFFFF",
     },
 })
 

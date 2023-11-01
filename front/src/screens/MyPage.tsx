@@ -1,4 +1,5 @@
-import {View, Text, Image, TouchableOpacity, ImageBackground} from "react-native";
+import { useState } from "react"
+import {View, Text, Image, TouchableOpacity} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import History from "@/components/History";
 
@@ -9,9 +10,16 @@ import BookIcon from "@/assets/img/book-icon.png"
 import GrayMoreIcon from "@/assets/img/gray-more-icon.png"
 
 import MyPageStyle from "@/styles/MyPageStyle";
+
 import { WebView } from "react-native-webview";
+import SosomonDictionary from "@/components/SosomonDictionary";
 
 const MyPage = () => {
+  const [modalState, setModalState] = useState<Boolean>(false);
+
+  const updateModalState = (status: Boolean) => {
+    setModalState(status);
+  }
   return (
     <CommonLayout headerType={0} footer={true}>
       <View style={MyPageStyle.myProfileWrap}>
@@ -51,7 +59,10 @@ const MyPage = () => {
 
 
       <View style={MyPageStyle.ThumbnailCharacterWrap}>
-        <WebView source={{uri: 'http://10.0.2.2:5173/sosomon/1/1'}}/>
+        <Image
+          source={FishThumbnail}
+          style={MyPageStyle.MySelectedCharImg}
+        />
         <TouchableOpacity activeOpacity={0.7} style={MyPageStyle.bookIconWrap}>
           <Image
             source={BookIcon}
@@ -84,6 +95,9 @@ const MyPage = () => {
           <Text style={MyPageStyle.expInfo}>진화까지 얼마 안남았어요! 새로운 행운력을 모아보세요!</Text>
         </View>
       </View>
+
+      <SosomonDictionary />
+
       <View style={MyPageStyle.historyTitleWrap}>
         <Text style={MyPageStyle.historyTitle}>나의 최근 행운</Text>
         <History/>
