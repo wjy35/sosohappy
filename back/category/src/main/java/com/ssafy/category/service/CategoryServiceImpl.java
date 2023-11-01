@@ -60,4 +60,23 @@ public class CategoryServiceImpl implements CategoryService{
 
         return categoryResList;
     }
+    /**
+     * help-history 이벤트 발생 시 pick에 추가하기
+     */
+    @Override
+    @Transactional
+    public void addCategoryPick(Long toMemberId, Long category_id) {
+        Category category = categoryRepository.findByCategoryId(category_id).get();
+
+        CategoryPick init = CategoryMapper.INSTANCE.toPickEntity(toMemberId, category);
+
+        CategoryPick pick = pickRepository.findByMemberIdAndCategory_CategoryId(toMemberId, category_id)
+                .orElseGet(() -> pickRepository.save(init));
+
+        pick.addPickCount();
+
+        pickRepository.save(pick);
+    }
+
+
 }

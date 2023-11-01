@@ -33,4 +33,9 @@ public class CategoryPick {
 
     @UpdateTimestamp
     private Timestamp pickTime;
+
+    public void addPickCount() {
+        this.pickCount += 1;
+    }
+
 }
