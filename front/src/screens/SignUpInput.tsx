@@ -7,7 +7,7 @@ import SignUpInputStyle from "@/styles/SignUpInputStyle";
 import {useEffect, useState} from "react";
 import PlainInput from "@/components/PlainInput";
 import useInput from "@/hooks/useInput";
-import {useRoute} from "@react-navigation/native";
+import {useNavigation, useRoute} from "@react-navigation/native";
 import memberApi from "@/apis/memberApi";
 import axios from "axios";
 
@@ -15,6 +15,7 @@ const SignUpInput = () => {
   const route = useRoute();
   const [isActive, setIsActive] = useState(false);
   const [selectedGender, setSelectedGender] = useState(1);
+  const navigation = useNavigation();
 
   const checkMemberId = async (newText: string) => {
     try {
@@ -110,12 +111,10 @@ const SignUpInput = () => {
         gender: selectedGender,
       })
       if (res.status === 200){
-        console.log(res);
+        navigation.replace('Login');
       }
     } catch (err) {
-      console.log(err.response.data);
-      console.log(err.response.status);
-      console.log(err.response.headers);
+      console.log(err);
     }
   }
 
