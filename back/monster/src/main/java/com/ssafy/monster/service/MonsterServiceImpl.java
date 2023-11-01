@@ -41,7 +41,9 @@ public class MonsterServiceImpl implements MonsterService{
     @PostConstruct
     private void getExpinfo() {
         List<Integer> expList = infoRepository.getMonsterCloverInfo();
-        expArr = expList.stream().mapToDouble(i -> i).toArray();
+        double[] temp = expList.stream().mapToDouble(i -> i).toArray();
+        expArr = Arrays.copyOf(temp, temp.length+1);
+        expArr[temp.length] = expArr[temp.length-1]+1;
     }
 
     private Pair<Integer, Double> getCurrentPoint(int currentClover){
@@ -224,6 +226,17 @@ public class MonsterServiceImpl implements MonsterService{
             growthRepository.deleteByMemberMonsterProfile_MemberId(memberId);
             profileRepository.deleteByMemberId(memberId);
         }
+    }
+
+    @Override
+    public boolean checkMaxLevel(Long memberId) {
+        List<MemberMonsterGrowth> growthList = growthRepository.findAllByMemberMonsterProfile_MemberId(memberId);
+
+        for(MemberMonsterGrowth growth : growthList){
+            if(growth.getMonsterClover() < expArr[expArr.length-2]) return false;
+        }
+
+        return true;
     }
 
 }
