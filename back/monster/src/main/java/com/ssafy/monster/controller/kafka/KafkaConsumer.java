@@ -33,13 +33,13 @@ public class KafkaConsumer {
             MemberDTO before = memberUpdateEvent.getBefore();
             MemberDTO after = memberUpdateEvent.getAfter();
 
-            if(memberUpdateEvent.getOp().equals("c")){
+            if("c".equals(memberUpdateEvent.getOp())){
                 monsterService.setInitialMonster(after.getMemberId());
-            } else if(memberUpdateEvent.getOp().equals("u")) {
+            } else if("u".equals(memberUpdateEvent.getOp())) {
                 if(before.getProfileMonsterId() != after.getProfileMonsterId()){
                     monsterService.updateMemberMonsterProfile(after.getMemberId(), after.getProfileMonsterId());
                 }
-            } else if (memberUpdateEvent.getOp().equals("d")) {
+            } else if ("d".equals(memberUpdateEvent.getOp())) {
                 monsterService.deleteMemberMonsterProfile(before.getMemberId());
             }
         } catch (IOException e) {
