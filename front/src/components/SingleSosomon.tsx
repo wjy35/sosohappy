@@ -6,7 +6,6 @@ interface propsType {
 }
 
 const SingleSosomon = ({src}: propsType) => {
-    console.log("single sosomon", src)
     return (
         <View style={{width: 50, height: 50, borderWidth: 1}}>
             <Image
