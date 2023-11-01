@@ -28,9 +28,14 @@ public class CategoryPick {
     private Long memberId;
 
     @NotNull
-    @ColumnDefault("1")
+    @ColumnDefault("0")
     private int pickCount;
 
     @UpdateTimestamp
     private Timestamp pickTime;
+
+    public void addPickCount() {
+        this.pickCount += 1;
+    }
+
 }
