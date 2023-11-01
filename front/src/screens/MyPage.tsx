@@ -2,6 +2,7 @@ import { useState } from "react"
 import {View, Text, Image, TouchableOpacity} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import History from "@/components/History";
+import { useNavigation } from "@react-navigation/native";
 
 import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 import GearIcon from "@/assets/img/gear-icon.png"
@@ -15,11 +16,13 @@ import { WebView } from "react-native-webview";
 import SosomonDictionary from "@/components/SosomonDictionary";
 
 const MyPage = () => {
+  const navigation = useNavigation();
   const [modalState, setModalState] = useState<Boolean>(false);
 
   const updateModalState = (status: Boolean) => {
     setModalState(status);
   }
+
   return (
     <CommonLayout headerType={0} footer={true}>
       <View style={MyPageStyle.myProfileWrap}>
@@ -63,7 +66,7 @@ const MyPage = () => {
           source={FishThumbnail}
           style={MyPageStyle.MySelectedCharImg}
         />
-        <TouchableOpacity activeOpacity={0.7} style={MyPageStyle.bookIconWrap}>
+        <TouchableOpacity activeOpacity={0.7} style={MyPageStyle.bookIconWrap} onPress={() => updateModalState(true)}>
           <Image
             source={BookIcon}
             style={MyPageStyle.bookIcon}
@@ -78,7 +81,7 @@ const MyPage = () => {
             <Text style={MyPageStyle.expMainTitle}>Amy의 성장경험치</Text>
             <Text style={MyPageStyle.expSubTitle}>당신의 선행력을 수치로 보여드려요</Text>
           </View>
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Character')}>
             <Image
               source={GrayMoreIcon}
               style={MyPageStyle.grayMoreIcon}
@@ -96,7 +99,9 @@ const MyPage = () => {
         </View>
       </View>
 
-      <SosomonDictionary />
+      {
+        modalState && <SosomonDictionary updateModalState={updateModalState}/>
+      }
 
       <View style={MyPageStyle.historyTitleWrap}>
         <Text style={MyPageStyle.historyTitle}>나의 최근 행운</Text>

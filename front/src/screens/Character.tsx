@@ -1,17 +1,40 @@
-import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native"
+import { useEffect, useState } from "react";
+import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Image } from "react-native"
 import CommonLayout from "@/components/CommonLayout";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import monsterApi from "@/apis/monsterApi";
 
-import FeedAnimalImg1 from "@/assets/img/feed-animal1.png";
-import FeedAnimalImg2 from "@/assets/img/feed-animal2.png";
-import FeedAnimalImg3 from "@/assets/img/feed-animal3.png";
 import CloverIcon from "@/assets/img/clover-icon.png"
 import BearAnimationIcon from "@/assets/img/bear-animation-icon.png"
 
+import { type1, type2, type3, type4 } from "@/assets/sosomon";
+
 import CharacterStyle from "@/styles/CharacterStyle";
 
+enum CategoryType{
+    "army",
+    "navy",
+    "airForce"
+}
+
 const Character = () => {
+    const [categoryType, setCategoryType] = useState<CategoryType>(CategoryType.army);
+    const [myMonsters, setMyMonsters] = useState<any[] | null>(null);
+    console.log(myMonsters);
+
+    useEffect(() => {
+        const getMyDict = async () => {
+            const collectedMonsterApi = await monsterApi.getMyDict();
+
+            if(collectedMonsterApi.status === 200){
+                setMyMonsters(collectedMonsterApi.data.result?.monsterList);
+                console.log(myMonsters);
+            }
+        }
+        getMyDict();
+    }, [])
+
     return(
         <CommonLayout>
             <Header/>
@@ -23,36 +46,100 @@ const Character = () => {
                 </Text>
                 <TouchableOpacity activeOpacity={0.7}>
                     <View style={CharacterStyle.feedButton}>
-                        <Text style={CharacterStyle.feedButtonText}>Amy 에게 먹이주기</Text>
+                        {
+                            categoryType === CategoryType.army && myMonsters &&
+                            <Text style={CharacterStyle.feedButtonText}>육식동물에게 먹이주기</Text>
+                        }
+                        {
+                            categoryType === CategoryType.navy && myMonsters &&
+                            <Text style={CharacterStyle.feedButtonText}>해양동물에게 먹이주기</Text>
+                        }
+                        {
+                            categoryType === CategoryType.airForce && myMonsters &&
+                            <Text style={CharacterStyle.feedButtonText}>비행동물에게 먹이주기</Text>
+                        }
                     </View>
                 </TouchableOpacity>
             </View>
 
             <View style={CharacterStyle.feedAnimalWrap}>
-                <ScrollView horizontal={true}>
-                    <Image
-                        source={FeedAnimalImg1}
-                        style={CharacterStyle.feedAnimalImg}
-                    />
-                    <Image
-                        source={FeedAnimalImg2}
-                        style={CharacterStyle.feedAnimalImg}
-                    />
-                    <Image
-                        source={FeedAnimalImg3}
-                        style={CharacterStyle.feedAnimalImg}
-                    />
+                <ScrollView
+                    horizontal={true}
+                    onScrollEndDrag={(x: any) => {
+                        console.log(x.nativeEvent.contentOffset.x );
+                        if(x.nativeEvent.contentOffset.x > 405){
+                            setCategoryType(CategoryType.airForce);
+                        }else if(x.nativeEvent.contentOffset.x > 185){
+                            setCategoryType(CategoryType.navy);
+                        }else{
+                            setCategoryType(CategoryType.army);
+                        }
+                    }}
+                >
+
+                    {
+                        myMonsters && 
+                        <ImageBackground
+                            source={type1[myMonsters[0].level]}
+                            style={CharacterStyle.feedAnimalImg}
+                            resizeMode="cover"
+                        />
+                    }
+                    {
+                        myMonsters &&
+                        <ImageBackground
+                            source={type2[myMonsters[1].level]}
+                            style={CharacterStyle.feedAnimalImg}
+                            resizeMode="cover"
+                        />
+                    }
+                    {
+                        myMonsters &&
+                        <ImageBackground
+                            source={type3[myMonsters[2].level]}
+                            style={CharacterStyle.feedAnimalImg}
+                            resizeMode="cover"
+                        />
+                    }
                 </ScrollView>
             </View>
 
             <View style={CharacterStyle.selectedCharaterWrap}>
-                <Image
-                    source={FeedAnimalImg1}
-                    style={CharacterStyle.selectedCharacterImg}
-                />
+                {
+                    categoryType === CategoryType.army && myMonsters &&
+                    <Image
+                        source={type1[myMonsters[0].level]}
+                        style={CharacterStyle.selectedCharacterImg}
+                    />
+                }
+                {
+                    categoryType === CategoryType.navy && myMonsters &&
+                    <Image
+                        source={type2[myMonsters[1].level]}
+                        style={CharacterStyle.selectedCharacterImg}
+                    />
+                }
+                {
+                    categoryType === CategoryType.airForce && myMonsters &&
+                    <Image
+                        source={type3[myMonsters[2].level]}
+                        style={CharacterStyle.selectedCharacterImg}
+                    />
+                }
                 <View style={CharacterStyle.selectedCharacterInfo}>
                     <Text style={CharacterStyle.selectedCharacterInfoTitle}>현재 성장 단계</Text>
-                    <Text style={CharacterStyle.selectedCharacterInfoLevel}>초식동물 Lv.3</Text>
+                    {
+                        categoryType === CategoryType.army &&
+                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>육식동물 Lv.3</Text>
+                    }
+                    {
+                        categoryType === CategoryType.navy &&
+                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>해양동물 Lv.3</Text>
+                    }
+                    {
+                        categoryType === CategoryType.airForce &&
+                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>비행동물 Lv.3</Text>
+                    }
                 </View>
             </View>
             <View style={CharacterStyle.expWrap}>
