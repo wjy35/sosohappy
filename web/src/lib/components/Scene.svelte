@@ -22,14 +22,14 @@
 />
 <T.AmbientLight intensity={2} />
 
-<Grid
-        position.y={-0.001}
-        cellColor="#000000"
-        sectionColor="#ffffff"
-        sectionThickness={0}
-        fadeDistance={25}
-        cellSize={2}
-/>
+<!--<Grid-->
+<!--        position.y={-0.001}-->
+<!--        cellColor="#000000"-->
+<!--        sectionColor="#ffffff"-->
+<!--        sectionThickness={0}-->
+<!--        fadeDistance={25}-->
+<!--        cellSize={2}-->
+<!--/>-->
 
 <ContactShadows
         scale={10}
