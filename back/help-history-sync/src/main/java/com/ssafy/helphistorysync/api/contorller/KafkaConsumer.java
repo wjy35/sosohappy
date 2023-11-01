@@ -9,6 +9,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Controller;
 
+import java.util.Optional;
+
 @Controller
 @RequiredArgsConstructor
 public class KafkaConsumer {
@@ -17,6 +19,8 @@ public class KafkaConsumer {
 
     @KafkaListener(topics = "help-history-command-mysql.help_history.help_history")
     public void consume(ConsumerRecord<String,String> message) {
+        if(isEmptyEvent(message)) return;
+
         try {
             helpHistoryService.addHelpHistory(message);
         } catch (JsonProcessingException e) {
@@ -24,5 +28,9 @@ public class KafkaConsumer {
         }
         System.out.println("message = " + message.value());
     }
+    private boolean isEmptyEvent(ConsumerRecord<?,?> consumerRecord){
+        return Optional.ofNullable(consumerRecord.value()).isEmpty();
+    }
+
 }
 
