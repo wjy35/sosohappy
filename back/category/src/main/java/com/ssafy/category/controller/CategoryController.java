@@ -32,8 +32,8 @@ public class CategoryController {
     }
 
     @GetMapping("/default")
-    public ResponseEntity<FormattedResponse> getCategoryList(@RequestHeader Long memberId) {
-        List<CategoryRes> defaultCategoryResList = categoryServiceImpl.getdefaultCategoryList();
+    public ResponseEntity<FormattedResponse> getDefaultCategoryList() {
+        List<CategoryRes> defaultCategoryResList = categoryServiceImpl.getDefaultCategoryList();
 
         FormattedResponse formattedResponse = FormattedResponse.builder()
                 .status("success")

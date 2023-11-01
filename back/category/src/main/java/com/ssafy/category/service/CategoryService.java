@@ -8,7 +8,7 @@ public interface CategoryService {
 
     CategoryRes getCategoryInfo(Long categoryId);
 
-    List<CategoryRes> getdefaultCategoryList();
+    List<CategoryRes> getDefaultCategoryList();
     List<CategoryRes> getRecentCategoryList(Long memberId);
     void addCategoryPick(Long toMemberId, Long category_id);
 }

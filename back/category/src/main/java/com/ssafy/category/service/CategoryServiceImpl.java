@@ -37,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService{
      * 카테고리 목록 조회(default)
      */
     @Override
-    public List<CategoryRes> getdefaultCategoryList() {
+    public List<CategoryRes> getDefaultCategoryList() {
         List<Category> categoryList = categoryRepository.findAll();
 
         List<CategoryRes> categoryResList = categoryList
