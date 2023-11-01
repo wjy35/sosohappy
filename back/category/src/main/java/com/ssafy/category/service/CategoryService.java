@@ -10,4 +10,5 @@ public interface CategoryService {
 
     List<CategoryRes> getdefaultCategoryList();
     List<CategoryRes> getRecentCategoryList(Long memberId);
+    void addCategoryPick(Long toMemberId, Long category_id);
 }
