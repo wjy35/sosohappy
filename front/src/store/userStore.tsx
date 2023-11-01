@@ -4,7 +4,7 @@ import memberApi from "@/apis/memberApi";
 const userStore = observable({
   user: null,
   setUser(userInfo: any){
-    this.user = {...userInfo};
+    this.user = userInfo;
   },
   // *getUser(){
   //   try {
