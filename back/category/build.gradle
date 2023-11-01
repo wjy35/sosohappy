@@ -39,7 +39,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'com.mysql:mysql-connector-j:8.1.0'
-	runtimeOnly 'mysql:mysql-connector-java'
+	runtimeOnly 'com.mysql:mysql-connector-j'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -48,6 +48,8 @@ dependencies {
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+	implementation 'org.springframework.kafka:spring-kafka'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
 }
 
 dependencyManagement {
