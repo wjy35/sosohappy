@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
+import java.sql.Timestamp;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -18,5 +20,6 @@ public class HelpHistoryRequest {
     private String content;
     private double x;
     private double y;
+    private Timestamp createdAt;
 }
 
