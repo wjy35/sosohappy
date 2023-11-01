@@ -1,8 +1,8 @@
-import {View, Text, Image, TouchableOpacity, ImageBackground} from "react-native";
+import { useState } from "react"
+import {View, Text, Image, TouchableOpacity} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import History from "@/components/History";
+import SosomonDictionary from "@/components/SosomonDictionary";
 
 import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 import GearIcon from "@/assets/img/gear-icon.png"
@@ -12,10 +12,12 @@ import GrayMoreIcon from "@/assets/img/gray-more-icon.png"
 
 import MyPageStyle from "@/styles/MyPageStyle";
 
-import test from "@/assets/sosomon/type1/FennecFox.png";
-import SosomonDictionary from "@/components/SosomonDictionary";
-
 const MyPage = () => {
+  const [modalState, setModalState] = useState<Boolean>(false);
+
+  const updateModalState = (status: Boolean) => {
+    setModalState(status);
+  }
   return (
     <CommonLayout headerType={0} footer={true}>
       <View style={MyPageStyle.myProfileWrap}>
@@ -59,7 +61,7 @@ const MyPage = () => {
           source={FishThumbnail}
           style={MyPageStyle.MySelectedCharImg}
         />
-        <TouchableOpacity activeOpacity={0.7} style={MyPageStyle.bookIconWrap}>
+        <TouchableOpacity activeOpacity={0.7} style={MyPageStyle.bookIconWrap} onPress={() => updateModalState(true)}>
           <Image
             source={BookIcon}
             style={MyPageStyle.bookIcon}
@@ -92,7 +94,9 @@ const MyPage = () => {
         </View>
       </View>
 
-      <SosomonDictionary />
+      {
+        modalState && <SosomonDictionary updateModalState={(status: Boolean) => updateModalState(status)}/>
+      }
 
       <View style={MyPageStyle.historyTitleWrap}>
         <Text style={MyPageStyle.historyTitle}>나의 최근 행운</Text>
