@@ -1,6 +1,5 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
-
 import LoginStyle from "@/styles/LoginStyle"
 import useInput from "@/hooks/useInput";
 import PlainInput from "@/components/PlainInput";
@@ -8,11 +7,13 @@ import memberApi from "@/apis/memberApi";
 import pushAlarmApi from "@/apis/pushAlarmApi";
 import RNSecureStorage, {ACCESSIBLE} from "rn-secure-storage";
 import {useNavigation} from "@react-navigation/native";
-import axios from "axios";
 import messaging from '@react-native-firebase/messaging'
+import {observer} from "mobx-react";
+import useStore from "@/hooks/useStore";
 
-const Login = () => {
+const Login = observer(() => {
   const navigation = useNavigation();
+  const {userStore} = useStore();
 
   const checkId = (newText: string) => {
     inputId.updateIsValid(newText!=="");
@@ -52,12 +53,19 @@ const Login = () => {
       }
 
       const fcmToken = await getFcmToken();
-
       const insertFcmTokenApi = await pushAlarmApi.insertFcmToken({fcmToken});
 
-      if(insertFcmTokenApi.status === 200){
+      const userInfo = await memberApi.getMember();
+
+      if (userInfo.status === 200){
+        userStore.setUser(userInfo.data.result.member);
         navigation.replace('Main');
+        // console.log(userInfo.data.result.member);
       }
+
+      // if(insertFcmTokenApi.status === 200){
+      //   navigation.replace('Main');
+      // }
 
     } catch (err) {
       console.error(err);
@@ -88,6 +96,6 @@ const Login = () => {
       </View>
     </CommonLayout>
   );
-};
+});
 
 export default Login;
