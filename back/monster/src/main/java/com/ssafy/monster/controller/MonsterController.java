@@ -38,11 +38,13 @@ public class MonsterController {
     public ResponseEntity<FormattedResponse> searchMonsterList(@RequestHeader Long memberId){
 
         List<MonsterRes> monsterResList = monsterService.searchMonsterList(memberId);
+        boolean isMaxLevel = monsterService.checkMaxLevel(memberId);
 
         FormattedResponse formattedResponse = FormattedResponse.builder()
                 .status("success")
                 .message("보유중인 몬스터를 성공적으로 불러왔습니다.")
                 .result("monsterList", monsterResList)
+                .result("isMaxLevel",isMaxLevel)
                 .build();
 
         return new ResponseEntity<>(formattedResponse, HttpStatus.OK);
@@ -67,12 +69,14 @@ public class MonsterController {
         //memberMonsterId, clover를 전달
         MonsterRes monsterRes = monsterService.updateMonsterClover(dto.getMemberMonsterId(), dto.getClover());
         CloverRes cloverRes = monsterService.searchCloverInfo(memberId);
+        boolean isMaxLevel = monsterService.checkMaxLevel(memberId);
 
         FormattedResponse formattedResponse = FormattedResponse.builder()
                 .status("success")
                 .message("클로버를 성공적으로 반영하였습니다.")
                 .result("clover", cloverRes)
                 .result("monster", monsterRes)
+                .result("isMaxLevel", isMaxLevel)
                 .build();
 
         return new ResponseEntity<>(formattedResponse, HttpStatus.OK);

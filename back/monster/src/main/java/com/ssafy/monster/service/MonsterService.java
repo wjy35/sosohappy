@@ -29,4 +29,6 @@ public interface MonsterService {
     void updateMemberMonsterProfile(Long memberId, int profileMonsterId);
 
     void deleteMemberMonsterProfile(Long memberId);
+
+    boolean checkMaxLevel(Long memberId);
 }

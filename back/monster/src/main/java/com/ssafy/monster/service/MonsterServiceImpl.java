@@ -226,4 +226,15 @@ public class MonsterServiceImpl implements MonsterService{
         }
     }
 
+    @Override
+    public boolean checkMaxLevel(Long memberId) {
+        List<MemberMonsterGrowth> growthList = growthRepository.findAllByMemberMonsterProfile_MemberId(memberId);
+
+        for(MemberMonsterGrowth growth : growthList){
+            if(growth.getMonsterClover() != expArr[expArr.length-1]) return false;
+        }
+
+        return true;
+    }
+
 }
