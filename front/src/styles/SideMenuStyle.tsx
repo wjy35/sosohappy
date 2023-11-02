@@ -52,10 +52,6 @@ const SideMenuStyle = StyleSheet.create({
         marginTop:6,
         borderRadius:6,
     },
-    navIcon:{
-        width:24,
-        height:24,
-    },
     menuItemText:{
         fontSize:16,
         fontWeight:"700",
@@ -65,8 +61,6 @@ const SideMenuStyle = StyleSheet.create({
     menuListActive:{
         backgroundColor:"#EEEEEE",
     },
-
-
     authButtonWrap:{
         marginTop:24,
     },
@@ -91,6 +85,10 @@ const SideMenuStyle = StyleSheet.create({
         textAlign:"center",
         marginTop:8,
     },
+    nickNameWrap: {
+        paddingTop: 20,
+
+    }
 })
 
 export default SideMenuStyle;
