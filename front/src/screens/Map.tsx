@@ -28,18 +28,12 @@ const Map = () => {
   ]);
   const [points, setPoints] = useState<any>();
 
-  const drawPolylineDirections = () => {
-
-    const pathCoordinates = [
-      { latitude: 37.501409, longitude: 127.039681 },
-      { latitude: 37.500069, longitude: 127.036841 },
-    ];
-  
-    return <Polyline coordinates={pathCoordinates} strokeWidth={2} strokeColor="red"/>;
-  };
-
   const updateBottomSheetStatus = (updateStatus: Boolean) => {
     setBottomSheetStatus(updateStatus);
+  }
+
+  const pressAroundMarker = () => {
+    setBottomSheetStatus(true);
   }
 
   //Todo : 현재는 파이낸셜센터 - 멀티캠퍼스 정적 위경도 넣어줌 (추후 GPS에 따른 위경도 변경)
@@ -110,12 +104,12 @@ const Map = () => {
                     description="around"
                     coordinate={{latitude: aroundMarker.latitude, longitude: aroundMarker.longitude}}
                     pinColor="#E9747A"
+                    onPress={() => pressAroundMarker()}
                   />
                 </>
               );
             })
           }
-          {/* {drawPolylineDirections()} */}
           {
             points?.features?.map((point, index) => {
                 console.log(point);

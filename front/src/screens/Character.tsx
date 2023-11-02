@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Image } from "react-native"
 import CommonLayout from "@/components/CommonLayout";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import monsterApi from "@/apis/monsterApi";
 
 import CloverIcon from "@/assets/img/clover-icon.png"
@@ -36,8 +34,7 @@ const Character = () => {
     }, [])
 
     return(
-        <CommonLayout>
-            <Header/>
+        <CommonLayout footer={true}>
 
             <View style={CharacterStyle.characterTitleWrap}>
                 <Text style={CharacterStyle.characterTitle}>
@@ -171,7 +168,6 @@ const Character = () => {
                     </View>
                 </TouchableOpacity>
             </View>
-            <Footer/>
         </CommonLayout>
     );
 }

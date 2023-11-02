@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity} from "react-native"
+import {View, Text, TouchableOpacity, Alert} from "react-native"
 import SideMenuStyle from "@/styles/SideMenuStyle";
 import {useNavigation} from "@react-navigation/native";
 import { sosohappyWhiteLogo, user, gear, chat, peace, home, close } from "@/assets/icons/icons";
@@ -31,6 +31,10 @@ const SideMenu = observer(({closeSide, nowPage}: props) => {
         userStore.user?(navigation.navigate(next)):(navigation.navigate('Login'));
     }
 
+    const moveSettingPage = () => {
+        Alert.alert('향후 업데이트 예정입니다. 잠시만 기다려주세요.');
+    }
+
     return(
         <>
             <View style={SideMenuStyle.sideMenuWrap}>
@@ -51,13 +55,13 @@ const SideMenu = observer(({closeSide, nowPage}: props) => {
                         />
                     </TouchableOpacity>
                 </View>
-                {
+                {/* {
                     userStore.user && (
                         <View style={SideMenuStyle.nickNameWrap}>
                             <Text>{userStore.user.nickname}</Text>
                         </View>
                     )
-                }
+                } */}
 
                 <View style={SideMenuStyle.navWrap}>
                     <TouchableOpacity activeOpacity={0.7} onPress={()=>navigation.navigate("Main")}>
@@ -104,7 +108,7 @@ const SideMenu = observer(({closeSide, nowPage}: props) => {
                             <Text style={[SideMenuStyle.menuItemText]}>마이페이지</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.7}>
+                    <TouchableOpacity activeOpacity={0.7} onPress={moveSettingPage}>
                         <View style={[SideMenuStyle.menuList]}>
                             <SvgXml
                                 xml={gear}
