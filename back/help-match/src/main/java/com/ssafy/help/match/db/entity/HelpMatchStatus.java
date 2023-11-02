@@ -1,4 +1,4 @@
-package com.ssafy.help.match.session.entity;
+package com.ssafy.help.match.db.entity;
 
 public enum HelpMatchStatus {
     Default(111),

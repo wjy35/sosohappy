@@ -1,10 +1,9 @@
-package com.ssafy.help.match.session.repository;
+package com.ssafy.help.match.db.repository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.help.match.session.entity.HelpMatchStatus;
-import com.ssafy.help.match.session.entity.HelpMatchType;
-import com.ssafy.help.match.session.entity.MemberSessionEntity;
+import com.ssafy.help.match.db.entity.HelpMatchStatus;
+import com.ssafy.help.match.db.entity.HelpMatchType;
+import com.ssafy.help.match.db.entity.MemberSessionEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;

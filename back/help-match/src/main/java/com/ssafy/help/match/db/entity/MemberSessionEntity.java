@@ -1,4 +1,4 @@
-package com.ssafy.help.match.session.entity;
+package com.ssafy.help.match.db.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

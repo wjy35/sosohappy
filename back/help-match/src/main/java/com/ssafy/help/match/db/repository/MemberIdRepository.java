@@ -1,4 +1,4 @@
-package com.ssafy.help.match.session.repository;
+package com.ssafy.help.match.db.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
