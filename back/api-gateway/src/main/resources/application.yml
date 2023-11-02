@@ -84,7 +84,7 @@ spring:
             - RewritePath=/help-match/(?<path>.*),/$\{path}
             - AuthorizationHeaderFilter
         - id: help-match-socket
-          uri: ws://HELP-MATCH-SERVICE/
+          uri: lb:ws://HELP-MATCH-SERVICE/
           predicates:
             - Path=/help-match-socket/**
           filters:
