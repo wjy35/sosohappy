@@ -16,6 +16,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 @SpringBootTest
 @ActiveProfiles("local")
 class HelpHistoryServiceImplTest {
@@ -53,6 +55,7 @@ class HelpHistoryServiceImplTest {
         JsonNode jsonNode;
 
         // when
+
         try {
             jsonNode = objectMapper.readTree(message.value());
             helpHistoryRequest = objectMapper.treeToValue(jsonNode.get("after"), HelpHistoryRequest.class);
@@ -64,5 +67,18 @@ class HelpHistoryServiceImplTest {
         assertThat(helpHistoryRequest).isNotNull();
         assertThat(helpHistoryRequest.getHistoryId()).isEqualTo(33);
 
+    }
+
+    @DisplayName("jsonparsing 오류 시 JsonProcessingException 예외를 발생시킨다.")
+    @Test
+    void invalidJsonProcessing() {
+
+        // given
+        String invalidJson = "invalidJson";
+
+        // when / then
+        assertThatThrownBy(() -> {
+            objectMapper.readTree(invalidJson);
+        }).isInstanceOf(JsonProcessingException.class);
     }
 }
