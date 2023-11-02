@@ -1,23 +1,35 @@
 import { View, Text, Image, TouchableOpacity } from "react-native"
 
 import HistoryItemStyle from "@/styles/HistoryItemStyle"
+import {lock, fortuneCookie, clover} from "@/assets/icons/icons";
+import {SvgXml} from "react-native-svg";
+import {useState} from "react";
 
 interface propsType{
-    thumbnail: HTMLImageElement,
+    thumbnail: string,
     content: string,
     createdDate: string,
-    stateImg: HTMLImageElement,
+    openCookie: Function,
 }
 
-const HistoryItem = ({thumbnail, content, createdDate, stateImg} : propsType) => {
+const HistoryItem = ({thumbnail, content, createdDate, openCookie} : propsType) => {
+    const [cookie, setCookie] = useState(true);
+
+    const clickOpenCookie = () => {
+        setCookie(false);
+        openCookie();
+    }
+
     return(
         <>
             <TouchableOpacity activeOpacity={0.7}>
                 <View style={HistoryItemStyle.historyItemWrap}>
                     <View style={HistoryItemStyle.historyItemProfileBg}>
-                        <Image
-                            source={thumbnail}
+                        <SvgXml
+                            xml={thumbnail}
                             style={HistoryItemStyle.historyItemProfileImg}
+                            width={40}
+                            height={40}
                         />
                     </View>
                     <View style={HistoryItemStyle.historyItemInfo}>
@@ -25,10 +37,24 @@ const HistoryItem = ({thumbnail, content, createdDate, stateImg} : propsType) =>
                         <Text style={HistoryItemStyle.historyItemDate}>{createdDate}</Text>
                     </View>
                     <View style={HistoryItemStyle.historyItemStateWrap}>
-                        <Image
-                            source={stateImg}
-                            style={HistoryItemStyle.historyItemStateImg}
-                        />
+                        {
+                            cookie ? (
+                                <TouchableOpacity activeOpacity={0.7} onPress={clickOpenCookie}>
+                                    <SvgXml
+                                        xml={fortuneCookie}
+                                        width={30}
+                                        height={30}
+                                    />
+                                </TouchableOpacity>
+                            ):(
+                                <SvgXml
+                                    xml={clover}
+                                    width={30}
+                                    height={30}
+                                />
+                            )
+                        }
+
                     </View>
                 </View>
             </TouchableOpacity>

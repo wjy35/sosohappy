@@ -23,8 +23,6 @@ const HistoryItemStyle = StyleSheet.create({
         borderRadius:8,
     },
     historyItemProfileImg:{
-        width:40,
-        height:40,
         borderRadius:50,
     },
     historyItemInfo:{
@@ -44,10 +42,6 @@ const HistoryItemStyle = StyleSheet.create({
     },
     historyItemStateWrap:{
         marginLeft:"auto",
-    },
-    historyItemStateImg:{
-        width:30,
-        height:30,
     },
 })
 
