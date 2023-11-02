@@ -21,6 +21,7 @@ const SideMenu = observer(({closeSide, nowPage}: props) => {
             const res = await memberApi.logout();
             if (res.status === 200){
                 userStore.setUser(null);
+                navigation.replace('Main');
             }
         } catch (err) {
             console.log(err);

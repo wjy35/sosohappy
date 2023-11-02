@@ -19,7 +19,6 @@ enum CategoryType{
 const Character = () => {
     const [categoryType, setCategoryType] = useState<CategoryType>(CategoryType.army);
     const [myMonsters, setMyMonsters] = useState<any[] | null>(null);
-    console.log(myMonsters);
 
     useEffect(() => {
         const getMyDict = async () => {
@@ -34,7 +33,7 @@ const Character = () => {
     }, [])
 
     return(
-        <CommonLayout footer={true}>
+        <CommonLayout headerType={0} footer={false}>
 
             <View style={CharacterStyle.characterTitleWrap}>
                 <Text style={CharacterStyle.characterTitle}>
@@ -45,7 +44,7 @@ const Character = () => {
                     <View style={CharacterStyle.feedButton}>
                         {
                             categoryType === CategoryType.army && myMonsters &&
-                            <Text style={CharacterStyle.feedButtonText}>육식동물에게 먹이주기</Text>
+                            <Text style={CharacterStyle.feedButtonText}>육지동물에게 먹이주기</Text>
                         }
                         {
                             categoryType === CategoryType.navy && myMonsters &&
@@ -75,28 +74,37 @@ const Character = () => {
                 >
 
                     {
-                        myMonsters && 
-                        <ImageBackground
-                            source={type1[myMonsters[0].level]}
-                            style={CharacterStyle.feedAnimalImg}
-                            resizeMode="cover"
-                        />
+                        myMonsters && (
+                            <View style={categoryType === CategoryType.army && CharacterStyle.feedAnimalActive}>
+                                <ImageBackground
+                                    source={type1[myMonsters[0].level]}
+                                    style={CharacterStyle.feedAnimalImg}
+                                    resizeMode="cover"
+                                />
+                            </View>
+                        )
                     }
                     {
-                        myMonsters &&
-                        <ImageBackground
-                            source={type2[myMonsters[1].level]}
-                            style={CharacterStyle.feedAnimalImg}
-                            resizeMode="cover"
-                        />
+                        myMonsters && (
+                            <View style={categoryType === CategoryType.navy && CharacterStyle.feedAnimalActive}>
+                                <ImageBackground
+                                    source={type2[myMonsters[1].level]}
+                                    style={CharacterStyle.feedAnimalImg}
+                                    resizeMode="cover"
+                                />
+                            </View>
+                            )
                     }
                     {
-                        myMonsters &&
-                        <ImageBackground
-                            source={type3[myMonsters[2].level]}
-                            style={CharacterStyle.feedAnimalImg}
-                            resizeMode="cover"
-                        />
+                        myMonsters && (
+                            <View style={categoryType === CategoryType.airForce && CharacterStyle.feedAnimalActive}>
+                                <ImageBackground
+                                    source={type3[myMonsters[2].level]}
+                                    style={CharacterStyle.feedAnimalImg}
+                                    resizeMode="cover"
+                                />
+                            </View>
+                            )
                     }
                 </ScrollView>
             </View>
@@ -127,7 +135,7 @@ const Character = () => {
                     <Text style={CharacterStyle.selectedCharacterInfoTitle}>현재 성장 단계</Text>
                     {
                         categoryType === CategoryType.army &&
-                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>육식동물 Lv.3</Text>
+                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>육지동물 Lv.3</Text>
                     }
                     {
                         categoryType === CategoryType.navy &&
@@ -143,7 +151,19 @@ const Character = () => {
                 <Text style={CharacterStyle.expTitle}>Exp.</Text>
                 <View style={CharacterStyle.expStatusWrap}>
                     <View style={CharacterStyle.expStatusBg}></View>
-                    <View style={CharacterStyle.expStatusMy}></View>
+                    {
+                        categoryType === CategoryType.army &&
+                        <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[0].currentPoint) * 100}` + "%"}]}></View>
+                    }
+                    {
+                        categoryType === CategoryType.navy &&
+                        <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[1].currentPoint) * 100}` + "%"}]}></View>
+                    }
+                    {
+                        categoryType === CategoryType.airForce &&
+                        <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[2].currentPoint) * 100}` + "%"}]}></View>
+                    }
+                    
                 </View>
             </View>
 

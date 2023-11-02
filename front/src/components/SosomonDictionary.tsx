@@ -1,4 +1,4 @@
-import { useState } from "react"
+import React, {useEffect, useState} from "react"
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native"
 import {type1, type2, type3, type4} from '@/assets/sosomon/index'
 import SosomonCard from "@/components/SosomaonCard"
@@ -7,9 +7,11 @@ import { SvgXml } from "react-native-svg"
 import { close } from "@/assets/icons/icons"
 
 import SosomonDictionaryStyle from "@/styles/SosomonDictionaryStyle"
+import monsterApi from "@/apis/monsterApi";
 
 interface propsType{
     updateModalState: Function,
+    changeProfileMonster: Function,
 }
 
 enum CategoryEnum{
@@ -18,11 +20,36 @@ enum CategoryEnum{
     "airForce",
 }
 
-const SosomonDictionary = ({updateModalState}: propsType) => {
+const SosomonDictionary = ({updateModalState, changeProfileMonster}: propsType) => {
     const [categoryType, setCategoryType] = useState<CategoryEnum>(CategoryEnum.navy);
+    const [dict, setDict] = useState({
+        1: 1,
+        2: 1,
+        3: 1,
+    })
     const updateCategory = (categoryStatus: CategoryEnum) => {
         setCategoryType(categoryStatus);
     }
+
+    const getDictionary = async () => {
+        try {
+            const res = await monsterApi.getMyDict();
+            if (res.status === 200){
+                let newDict = {}
+                res.data.result.monsterList.forEach((el, idx)=>{
+                    newDict[el.typeId] = el.level
+                })
+                setDict(newDict);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    useEffect(() => {
+        getDictionary();
+    }, []);
+
     return (
         <>
             <View style={SosomonDictionaryStyle.modalBack}></View>
@@ -32,6 +59,8 @@ const SosomonDictionary = ({updateModalState}: propsType) => {
                         <SvgXml
                             xml={close}
                             style={SosomonDictionaryStyle.closeIcon}
+                            width={16}
+                            height={16}
                         />
                     </View>
                 </TouchableOpacity>
@@ -39,7 +68,7 @@ const SosomonDictionary = ({updateModalState}: propsType) => {
                     <Text style={SosomonDictionaryStyle.collectionTitle}>Collection</Text>
                     <Text style={SosomonDictionaryStyle.collectionTitleDescription}>도감을 열어 새로운 소소몬을 만나세요.</Text>
                 </View>
-                
+
                 <View>
                     <ScrollView
                         horizontal={true}
@@ -49,9 +78,14 @@ const SosomonDictionary = ({updateModalState}: propsType) => {
                         categoryType === CategoryEnum.army &&
                         type1.map((object, index) => {
                             return(
-                                <>
-                                    <SosomonCard src={object} isLocked={true}/>
-                                </>
+                                <React.Fragment key={`type1${index}`}>
+                                    <SosomonCard
+                                        src={object}
+                                        isLocked={(index+1>dict[1])?true:false}
+                                        level={index+1}
+                                        type='육지'
+                                        changeProfileMonster={()=>{changeProfileMonster(1, index+1)}}/>
+                                </React.Fragment>
                             );
                         })
                     }
@@ -59,9 +93,15 @@ const SosomonDictionary = ({updateModalState}: propsType) => {
                         categoryType === CategoryEnum.airForce &&
                         type3.map((object, index) => {
                             return(
-                                <>
-                                    <SosomonCard src={object} isLocked={false}/>
-                                </>
+                                <React.Fragment key={`type3${index}`}>
+                                    <SosomonCard
+                                        src={object}
+                                        isLocked={(index+1>dict[1])?true:false}
+                                        level={index+1}
+                                        type='공중'
+                                        changeProfileMonster={()=>{changeProfileMonster(3, index+1)}}
+                                    />
+                                </React.Fragment>
                             );
                         })
                     }
@@ -69,9 +109,15 @@ const SosomonDictionary = ({updateModalState}: propsType) => {
                         categoryType === CategoryEnum.navy &&
                         type2.map((object, index) => {
                             return(
-                                <>
-                                    <SosomonCard src={object} isLocked={false}/>
-                                </>
+                                <React.Fragment key={`type2${index}`}>
+                                    <SosomonCard
+                                        src={object}
+                                        isLocked={(index+1>dict[1])?true:false}
+                                        level={index+1}
+                                        type='해양'
+                                        changeProfileMonster={()=>{changeProfileMonster(2, index+1)}}
+                                    />
+                                </React.Fragment>
                             );
                         })
                     }
@@ -120,7 +166,7 @@ const SosomonDictionary = ({updateModalState}: propsType) => {
                                     <Text style={SosomonDictionaryStyle.categoryText}>공중생물</Text>
                                 </View>
                             }
-                            
+
                         </TouchableOpacity>
                         <TouchableOpacity activeOpacity={0.7} onPress={() => updateCategory(CategoryEnum.army)}>
                             {
@@ -138,10 +184,10 @@ const SosomonDictionary = ({updateModalState}: propsType) => {
                                         xml={horse}
                                         style={SosomonDictionaryStyle.categoryImg}
                                     />
-                                    <Text style={SosomonDictionaryStyle.categoryText}>육식생물</Text>
+                                    <Text style={SosomonDictionaryStyle.categoryText}>육지생물</Text>
                                 </View>
                             }
-                            
+
                         </TouchableOpacity>
                     </View>
                 </View>

@@ -65,6 +65,9 @@ const SosomonCardStyle = StyleSheet.create({
         fontWeight:"500",
         color:"#FFFFFF",
     },
+    lock: {
+        tintColor: '#000000',
+    }
 })
 
 export default SosomonCardStyle;

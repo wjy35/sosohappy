@@ -55,7 +55,7 @@ const memberApi = {
         );
         return res;
     },
-    updateMember: async ({memberName, memberNickname, memberSignPassword, disabled, gender}: props) => {
+    updateMember: async ({memberName, memberNickname, memberSignPassword, disabled, gender, profileBackgroundId, profileMonsterId}: props) => {
         const res = PrivateInstance.patch(
           `${commandDomain}/`,
           {
@@ -64,7 +64,8 @@ const memberApi = {
             memberSignPassword: memberSignPassword,
             disabled: disabled,
             gender: gender,
-
+            profileBackgroundId: profileBackgroundId,
+            profileMonsterId: profileMonsterId,
           }
         );
         return res;
