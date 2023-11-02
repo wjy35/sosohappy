@@ -5,6 +5,7 @@ import com.ssafy.help.match.db.entity.HelpMatchStatus;
 import com.ssafy.help.match.db.entity.HelpMatchType;
 import com.ssafy.help.match.db.entity.MemberSessionEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
@@ -16,6 +17,9 @@ public class MemberSessionEntityRepository {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
     private final String PREFIX="memberSessionEntity:";
+
+    @Value("${spring.server.uuid}")
+    String uuid;
 
     public void create(Long memberId) {
         MemberSessionEntity memberSessionEntity = MemberSessionEntity
@@ -31,11 +35,13 @@ public class MemberSessionEntityRepository {
     public void connect(Long memberId,String sessionId){
         redisTemplate.opsForHash().put(PREFIX+memberId,"isConnected",true);
         redisTemplate.opsForHash().put(PREFIX+memberId,"sessionId",sessionId);
+        redisTemplate.opsForHash().put(PREFIX+memberId,"serverUUID",uuid);
     }
 
     public void disconnect(Long memberId){
         redisTemplate.opsForHash().put(PREFIX+memberId,"isConnected",false);
         redisTemplate.opsForHash().put(PREFIX+memberId,"sessionId",null);
+        redisTemplate.opsForHash().put(PREFIX+memberId,"serverUUID",null);
     }
 
     public void setMatchType(Long memberId, HelpMatchType matchType){
@@ -52,5 +58,9 @@ public class MemberSessionEntityRepository {
 
     public HelpMatchStatus getMatchStatus(Long memberId){
         return HelpMatchStatus.valueOf((String)redisTemplate.opsForHash().get(PREFIX+memberId,"matchStatus"));
+    }
+
+    public String getServerUUID(Long memberId){
+        return (String)redisTemplate.opsForHash().get(PREFIX+memberId,"serverUUID");
     }
 }
