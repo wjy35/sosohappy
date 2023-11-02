@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Image } from "react-native"
+import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Image, Alert } from "react-native"
 import CommonLayout from "@/components/CommonLayout";
 import monsterApi from "@/apis/monsterApi";
 
@@ -16,9 +16,52 @@ enum CategoryType{
     "airForce"
 }
 
+interface feedTypes{
+    feedType: number,
+}
+
 const Character = () => {
     const [categoryType, setCategoryType] = useState<CategoryType>(CategoryType.army);
     const [myMonsters, setMyMonsters] = useState<any[] | null>(null);
+
+    const feedSosomonCommon = async ({feedType}: feedTypes) => {
+        if(myMonsters){
+            const levelUpApi = await monsterApi.levelUp({
+                memberMonsterId: myMonsters[feedType].memberMonsterId,
+                clover: 1,
+            });
+            console.log("levelUpApi", levelUpApi);
+            if(levelUpApi.status === 200){
+                if(levelUpApi.data.message === "보유중인 클로버가 부족합니다."){
+                    Alert.alert("보유중인 클로버가 부족하여 먹이를 줄 수 없습니다.");
+                }else if(levelUpApi.data.message === "경험치 등록 완료"){
+                    Alert.alert("소소몬에게 성공적으로 먹이를 주었습니다.");
+                }
+            }else{
+                Alert.alert("시스템 오류, 관리자에게 문의하세요.");
+            }
+        }
+    }
+
+    const feedSosomon = async () => {
+        switch(categoryType){
+            case CategoryType.army:
+                feedSosomonCommon({
+                    feedType:0,
+                });
+                break;
+            case CategoryType.navy:
+                feedSosomonCommon({
+                    feedType:1,
+                });
+                break;
+            case CategoryType.airForce:
+                feedSosomonCommon({
+                    feedType:2,
+                });
+                break;
+        }
+    }
 
     useEffect(() => {
         const getMyDict = async () => {
@@ -26,7 +69,7 @@ const Character = () => {
 
             if(collectedMonsterApi.status === 200){
                 setMyMonsters(collectedMonsterApi.data.result?.monsterList);
-                console.log(myMonsters);
+                console.log("myMonsters", myMonsters);
             }
         }
         getMyDict();
@@ -40,7 +83,7 @@ const Character = () => {
                     <Text style={CharacterStyle.characterTitleMyName}>김싸피</Text> 님 어떤 캐릭터를{"\n"}
                     성장시킬까요?
                 </Text>
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity activeOpacity={0.7} onPress={() => feedSosomon()}>
                     <View style={CharacterStyle.feedButton}>
                         {
                             categoryType === CategoryType.army && myMonsters &&
@@ -134,16 +177,16 @@ const Character = () => {
                 <View style={CharacterStyle.selectedCharacterInfo}>
                     <Text style={CharacterStyle.selectedCharacterInfoTitle}>현재 성장 단계</Text>
                     {
-                        categoryType === CategoryType.army &&
-                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>육지동물 Lv.3</Text>
+                        categoryType === CategoryType.army && myMonsters &&
+                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>육지동물 Lv.{myMonsters[0].level}</Text>
                     }
                     {
-                        categoryType === CategoryType.navy &&
-                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>해양동물 Lv.3</Text>
+                        categoryType === CategoryType.navy && myMonsters &&
+                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>해양동물 Lv.{myMonsters[1].level}</Text>
                     }
                     {
-                        categoryType === CategoryType.airForce &&
-                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>비행동물 Lv.3</Text>
+                        categoryType === CategoryType.airForce && myMonsters &&
+                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>비행동물 Lv.{myMonsters[2].level}</Text>
                     }
                 </View>
             </View>
@@ -152,15 +195,15 @@ const Character = () => {
                 <View style={CharacterStyle.expStatusWrap}>
                     <View style={CharacterStyle.expStatusBg}></View>
                     {
-                        categoryType === CategoryType.army &&
+                        categoryType === CategoryType.army && myMonsters &&
                         <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[0].currentPoint) * 100}` + "%"}]}></View>
                     }
                     {
-                        categoryType === CategoryType.navy &&
+                        categoryType === CategoryType.navy && myMonsters &&
                         <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[1].currentPoint) * 100}` + "%"}]}></View>
                     }
                     {
-                        categoryType === CategoryType.airForce &&
+                        categoryType === CategoryType.airForce && myMonsters &&
                         <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[2].currentPoint) * 100}` + "%"}]}></View>
                     }
                     
@@ -169,7 +212,7 @@ const Character = () => {
 
 
             <View style={CharacterStyle.animationButtonWrap}>
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity activeOpacity={0.7} onPress={() => feedSosomon()}>
                     <View style={CharacterStyle.animationButton}>
                         <Image
                             source={CloverIcon}
