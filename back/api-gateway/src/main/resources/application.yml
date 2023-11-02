@@ -76,7 +76,18 @@ spring:
           filters:
             - RewritePath=/category/(?<path>.*),/$\{path}
             - AuthorizationHeaderFilter
-
-
+        - id: help-match
+          uri: lb://HELP-MATCH-SERVICE/
+          predicates:
+            - Path=/help-match/**
+          filters:
+            - RewritePath=/help-match/(?<path>.*),/$\{path}
+            - AuthorizationHeaderFilter
+        - id: help-match-socket
+          uri: ws://HELP-MATCH-SERVICE/
+          predicates:
+            - Path=/help-match-socket/**
+          filters:
+            - RewritePath=/help-match-socket/(?<path>.*),/$\{path}
         
         
