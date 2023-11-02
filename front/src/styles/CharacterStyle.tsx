@@ -48,11 +48,11 @@ const CharacterStyle = StyleSheet.create({
         alignItems:"center",
     },
     selectedCharacterImg:{
-        width:68,
-        height:68,
+        width:100,
+        height:100,
     },
     selectedCharacterInfo:{
-        marginLeft:14,
+        marginLeft:4,
     },
     selectedCharacterInfoTitle:{
         fontSize:14,
