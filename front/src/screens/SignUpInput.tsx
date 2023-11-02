@@ -9,7 +9,7 @@ import PlainInput from "@/components/PlainInput";
 import useInput from "@/hooks/useInput";
 import {useNavigation, useRoute} from "@react-navigation/native";
 import memberApi from "@/apis/memberApi";
-import axios from "axios";
+import DropDownPicker from "react-native-dropdown-picker";
 
 const SignUpInput = () => {
   const route = useRoute();
@@ -118,6 +118,13 @@ const SignUpInput = () => {
     }
   }
 
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    {label: '남', value: 'male'},
+    {label: '여', value: 'female'}
+  ]);
+
   return (
     <CommonLayout headerType={0} footer={true}>
       <AuthTitle level="3" title="회원가입을 진행합니다." description={`간편한 회원가입으로 소소한${"\n"}행운을 쌓습니다`}/>
@@ -130,6 +137,16 @@ const SignUpInput = () => {
         <PlainInput {...memberNickname}/>
         <PlainInput {...memberType} editable={false}/>
         <Text style={SignUpInputStyle.signUpInputText}>성별을 입력해주세요.</Text>
+        <DropDownPicker
+          open={open}
+          value={value}
+          items={items}
+          setOpen={setOpen}
+          setValue={setValue}
+          setItems={setItems}
+          placeholder="성별을 입력해주세요."
+          style={SignUpInputStyle.signUpDropBox}
+        />
       </View>
 
       <AuthButton

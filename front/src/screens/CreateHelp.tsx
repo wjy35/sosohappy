@@ -1,7 +1,5 @@
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import AllCategoryWrap from "@/components/AllCategoryWrap";
 import RecommendCategoryWrap from "@/components/RecommendCategoryWrap";
 import SimilarRecommendCategoryWrap from "@/components/SimilarRecommendCategoryWrap";
