@@ -1,4 +1,4 @@
-package com.ssafy.help.match.db.repository.imp;
+package com.ssafy.help.match.db.repository.impl;
 
 import com.ssafy.help.match.db.repository.MemberPointRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,9 +8,6 @@ import org.springframework.data.geo.Point;
 import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
