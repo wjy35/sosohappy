@@ -87,7 +87,6 @@ const CharacterStyle = StyleSheet.create({
         backgroundColor:"#E4E8EB",
     },
     expStatusMy:{
-        width:"20%",
         height:28,
         borderRadius:10,
         backgroundColor:"#8B8BEF",
