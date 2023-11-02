@@ -93,7 +93,7 @@ public class MonsterServiceImpl implements MonsterService{
         List<MemberMonsterGrowth> monsterList = growthRepository.findAllByMemberMonsterProfile_MemberId(memberId);
 
         List<MonsterRes> resList = monsterList
-                .stream().map(m -> MonsterMapper.INSTANCE.toMonsterListRes(m, getCurrentPoint(m.getMonsterClover()).first())
+                .stream().map(m -> MonsterMapper.INSTANCE.toMonsterRes(m, getCurrentPoint(m.getMonsterClover()).first(), getCurrentPoint(m.getMonsterClover()).second())
                 ).collect(Collectors.toList());
 
         return resList;
@@ -140,7 +140,7 @@ public class MonsterServiceImpl implements MonsterService{
         Pair<Integer, Double> pair = getCurrentPoint(currentClover);
 
         //result
-        MonsterRes monsterRes = MonsterMapper.INSTANCE.toLevelUpMonsterRes(growth, pair.first(), pair.second());
+        MonsterRes monsterRes = MonsterMapper.INSTANCE.toMonsterRes(growth, pair.first(), pair.second());
 
         return monsterRes;
     }
