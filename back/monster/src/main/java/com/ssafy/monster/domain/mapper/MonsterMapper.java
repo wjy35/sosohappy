@@ -20,6 +20,6 @@ public interface MonsterMapper {
     @Mapping(source="growth.memberMonsterId", target="memberMonsterId")
     @Mapping(source="growth.monsterType.typeId", target="typeId")
     @Mapping(source="growth.monsterType.typeName", target="typeName")
-    MonsterRes toLMonsterRes(MemberMonsterGrowth growth, Integer level, Double currentPoint);
+    MonsterRes toMonsterRes(MemberMonsterGrowth growth, Integer level, Double currentPoint);
 
 }
