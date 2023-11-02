@@ -191,7 +191,21 @@ const Character = () => {
                 </View>
             </View>
             <View style={CharacterStyle.expWrap}>
-                <Text style={CharacterStyle.expTitle}>Exp.</Text>
+                <Text style={CharacterStyle.expTitle}>
+                    Exp.
+                    {
+                        categoryType === CategoryType.army && myMonsters &&
+                        Number(myMonsters[0].currentPoint) * 100 + "%"
+                    }
+                    {
+                        categoryType === CategoryType.navy && myMonsters &&
+                        Number(myMonsters[1].currentPoint) * 100 + "%"
+                    }
+                    {
+                        categoryType === CategoryType.airForce && myMonsters &&
+                        Number(myMonsters[2].currentPoint) * 100 + "%"
+                    }
+                </Text>
                 <View style={CharacterStyle.expStatusWrap}>
                     <View style={CharacterStyle.expStatusBg}></View>
                     {
