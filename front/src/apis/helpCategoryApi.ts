@@ -10,13 +10,13 @@ const helpCategoryApi = {
     return res;
   },
   recent: async () => {
-    const res = PublicInstance.get(
+    const res = PrivateInstance.get(
       `${domain}/recent`,
     );
     return res;
   },
   recommend: async () => {
-    const res = PublicInstance.get(
+    const res = PrivateInstance.get(
       `${domain}/recommend`,
     );
     return res;
