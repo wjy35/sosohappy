@@ -21,8 +21,8 @@ public class MemberSessionEntityRepository {
         MemberSessionEntity memberSessionEntity = MemberSessionEntity
                 .builder()
                 .memberId(memberId)
-                .matchType(HelpMatchType.None)
-                .matchStatus(HelpMatchStatus.Default)
+                .matchType(HelpMatchType.NONE)
+                .matchStatus(HelpMatchStatus.DEFAULT)
                 .build();
 
         redisTemplate.opsForHash().putAll(PREFIX+memberSessionEntity.getMemberId(),objectMapper.convertValue(memberSessionEntity,Map.class));
@@ -47,10 +47,10 @@ public class MemberSessionEntityRepository {
     }
 
     public HelpMatchType getMatchType(Long memberId){
-        return (HelpMatchType) redisTemplate.opsForHash().get(PREFIX+memberId,"matchType");
+        return HelpMatchType.valueOf((String)redisTemplate.opsForHash().get(PREFIX+memberId,"matchType"));
     }
 
     public HelpMatchStatus getMatchStatus(Long memberId){
-        return (HelpMatchStatus) redisTemplate.opsForHash().get(PREFIX+memberId,"matchStatus");
+        return HelpMatchStatus.valueOf((String)redisTemplate.opsForHash().get(PREFIX+memberId,"matchStatus"));
     }
 }
