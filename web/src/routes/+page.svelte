@@ -1,23 +1,14 @@
 <script lang="ts">
-  import { Canvas } from '@threlte/core'
-  import Scene from '$lib/components/Scene.svelte'
+
 </script>
 
 <div>
-  <Canvas>
-    <Scene />
-  </Canvas>
+  <h1>메인 페이지</h1>
+  <h3>앱 다운로드 경로 표시할 예정</h3>
 </div>
 
 <style>
   :global(body) {
     margin: 0;
-  }
-
-  div {
-    width: 100vw;
-    height: 100vh;
-    background: rgb(13, 19, 32);
-    background: linear-gradient(180deg, rgba(13, 19, 32, 1) 0%, rgba(8, 12, 21, 1) 100%);
   }
 </style>
