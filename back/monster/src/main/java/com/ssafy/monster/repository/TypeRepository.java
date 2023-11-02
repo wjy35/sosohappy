@@ -11,4 +11,6 @@ import java.util.Optional;
 @Repository
 public interface TypeRepository extends JpaRepository<MonsterType, Byte> {
     List<MonsterType> findAll();
+
+    MonsterType findByTypeId(Byte typeId);
 }
