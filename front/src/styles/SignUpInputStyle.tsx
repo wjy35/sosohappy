@@ -30,6 +30,7 @@ const SignUpInputStyle = StyleSheet.create({
         borderColor:"#9D9D9D",
         backgroundColor:"transparent",
         borderRadius:14,
+        marginBottom:22,
     },
 })
 
