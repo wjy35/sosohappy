@@ -6,16 +6,45 @@ import CloverIcon from "@/assets/img/clover-icon.png"
 import FortuneCookieIcon from "@/assets/img/fortune-cookie-icon.png"
 
 import HistoryStyle from "@/styles/HistoryStyle";
+import {useEffect, useState} from "react";
+import helpHistoryApi from "@/apis/helpHistoryApi";
 
 const History = () => {
+    const [historyList, setHistoryList] = useState([]);
+
+    const openCookie = () => {
+
+    }
+
+
+    const getHistory = async () => {
+        try {
+            const res = await helpHistoryApi.getHistoryList();
+            if (res.status === 200){
+                setHistoryList(res.data.result.historyList);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    useEffect(()=>{
+        getHistory();
+    }, [])
+
     return(
         <>
-            <View style={HistoryStyle.historyWrap}>
-                
-                <View>
-                    <HistoryItem thumbnail={FishThumbnail} content="버스승차를 도와주세요!" createdDate="2023. 10. 16." stateImg={FortuneCookieIcon} />
-                </View>
-                
+            <View>
+                {
+                    historyList.map((el, idx)=>{
+                        return (
+                            <View style={HistoryStyle.historyWrap} key={`helpHistory${idx}`}>
+                                <HistoryItem thumbnail={el.categoryImage} content={el.content} createdDate={el.createdAt} openCookie={openCookie}/>
+                            </View>
+                        )
+                    })
+                }
+
             </View>
         </>
     );

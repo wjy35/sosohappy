@@ -39,8 +39,11 @@ const CharacterStyle = StyleSheet.create({
         height:responsiveWidth(70),
         marginHorizontal:responsiveWidth(2),
     },
-
-
+    feedAnimalActive: {
+        borderWidth: 1,
+        borderColor: 'blue',
+        borderRadius: 20,
+    },
     selectedCharaterWrap:{
         marginHorizontal:responsiveWidth(4),
         display:"flex",
