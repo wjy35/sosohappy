@@ -1,6 +1,8 @@
 import Geolocation from "@react-native-community/geolocation";
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
 import {useState} from "react";
+import helpMatchApi from "@/apis/helpMatchApi";
+import RNSecureStorage from "rn-secure-storage";
 
 interface propsType {
 
@@ -15,13 +17,25 @@ function useLocation({}: propsType) {
         skipPermissionRequests: false,
     });
 
+    const sendPosition = async (latitude: number, longitude: number) => {
+        try {
+            const res = await helpMatchApi.sendPosition({
+                latitude: latitude,
+                longitude: longitude,
+            })
+            if (res.status === 200){
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     const backgroundPositionFunc = (y: string, x: string) => {
-        console.log('background longitude: ', x, 'latitude: ', y);
         // TODO: background에서 사용될 작업
+        sendPosition(y, x)
     }
 
     const foregroundPositionFunc = (y: string, x: string) => {
-        console.log('foreground longitude: ', x, 'latitude: ', y);
         // TODO: foreground에서 사용될 작업
     }
 
@@ -53,7 +67,7 @@ function useLocation({}: propsType) {
                 getPosition();
             },
             {
-                delay: 300000,
+                delay: 60000,
                 onLoop: true,
                 taskId: 'taskid',
                 onError: (e) => console.log('Error logging:', e),
