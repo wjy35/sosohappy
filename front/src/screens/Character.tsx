@@ -21,7 +21,6 @@ enum CategoryType{
 const Character = () => {
     const [categoryType, setCategoryType] = useState<CategoryType>(CategoryType.army);
     const [myMonsters, setMyMonsters] = useState<any[] | null>(null);
-    console.log(myMonsters);
 
     useEffect(() => {
         const getMyDict = async () => {
@@ -36,8 +35,7 @@ const Character = () => {
     }, [])
 
     return(
-        <CommonLayout>
-            <Header/>
+        <CommonLayout headerType={0} footer={false}>
 
             <View style={CharacterStyle.characterTitleWrap}>
                 <Text style={CharacterStyle.characterTitle}>
@@ -146,7 +144,19 @@ const Character = () => {
                 <Text style={CharacterStyle.expTitle}>Exp.</Text>
                 <View style={CharacterStyle.expStatusWrap}>
                     <View style={CharacterStyle.expStatusBg}></View>
-                    <View style={CharacterStyle.expStatusMy}></View>
+                    {
+                        categoryType === CategoryType.army &&
+                        <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[0].currentPoint) * 100}` + "%"}]}></View>
+                    }
+                    {
+                        categoryType === CategoryType.navy &&
+                        <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[1].currentPoint) * 100}` + "%"}]}></View>
+                    }
+                    {
+                        categoryType === CategoryType.airForce &&
+                        <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[2].currentPoint) * 100}` + "%"}]}></View>
+                    }
+                    
                 </View>
             </View>
 
@@ -171,7 +181,6 @@ const Character = () => {
                     </View>
                 </TouchableOpacity>
             </View>
-            <Footer/>
         </CommonLayout>
     );
 }
