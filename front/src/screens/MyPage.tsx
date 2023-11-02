@@ -1,4 +1,4 @@
-import { useState } from "react"
+import {useEffect, useState} from "react"
 import {View, Text, Image, TouchableOpacity} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import History from "@/components/History";
@@ -14,14 +14,57 @@ import MyPageStyle from "@/styles/MyPageStyle";
 
 import { WebView } from "react-native-webview";
 import SosomonDictionary from "@/components/SosomonDictionary";
+import {observer} from "mobx-react";
+import useStore from "@/hooks/useStore";
+import monsterApi from "@/apis/monsterApi";
+import memberApi from "@/apis/memberApi";
 
-const MyPage = () => {
+const MyPage = observer(() => {
   const navigation = useNavigation();
   const [modalState, setModalState] = useState<Boolean>(false);
+  const {userStore} = useStore();
+  const [myProfile, setMyProfile] = useState<any>(null);
 
   const updateModalState = (status: Boolean) => {
     setModalState(status);
   }
+
+  const getProfileMonster = async () => {
+    try {
+      const res = await monsterApi.getMyDetail();
+      if (res.status === 200){
+        setMyProfile({
+          type: res.data.result.monster.typeId,
+          level: res.data.result.monster.level,
+        })
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const changeProfileMonster = async (profileType: number, profileLevel: number) => {
+    const profileMonsterId = (profileType-1)*10 + profileLevel;
+    try {
+      const res = await memberApi.updateMember({
+        profileMonsterId: profileMonsterId,
+      })
+      if (res.status === 200){
+        setMyProfile({
+          type: profileType,
+          level: profileLevel,
+        })
+      }
+    } catch (err){
+      console.log(err);
+    }
+  }
+
+  useEffect(()=>{
+    getProfileMonster();
+  }, [])
+
+
 
   return (
     <CommonLayout headerType={0} footer={true}>
@@ -54,18 +97,20 @@ const MyPage = () => {
         </View>
       </View>
 
-
       <View style={MyPageStyle.myPointInfo}>
         <Text style={MyPageStyle.myPoint}>214P / <Text style={MyPageStyle.myAllPoint}>2400P</Text></Text>
         <Text style={MyPageStyle.myPointDesc}><Text style={MyPageStyle.myPointDescPoint}>행운력을</Text> 통해 성장시키세요!</Text>
       </View>
 
-
       <View style={MyPageStyle.ThumbnailCharacterWrap}>
-        <Image
-          source={FishThumbnail}
-          style={MyPageStyle.MySelectedCharImg}
-        />
+        {
+          myProfile && (
+                <WebView
+                    source={{uri: `http://sosohappy.co.kr:8888/sosomon/${myProfile.type}/${myProfile.level}`}}
+                    style={MyPageStyle.MySelectedCharImg}
+                />
+            )
+        }
         <TouchableOpacity activeOpacity={0.7} style={MyPageStyle.bookIconWrap} onPress={() => updateModalState(true)}>
           <Image
             source={BookIcon}
@@ -74,6 +119,9 @@ const MyPage = () => {
         </TouchableOpacity>
       </View>
 
+      {
+          modalState && <SosomonDictionary updateModalState={updateModalState} changeProfileMonster={changeProfileMonster}/>
+      }
 
       <View style={MyPageStyle.expWrap}>
         <View style={MyPageStyle.expTitleWrap}>
@@ -99,24 +147,19 @@ const MyPage = () => {
         </View>
       </View>
 
-      {
-        modalState && <SosomonDictionary updateModalState={updateModalState}/>
-      }
+
 
       <View style={MyPageStyle.historyTitleWrap}>
         <Text style={MyPageStyle.historyTitle}>나의 최근 행운</Text>
         <History/>
-        <History/>
-        <History/>
-
-        <TouchableOpacity activeOpacity={0.7}>
-            <View style={MyPageStyle.moreButton}>
-                <Text style={MyPageStyle.moreButtonText}>더보기</Text>
-            </View>
-        </TouchableOpacity>
+        {/*<TouchableOpacity activeOpacity={0.7}>*/}
+        {/*    <View style={MyPageStyle.moreButton}>*/}
+        {/*        <Text style={MyPageStyle.moreButtonText}>더보기</Text>*/}
+        {/*    </View>*/}
+        {/*</TouchableOpacity>*/}
       </View>
     </CommonLayout>
   );
-};
+});
 
 export default MyPage;
