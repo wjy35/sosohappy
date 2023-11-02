@@ -63,4 +63,8 @@ public class MemberSessionEntityRepository {
     public String getServerUUID(Long memberId){
         return (String)redisTemplate.opsForHash().get(PREFIX+memberId,"serverUUID");
     }
+
+    public boolean isConnected(Long memberId){
+        return (boolean)redisTemplate.opsForHash().get(PREFIX+memberId,"isConnected");
+    }
 }
