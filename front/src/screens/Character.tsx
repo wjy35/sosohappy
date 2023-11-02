@@ -37,8 +37,6 @@ const Character = () => {
 
     return(
         <CommonLayout>
-            <Header/>
-
             <View style={CharacterStyle.characterTitleWrap}>
                 <Text style={CharacterStyle.characterTitle}>
                     <Text style={CharacterStyle.characterTitleMyName}>김싸피</Text> 님 어떤 캐릭터를{"\n"}
@@ -48,7 +46,7 @@ const Character = () => {
                     <View style={CharacterStyle.feedButton}>
                         {
                             categoryType === CategoryType.army && myMonsters &&
-                            <Text style={CharacterStyle.feedButtonText}>육식동물에게 먹이주기</Text>
+                            <Text style={CharacterStyle.feedButtonText}>육지동물에게 먹이주기</Text>
                         }
                         {
                             categoryType === CategoryType.navy && myMonsters &&
@@ -78,28 +76,37 @@ const Character = () => {
                 >
 
                     {
-                        myMonsters && 
-                        <ImageBackground
-                            source={type1[myMonsters[0].level]}
-                            style={CharacterStyle.feedAnimalImg}
-                            resizeMode="cover"
-                        />
+                        myMonsters && (
+                            <View style={categoryType === CategoryType.army && CharacterStyle.feedAnimalActive}>
+                                <ImageBackground
+                                    source={type1[myMonsters[0].level]}
+                                    style={CharacterStyle.feedAnimalImg}
+                                    resizeMode="cover"
+                                />
+                            </View>
+                        )
                     }
                     {
-                        myMonsters &&
-                        <ImageBackground
-                            source={type2[myMonsters[1].level]}
-                            style={CharacterStyle.feedAnimalImg}
-                            resizeMode="cover"
-                        />
+                        myMonsters && (
+                            <View style={categoryType === CategoryType.navy && CharacterStyle.feedAnimalActive}>
+                                <ImageBackground
+                                    source={type2[myMonsters[1].level]}
+                                    style={CharacterStyle.feedAnimalImg}
+                                    resizeMode="cover"
+                                />
+                            </View>
+                            )
                     }
                     {
-                        myMonsters &&
-                        <ImageBackground
-                            source={type3[myMonsters[2].level]}
-                            style={CharacterStyle.feedAnimalImg}
-                            resizeMode="cover"
-                        />
+                        myMonsters && (
+                            <View style={categoryType === CategoryType.airForce && CharacterStyle.feedAnimalActive}>
+                                <ImageBackground
+                                    source={type3[myMonsters[2].level]}
+                                    style={CharacterStyle.feedAnimalImg}
+                                    resizeMode="cover"
+                                />
+                            </View>
+                            )
                     }
                 </ScrollView>
             </View>
@@ -130,7 +137,7 @@ const Character = () => {
                     <Text style={CharacterStyle.selectedCharacterInfoTitle}>현재 성장 단계</Text>
                     {
                         categoryType === CategoryType.army &&
-                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>육식동물 Lv.3</Text>
+                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>육지동물 Lv.3</Text>
                     }
                     {
                         categoryType === CategoryType.navy &&
