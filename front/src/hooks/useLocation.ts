@@ -2,7 +2,6 @@ import Geolocation from "@react-native-community/geolocation";
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
 import {useState} from "react";
 import helpMatchApi from "@/apis/helpMatchApi";
-import RNSecureStorage from "rn-secure-storage";
 
 interface propsType {
 
@@ -30,25 +29,28 @@ function useLocation({}: propsType) {
         }
     }
 
-    const backgroundPositionFunc = (y: string, x: string) => {
+    const backgroundPositionFunc = (lati: number, longi: number) => {
         // TODO: background에서 사용될 작업
-        sendPosition(y, x)
+        sendPosition(lati, longi)
+        setCoordinate({
+            latitude: lati,
+            longitude: longi,
+        });
     }
 
-    const foregroundPositionFunc = (y: string, x: string) => {
+    const foregroundPositionFunc = (lati: number, longi: number) => {
         // TODO: foreground에서 사용될 작업
+        setCoordinate({
+            latitude: lati,
+            longitude: longi,
+        });
     }
 
     const getPosition = () => {
         Geolocation.getCurrentPosition(
             position => {
-                const latitude = JSON.stringify(position.coords.latitude);
-                const longitude = JSON.stringify(position.coords.longitude);
-
-                setCoordinate({
-                    y: latitude,
-                    x: longitude,
-                });
+                const latitude = Number(JSON.stringify(position.coords.latitude));
+                const longitude = Number(JSON.stringify(position.coords.longitude));
                 backgroundPositionFunc(latitude, longitude);
             },
             error => {console.log(error)},
@@ -101,12 +103,8 @@ function useLocation({}: propsType) {
 
         watchId = Geolocation.watchPosition(
             position => {
-                const latitude = JSON.stringify(position.coords.latitude);
-                const longitude = JSON.stringify(position.coords.longitude);
-                setCoordinate({
-                    y: latitude,
-                    x: longitude,
-                });
+                const latitude = Number(JSON.stringify(position.coords.latitude));
+                const longitude = Number(JSON.stringify(position.coords.longitude));
                 foregroundPositionFunc(latitude, longitude);
             },
             error => {
