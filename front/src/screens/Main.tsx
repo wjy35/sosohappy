@@ -34,14 +34,14 @@ const Main = observer(() => {
           source={MainImg}
           style={MainStyle.mainImg}
         />
-        <TouchableOpacity activeOpacity={0.7}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Map')}>
           <View style={MainStyle.helpButton}>
             <Text style={MainStyle.helpButtonText}>도움 찾아가기</Text>
           </View>
         </TouchableOpacity>
         {
           !userStore.user && (
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('SignUpSeparate')}>
                   <Text style={MainStyle.signUpText}>회원이 아니신가요?</Text>
                 </TouchableOpacity>
             )
@@ -57,7 +57,7 @@ const Main = observer(() => {
           <Text style={MainStyle.boxSubTitle}>소소한 행복이 행운을 가져다줘요</Text>
         </View>
         <View style={MainStyle.boxFlexWrap}>
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Map')}>
             <View style={MainStyle.boxContentWrap}>
               <Text style={MainStyle.boxContentTitle}>
                 도움이{"\n"}
@@ -71,7 +71,7 @@ const Main = observer(() => {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('CreateHelp')}>
             <View style={MainStyle.boxContentWrap}>
               <Text style={MainStyle.boxContentTitle}>
                 소소한 행복을{"\n"}
@@ -96,7 +96,7 @@ const Main = observer(() => {
           </Text>
         </View>
 
-        <TouchableOpacity activeOpacity={0.7}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('MyPage')}>
           <View style={MainStyle.moveMypageButton}>
             <Image
               source={CloverIcon}

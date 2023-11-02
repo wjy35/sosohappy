@@ -3,7 +3,7 @@ import { responsiveWidth, responsiveHeight } from "react-native-responsive-dimen
 
 const ChatStyle = StyleSheet.create({
     heightWrap:{
-        height:responsiveHeight(96),
+        height:responsiveHeight(100) - 80,
     },
     chatTitleWrap:{
         paddingHorizontal:responsiveWidth(4),

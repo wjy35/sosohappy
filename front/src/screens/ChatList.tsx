@@ -29,19 +29,19 @@ const ChatList = () => {
       <View style={ChatListStyle.chatListBg}>
         <View style={ChatListStyle.chatListHeaderWrap}>
           <TouchableOpacity activeOpacity={0.7}>
-            <Image
+            {/* <Image
               source={PreArrowIcon}
               style={ChatListStyle.preArrowIcon}
-            />
+            /> */}
           </TouchableOpacity>
           <View>
             <Text style={ChatListStyle.headerTitle}>Messages</Text>
           </View>
           <TouchableOpacity activeOpacity={0.7}>
-            <Image
+            {/* <Image
               source={HamburgerMenuIcon}
               style={ChatListStyle.hamburgerIcon}
-            />
+            /> */}
           </TouchableOpacity>
         </View>
 
