@@ -3,6 +3,7 @@ import {View, Text, Image, TouchableOpacity} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import History from "@/components/History";
 import { useNavigation } from "@react-navigation/native";
+import FortuneModal from "@/components/FortuneModal";
 
 import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 import GearIcon from "@/assets/img/gear-icon.png"
@@ -24,6 +25,7 @@ const MyPage = observer(() => {
   const [modalState, setModalState] = useState<Boolean>(false);
   const {userStore} = useStore();
   const [myProfile, setMyProfile] = useState<any>(null);
+  const [defaultSosomon, setDefaultSosomon] = useState<any>(null);
 
   const updateModalState = (status: Boolean) => {
     setModalState(status);
@@ -33,6 +35,7 @@ const MyPage = observer(() => {
     try {
       const res = await monsterApi.getMyDetail();
       if (res.status === 200){
+        setDefaultSosomon(res.data.result.monster);
         setMyProfile({
           type: res.data.result.monster.typeId,
           level: res.data.result.monster.level,
@@ -67,6 +70,7 @@ const MyPage = observer(() => {
 
 
   return (
+    <>
     <CommonLayout headerType={0} footer={true}>
       <View style={MyPageStyle.myProfileWrap}>
         <Image
@@ -126,7 +130,10 @@ const MyPage = observer(() => {
       <View style={MyPageStyle.expWrap}>
         <View style={MyPageStyle.expTitleWrap}>
           <View style={MyPageStyle.expTitle}>
-            <Text style={MyPageStyle.expMainTitle}>Amy의 성장경험치</Text>
+              {
+                defaultSosomon &&
+                <Text style={MyPageStyle.expMainTitle}>{defaultSosomon?.typeName}동물의 성장경험치</Text>
+              }
             <Text style={MyPageStyle.expSubTitle}>당신의 선행력을 수치로 보여드려요</Text>
           </View>
           <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Character')}>
@@ -138,10 +145,16 @@ const MyPage = observer(() => {
         </View>
 
         <View style={MyPageStyle.statusWrap}>
-          <Text style={MyPageStyle.statusPercent}>28%</Text>
+          {
+            defaultSosomon &&
+            <Text style={MyPageStyle.statusPercent}>{defaultSosomon.currentPoint*100 + "%"}</Text>
+          }
           <View style={MyPageStyle.expBarWrap}>
             <View style={MyPageStyle.expBarBg}></View>
-            <View style={MyPageStyle.expBarMy}></View>
+            {
+              defaultSosomon &&
+              <View style={[MyPageStyle.expBarMy, {width:`${defaultSosomon.currentPoint*100 + "%"}`}]}></View>
+            }
           </View>
           <Text style={MyPageStyle.expInfo}>진화까지 얼마 안남았어요! 새로운 행운력을 모아보세요!</Text>
         </View>
@@ -159,6 +172,8 @@ const MyPage = observer(() => {
         {/*</TouchableOpacity>*/}
       </View>
     </CommonLayout>
+    <FortuneModal/>
+    </>
   );
 });
 
