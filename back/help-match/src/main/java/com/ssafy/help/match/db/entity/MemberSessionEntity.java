@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class MemberSessionEntity {
     Long memberId;
     String sessionId;
+    String serverUUID;
     Boolean isConnected;
     HelpMatchType matchType;
     HelpMatchStatus matchStatus;
