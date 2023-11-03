@@ -4,7 +4,6 @@ import com.ssafy.monster.domain.res.CloverRes;
 import com.ssafy.monster.domain.res.MonsterRes;
 
 import java.util.List;
-import java.util.Map;
 
 public interface MonsterService {
 
