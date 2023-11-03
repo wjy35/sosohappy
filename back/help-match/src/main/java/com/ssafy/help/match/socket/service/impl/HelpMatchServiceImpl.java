@@ -49,15 +49,6 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     }
 
     @Override
-    public void match(Point point,double m,Long memberId) {
-        memberPointRepository.search(point,m)
-                .getContent()
-                .stream()
-                .filter((geoResult)-> isGeoResultAvailable(geoResult,memberId))
-                .forEach((geoResult)-> emitMatchEvent(memberId,Long.parseLong(geoResult.getContent().getName())));
-    }
-
-    @Override
     public MatchStatusResponse saveAndGetMatchStatus(HelpMatchRequest helpMatchRequest) {
         MatchStatusResponse matchStatusResponse = MatchStatusResponse
                 .builder()
@@ -85,6 +76,15 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         }
 
         return receiveMatchItemList;
+    }
+
+    @Override
+    public void match(Point point,double m,Long memberId) {
+        memberPointRepository.search(point,m)
+                .getContent()
+                .stream()
+                .filter((geoResult)-> isGeoResultAvailable(geoResult,memberId))
+                .forEach((geoResult)-> emitMatchEvent(memberId,Long.parseLong(geoResult.getContent().getName())));
     }
 
     private void emitMatchEvent(Long memberId, Long matchedMemberId){
