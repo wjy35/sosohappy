@@ -1,8 +1,5 @@
 import {View, Text, Image, TouchableOpacity, ScrollView} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-
 import MainImg from "@/assets/img/main-img.png"
 import HandShakeIcon from "@/assets/img/handshake-icon.png"
 import MegaphoneIcon from "@/assets/img/megaphone-icon.png"
@@ -12,10 +9,16 @@ import RightArrowIcon from "@/assets/img/right-arrow-icon.png"
 import MainStyle from "@/styles/MainStyle";
 
 import {observer} from 'mobx-react';
-import store from '@/store/indexStore';
+import useStore from "@/hooks/useStore";
+import {useNavigation} from "@react-navigation/native";
 
 const Main = observer(() => {
-  const {userStore} = store;
+  const {userStore} = useStore();
+  const navigation =  useNavigation();
+
+  const goto = (next: string) => {
+    userStore.user?(navigation.navigate(next)):(navigation.navigate('Login'));
+  }
 
   return (
     <CommonLayout footer={true} headerType={0} nowPage={'Main'}>
@@ -31,14 +34,18 @@ const Main = observer(() => {
           source={MainImg}
           style={MainStyle.mainImg}
         />
-        <TouchableOpacity activeOpacity={0.7}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Map')}>
           <View style={MainStyle.helpButton}>
             <Text style={MainStyle.helpButtonText}>도움 찾아가기</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.7}>
-          <Text style={MainStyle.signUpText}>회원이 아니신가요?</Text>
-        </TouchableOpacity>
+        {
+          !userStore.user && (
+                <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('SignUpSeparate')}>
+                  <Text style={MainStyle.signUpText}>회원이 아니신가요?</Text>
+                </TouchableOpacity>
+            )
+        }
       </View>
 
       <View>
@@ -50,46 +57,59 @@ const Main = observer(() => {
           <Text style={MainStyle.boxSubTitle}>소소한 행복이 행운을 가져다줘요</Text>
         </View>
         <View style={MainStyle.boxFlexWrap}>
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Map')}>
             <View style={MainStyle.boxContentWrap}>
               <Text style={MainStyle.boxContentTitle}>
                 도움이{"\n"}
                 필요하신가요?
               </Text>
               <Text style={MainStyle.boxContentSubTitle}>글 작성하러 가기</Text>
+              <Image
+                source={HandShakeIcon}
+                style={MainStyle.boxContentImg}
+              />
             </View>
-            <Image
-              source={HandShakeIcon}
-              style={MainStyle.boxContentImg}
-            />
           </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('CreateHelp')}>
             <View style={MainStyle.boxContentWrap}>
               <Text style={MainStyle.boxContentTitle}>
                 소소한 행복을{"\n"}
                 찾으시나요?
               </Text>
               <Text style={MainStyle.boxContentSubTitle}>주변의 행운 찾으러가기</Text>
+              <Image
+                source={MegaphoneIcon}
+                style={MainStyle.boxContentImg}
+              />
             </View>
-            <Image
-              source={MegaphoneIcon}
-              style={MainStyle.boxContentImg}
-            />
           </TouchableOpacity>
         </View>
       </View>
 
       <View style={MainStyle.happyWrap}>
-        <View>
-          <Text style={MainStyle.happyMainTitle}>김싸피님, 행운을 나누세요.</Text>
-          <Text style={MainStyle.happySubTitle}>
-                오늘도 김싸피님의 소소한 행운이 더 많이{"\n"}
-                전해질 수 있도록
-          </Text>
-        </View>
+        
+          {
+            userStore.user ?
+            <View>
+              <Text style={MainStyle.happyMainTitle}>{userStore.user.name}님, 행운을 나누세요.</Text>
+              <Text style={MainStyle.happySubTitle}>
+                    오늘도 {userStore.user.name}님의 소소한 행운이 더 많이{"\n"}
+                    전해질 수 있도록
+              </Text>
+            </View>
+            :
+            <View>
+              <Text style={MainStyle.happyMainTitle}>로그인을 하시면 소소몬을 만날 수 있어요.</Text>
+              <Text style={MainStyle.happySubTitle}>
+                    로그인을 하시면, 일상의 선행을 통해{"\n"}
+                    캐릭터를 키우실 수 있어요.
+              </Text>
+            </View>
+          }
+        
 
-        <TouchableOpacity activeOpacity={0.7}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('MyPage')}>
           <View style={MainStyle.moveMypageButton}>
             <Image
               source={CloverIcon}

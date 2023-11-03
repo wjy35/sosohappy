@@ -14,6 +14,7 @@ const MyPageStyle = StyleSheet.create({
         width:48,
         height:48,
         borderRadius:50,
+        backgroundColor:"#6ED4E0",
     },
     myProfileInfo:{
         marginLeft:17,
@@ -77,6 +78,7 @@ const MyPageStyle = StyleSheet.create({
 
     ThumbnailCharacterWrap:{
         width:responsiveWidth(92),
+        height: responsiveWidth(80),
         marginHorizontal:responsiveWidth(4),
         marginTop:26,
         position:"relative",
@@ -95,7 +97,7 @@ const MyPageStyle = StyleSheet.create({
     bookIcon:{
         width:24,
         height:24,
-        
+
     },
 
 
@@ -154,7 +156,6 @@ const MyPageStyle = StyleSheet.create({
         borderRadius:50,
     },
     expBarMy:{
-        width:"40%",
         height:16,
         backgroundColor:"#306E69",
         borderRadius:50,

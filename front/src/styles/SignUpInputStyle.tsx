@@ -22,7 +22,16 @@ const SignUpInputStyle = StyleSheet.create({
         fontSize:14,
         fontWeight:"900",
         color:"#535353",
-    }
+    },
+    signUpDropBox:{
+        marginTop:6,
+        height:36,
+        borderWidth:1,
+        borderColor:"#9D9D9D",
+        backgroundColor:"transparent",
+        borderRadius:14,
+        marginBottom:22,
+    },
 })
 
 export default SignUpInputStyle;

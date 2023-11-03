@@ -33,8 +33,8 @@ const SignUpAuthStyle = StyleSheet.create({
         marginTop:6,
     },
     uploadImage: {
-        height:132,
-        width: 20
+        width:"100%",
+        height: 160,
     }
 })
 

@@ -19,6 +19,7 @@ const CategoryWrapStyle = StyleSheet.create({
         color:"#5F5F5F",
         marginTop:5,
     },
+
 })
 
 export default CategoryWrapStyle;
