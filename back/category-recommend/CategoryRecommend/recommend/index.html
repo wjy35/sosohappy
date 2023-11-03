@@ -1,0 +1,13 @@
+#index.html
+<table class="table-contents" style="padding:10px">
+  <tr>
+    <th>제목</th>
+    <th>내용</th>
+  </tr>
+  {% for category in categoryList %}
+    <tr>
+      <td>{{category.category_id}}</td>
+      <td>{{category.category_name}}</td>
+  	</tr>
+  {%endfor%}
+</table>

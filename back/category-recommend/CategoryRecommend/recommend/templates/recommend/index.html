@@ -2,11 +2,17 @@
     <tr>
       <th>제목</th>
       <th>내용</th>
+      <th>횟수</th>
+      <th>날짜</th>
+      <th>카테고리번호</th>
     </tr>
     {% for c in categoryList %}
       <tr>
+        <td>{{c.pick_id}}</td>
+        <td>{{c.member_id}}</td>
+        <td>{{c.pick_count}}</td>
+        <td>{{c.pick_time}}</td>
         <td>{{c.category_id}}</td>
-        <td>{{c.category_name}}</td>
-        </tr>
+       </tr>
     {%endfor%}
   </table>
