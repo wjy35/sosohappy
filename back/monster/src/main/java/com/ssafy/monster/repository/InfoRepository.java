@@ -1,6 +1,5 @@
 package com.ssafy.monster.repository;
 
-import com.ssafy.monster.domain.entity.MemberMonsterGrowth;
 import com.ssafy.monster.domain.entity.MonsterInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +15,7 @@ public interface InfoRepository extends JpaRepository<MonsterInfo, Integer> {
 
     @Query(value = "SELECT SUM(required_clover) OVER(ORDER BY monster_level) AS required FROM monster_info WHERE type_id = 1", nativeQuery = true)
     List<Integer> getMonsterCloverInfo();
+
+    List<Integer> findAllByMonsterType_TypeId(int typeId);
+
 }
