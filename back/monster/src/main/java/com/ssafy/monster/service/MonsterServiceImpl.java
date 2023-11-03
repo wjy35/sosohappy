@@ -49,7 +49,7 @@ public class MonsterServiceImpl implements MonsterService{
         List<Integer> expList = infoRepository.getMonsterCloverInfo();
         expArr = expList.stream().mapToDouble(i -> i).toArray();
 
-        List<Integer> levelList = infoRepository.findAllByMonsterType_TypeId(1);
+        List<Integer> levelList = infoRepository.getMonsterLevels();
         levelArr = levelList.stream().map(i -> i.toString()).toArray(size -> new String[size]);
 
         cf = new ChoiceFormat(expArr, levelArr);
