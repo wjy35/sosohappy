@@ -17,4 +17,12 @@ public class ObjectSerializer {
             throw new RuntimeException(e);
         }
     }
+
+    public <T> T deserialize(String object,Class<T> clazz){
+        try {
+            return objectMapper.readValue(object,clazz);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
