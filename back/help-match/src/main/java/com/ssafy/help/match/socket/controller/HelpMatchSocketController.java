@@ -20,9 +20,10 @@ public class HelpMatchSocketController{
     private final ObjectSerializer objectSerializer;
     private final SimpMessageSendingOperations simpMessageSendingOperations;
     private final HelpMatchService helpMatchService;
+    private final double[] metricList = {500d,1000d,1500d};
 
     @SubscribeMapping("/topic/match/status/{memberId}")
-    void match(@DestinationVariable Long memberId){
+    void status(@DestinationVariable Long memberId){
         MatchStatusResponse response = helpMatchService.viewStatusByMemberId(memberId);
         simpMessageSendingOperations.convertAndSend("/topic/match/status/"+memberId, objectSerializer.serialize(response));
     }
@@ -39,10 +40,11 @@ public class HelpMatchSocketController{
 
     @MessageMapping("/match")
     void match(@Payload HelpMatchRequest helpMatchRequest){
-        helpMatchService.save(helpMatchRequest);
+        MatchStatusResponse response = helpMatchService.saveAndGetMatchStatus(helpMatchRequest);
+        simpMessageSendingOperations.convertAndSend("/topic/match/status/"+helpMatchRequest.getMemberId(), objectSerializer.serialize(response));
 
-        // 요청 정보 저장
-        helpMatchService.match(new Point(helpMatchRequest.getLongitude(),helpMatchRequest.getLatitude()),1000d, helpMatchRequest.getMemberId());
-
+        for(double metric: metricList){
+            helpMatchService.match(new Point(helpMatchRequest.getLongitude(),helpMatchRequest.getLatitude()),metric, helpMatchRequest.getMemberId());
+        }
     }
 }
