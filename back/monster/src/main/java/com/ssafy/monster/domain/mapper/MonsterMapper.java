@@ -1,4 +1,4 @@
-package com.ssafy.monster.mapper;
+package com.ssafy.monster.domain.mapper;
 
 import com.ssafy.monster.domain.entity.MemberMonsterGrowth;
 import com.ssafy.monster.domain.entity.MemberMonsterProfile;
@@ -20,11 +20,6 @@ public interface MonsterMapper {
     @Mapping(source="growth.memberMonsterId", target="memberMonsterId")
     @Mapping(source="growth.monsterType.typeId", target="typeId")
     @Mapping(source="growth.monsterType.typeName", target="typeName")
-    MonsterRes toMonsterListRes(MemberMonsterGrowth growth, Integer level);
-
-    @Mapping(source="growth.memberMonsterId", target="memberMonsterId")
-    @Mapping(source="growth.monsterType.typeId", target="typeId")
-    @Mapping(source="growth.monsterType.typeName", target="typeName")
-    MonsterRes toLevelUpMonsterRes(MemberMonsterGrowth growth, Integer level, Double currentPoint);
+    MonsterRes toMonsterRes(MemberMonsterGrowth growth, Integer level, Double currentPoint);
 
 }

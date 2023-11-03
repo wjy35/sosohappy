@@ -17,7 +17,12 @@ public enum ErrorCode {
     /* 409 : CONFLICT : Resource의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
 
     SHORTAGE_OF_CLOVER(HttpStatus.BAD_REQUEST, "보유중인 클로버가 부족합니다."),
-    FULL_OF_CLOVER(HttpStatus.BAD_REQUEST, "클로버가 이미 가득 차 있습니다.");
+    FULL_OF_CLOVER(HttpStatus.BAD_REQUEST, "클로버가 이미 가득 차 있습니다."),
+    JSON_PARSE_ERROR(HttpStatus.CONFLICT, "Topic을 변환하는 과정에서 오류가 발생했습니다."),
+    MONSTER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 monster 정보가 없습니다."),
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 profile이 없습니다."),
+    GROWTH_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 growth 정보가 없습니다."),
+    MEMBER_EXIST_ERROR(HttpStatus.CONFLICT, "해당 profile 정보가 이미 존재합니다.");
 
     private final HttpStatus status;
     private final String message;

@@ -14,7 +14,6 @@ import javax.persistence.*;
 public class MemberMonsterProfile {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
 
     @NotNull
@@ -36,6 +35,10 @@ public class MemberMonsterProfile {
     }
     public void addMemberAccruedClover(int clover){
         this.memberAccruedClover += clover;
+    }
+
+    public void setMonsterInfo(MonsterInfo monsterInfo) {
+        this.monsterInfo = monsterInfo;
     }
 
 }

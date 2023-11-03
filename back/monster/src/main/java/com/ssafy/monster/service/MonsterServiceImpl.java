@@ -7,26 +7,28 @@ import com.ssafy.monster.domain.entity.MemberMonsterGrowth;
 import com.ssafy.monster.domain.entity.MemberMonsterProfile;
 import com.ssafy.monster.domain.entity.MonsterInfo;
 import com.ssafy.monster.domain.entity.MonsterType;
+import com.ssafy.monster.domain.mapper.GrowthMapper;
+import com.ssafy.monster.domain.mapper.ProfileMapper;
 import com.ssafy.monster.domain.res.CloverRes;
 import com.ssafy.monster.domain.res.MonsterRes;
-import com.ssafy.monster.mapper.CloverMapper;
-import com.ssafy.monster.mapper.MonsterMapper;
+import com.ssafy.monster.domain.mapper.CloverMapper;
+import com.ssafy.monster.domain.mapper.MonsterMapper;
 import com.ssafy.monster.repository.GrowthRepository;
 import com.ssafy.monster.repository.InfoRepository;
 import com.ssafy.monster.repository.ProfileRepository;
 import com.ssafy.monster.repository.TypeRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.text.ChoiceFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MonsterServiceImpl implements MonsterService{
 
     private final ProfileRepository profileRepository;
@@ -38,24 +40,29 @@ public class MonsterServiceImpl implements MonsterService{
      * 경험치 구간 가져오기
      */
     private double[] expArr; //누적 경험치
+    private String[] levelArr;
+
+    private ChoiceFormat cf;
 
     @PostConstruct
     private void getExpinfo() {
         List<Integer> expList = infoRepository.getMonsterCloverInfo();
         expArr = expList.stream().mapToDouble(i -> i).toArray();
+
+        List<Integer> levelList = infoRepository.getMonsterLevels();
+        levelArr = levelList.stream().map(i -> i.toString()).toArray(size -> new String[size]);
+
+        cf = new ChoiceFormat(expArr, levelArr);
     }
 
     private Pair<Integer, Double> getCurrentPoint(int currentClover){
-
-        int currentLevel = Arrays.binarySearch(expArr, currentClover);
-        if(currentLevel<0) {
-            currentLevel = Math.abs(currentLevel) -1;
-        } else {
-            currentLevel += 1;
+        int currentLevel = Integer.parseInt(cf.format(currentClover));
+        if(currentLevel == expArr.length){
+            return new Pair<>(currentLevel, 1.0);
         }
-
         int requiredClover = (int) (expArr[currentLevel] - expArr[currentLevel-1]);
         Double prevRequiredClover = expArr[currentLevel-1];
+
         Double currentPoint = (currentClover-prevRequiredClover) / requiredClover;
 
         return new Pair<>(currentLevel, currentPoint);
@@ -67,8 +74,11 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     public MonsterRes searchRepresentativeMonster(Long memberId) {
 
-        MemberMonsterProfile profile = profileRepository.findByMemberId(memberId).get();
-        MemberMonsterGrowth growth = growthRepository.findByMemberMonsterProfile_MemberIdAndMonsterType_TypeId(profile.getMemberId(), profile.getMonsterInfo().getMonsterType().getTypeId()).get();
+        MemberMonsterProfile profile = profileRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        MemberMonsterGrowth growth = growthRepository
+                .findByMemberMonsterProfile_MemberIdAndMonsterType_TypeId(profile.getMemberId(), profile.getMonsterInfo().getMonsterType().getTypeId())
+                .orElseThrow(() -> new CustomException(ErrorCode.GROWTH_NOT_FOUND));
         MonsterType type = profile.getMonsterInfo().getMonsterType(); //프로필 타입
 
         // exp 계산
@@ -89,7 +99,7 @@ public class MonsterServiceImpl implements MonsterService{
         List<MemberMonsterGrowth> monsterList = growthRepository.findAllByMemberMonsterProfile_MemberId(memberId);
 
         List<MonsterRes> resList = monsterList
-                .stream().map(m -> MonsterMapper.INSTANCE.toMonsterListRes(m, getCurrentPoint(m.getMonsterClover()).first())
+                .stream().map(m -> MonsterMapper.INSTANCE.toMonsterRes(m, getCurrentPoint(m.getMonsterClover()).first(), getCurrentPoint(m.getMonsterClover()).second())
                 ).collect(Collectors.toList());
 
         return resList;
@@ -101,7 +111,8 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     public CloverRes searchCloverInfo(Long memberId) {
 
-        MemberMonsterProfile profile = profileRepository.findByMemberId(memberId).get();
+        MemberMonsterProfile profile = profileRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         CloverRes cloverRes = CloverMapper.INSTANCE.toCloverRes(profile);
 
@@ -115,13 +126,14 @@ public class MonsterServiceImpl implements MonsterService{
     @Transactional
     public MonsterRes updateMonsterClover(Long memberMonsterId, int clover) {
 
-        MemberMonsterGrowth growth = growthRepository.findByMemberMonsterId(memberMonsterId).get();
+        MemberMonsterGrowth growth = growthRepository.findByMemberMonsterId(memberMonsterId)
+                .orElseThrow(() -> new CustomException(ErrorCode.GROWTH_NOT_FOUND));
         MemberMonsterProfile profile = growth.getMemberMonsterProfile();
         if(profile.getMemberClover() < clover) {
             throw new CustomException(ErrorCode.SHORTAGE_OF_CLOVER);
         } else if(growth.getMonsterClover() >= expArr[expArr.length -1]) {
             throw new CustomException(ErrorCode.FULL_OF_CLOVER);
-        } else if(growth.getMonsterClover() + clover >= expArr[expArr.length -1]) {
+        } else if(growth.getMonsterClover() + clover > expArr[expArr.length -1]) {
             clover = (int) expArr[expArr.length -1] - growth.getMonsterClover();
         }
         growth.addMonsterClover(clover);
@@ -134,7 +146,7 @@ public class MonsterServiceImpl implements MonsterService{
         Pair<Integer, Double> pair = getCurrentPoint(currentClover);
 
         //result
-        MonsterRes monsterRes = MonsterMapper.INSTANCE.toLevelUpMonsterRes(growth, pair.first(), pair.second());
+        MonsterRes monsterRes = MonsterMapper.INSTANCE.toMonsterRes(growth, pair.first(), pair.second());
 
         return monsterRes;
     }
@@ -146,17 +158,14 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     @Transactional
     public void setInitialMonster(Long memberId) {
-        // 회원에서 memberId 받아서 -> 정합성 체크..??..
+        if(!profileRepository.existsByMemberId(memberId)){
+            throw new CustomException(ErrorCode.MEMBER_EXIST_ERROR);
+        }
 
-        // 프로필 저장
+        //프로필 저장
         MonsterInfo info = infoRepository.findByMonsterId(1).get();
 
-        MemberMonsterProfile profile = MemberMonsterProfile.builder()
-                .memberId(memberId)
-                .memberClover(0)
-                .memberAccruedClover(0L)
-                .monsterInfo(info)
-                .build();
+        MemberMonsterProfile profile = ProfileMapper.INSTANCE.toProfileEntity(memberId, 0, 0L, info);
 
         profileRepository.save(profile);
 
@@ -164,12 +173,7 @@ public class MonsterServiceImpl implements MonsterService{
         List<MonsterType> types = typeRepository.findAll();
 
         for(MonsterType t : types) {
-            MemberMonsterGrowth growth = MemberMonsterGrowth.builder()
-                    .memberMonsterProfile(profile)
-                    .monsterType(t)
-                    .monsterClover(0)
-                    .build();
-            growthRepository.save(growth);
+            growthRepository.save(GrowthMapper.INSTANCE.toGrowthEntity(profile, t, 0));
         }
 
     }
@@ -178,8 +182,10 @@ public class MonsterServiceImpl implements MonsterService{
     @Transactional
     public void updateClover(Long fromMemberId, Long toMemberId, int clover) {
 
-        MemberMonsterProfile fromProfile = profileRepository.findByMemberId(fromMemberId).get();
-        MemberMonsterProfile toProfile = profileRepository.findByMemberId(toMemberId).get();
+        MemberMonsterProfile fromProfile = profileRepository.findByMemberId(fromMemberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        MemberMonsterProfile toProfile = profileRepository.findByMemberId(toMemberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         fromProfile.addMemberClover(clover);
         fromProfile.addMemberAccruedClover(clover);
@@ -189,6 +195,52 @@ public class MonsterServiceImpl implements MonsterService{
         profileRepository.save(fromProfile);
         profileRepository.save(toProfile);
 
+    }
+
+    /**
+     * 프로필 변경
+     */
+    @Override
+    @Transactional
+    public void updateMemberMonsterProfile(Long memberId, int profileMonsterId) {
+
+        MemberMonsterProfile profile = profileRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        MonsterInfo info = infoRepository.findByMonsterId(profileMonsterId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MONSTER_NOT_FOUND));
+        MemberMonsterGrowth growth = growthRepository.findByMemberMonsterProfile_MemberIdAndMonsterType_TypeId(memberId, info.getMonsterType().getTypeId())
+                .orElseThrow(() -> new CustomException(ErrorCode.GROWTH_NOT_FOUND));
+
+        profile.setMonsterInfo(info);
+        profileRepository.save(profile);
+    }
+
+    @Override
+    @Transactional
+    public void deleteMemberMonsterProfile(Long memberId) {
+        if(!profileRepository.existsByMemberId(memberId)){
+            throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
+        } else {
+            growthRepository.deleteByMemberMonsterProfile_MemberId(memberId);
+            profileRepository.deleteByMemberId(memberId);
+        }
+    }
+
+    @Override
+    @Transactional
+    public boolean checkMaxLevel(Long memberId) {
+        List<MemberMonsterGrowth> growthList = growthRepository.findAllByMemberMonsterProfile_MemberId(memberId);
+
+        for(MemberMonsterGrowth growth : growthList){
+            if(growth.getMonsterType().getTypeId() == 4) return true;
+            if(growth.getMonsterClover() < expArr[expArr.length-1]) return false;
+        }
+
+        MemberMonsterProfile profile = profileRepository.findByMemberId(memberId).get();
+        MonsterType type = typeRepository.findByTypeId((byte) 4);
+        growthRepository.save(GrowthMapper.INSTANCE.toGrowthEntity(profile, type, 0));
+
+        return true;
     }
 
 }
