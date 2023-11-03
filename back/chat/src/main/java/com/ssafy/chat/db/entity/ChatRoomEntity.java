@@ -1,11 +1,10 @@
 package com.ssafy.chat.db.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -14,7 +13,8 @@ import javax.persistence.*;
 @Table(name = "chatroom")
 @IdClass(ChatRoomEntityPK.class)
 public class ChatRoomEntity {
-    @Column(name = "chat_room_id")
+
+    @Column(name = "chat_room_id", unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer chatRoomId;
 
@@ -25,6 +25,10 @@ public class ChatRoomEntity {
     @Id
     @Column(name = "receiver_member_id")
     private Long receiverMemberId;
+
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @org.hibernate.annotations.Generated(GenerationTime.INSERT)
+    private Timestamp createdAt;
 
     @Builder
     public ChatRoomEntity(Long senderMemberId, Long receiverMemberId) {
