@@ -18,18 +18,20 @@ const SideMenuStyle = StyleSheet.create({
         marginTop:44,
     },
     logoBg:{
-        width:80,
-        height:25,
+        width:86,
+        height:30,
         backgroundColor:"#26232A",
         borderRadius:8,
         display:"flex",
+        flexDirection:"row",
         justifyContent:"center",
         alignItems:"center",
     },
-    logo:{
+    logoText:{
         fontSize:16,
         fontWeight:"700",
         color:"#FFFFFF",
+        marginLeft:4,
     },
     closeIcon:{
         width:16,
@@ -44,7 +46,8 @@ const SideMenuStyle = StyleSheet.create({
         width:"100%",
         height:36,
         display:"flex",
-        justifyContent:"center",
+        flexDirection:"row",
+        alignItems:"center",
         paddingLeft:8,
         marginTop:6,
         borderRadius:6,
@@ -53,12 +56,11 @@ const SideMenuStyle = StyleSheet.create({
         fontSize:16,
         fontWeight:"700",
         color:"#B4B4B4",
+        marginLeft:15,
     },
     menuListActive:{
         backgroundColor:"#EEEEEE",
     },
-
-
     authButtonWrap:{
         marginTop:24,
     },
@@ -83,6 +85,10 @@ const SideMenuStyle = StyleSheet.create({
         textAlign:"center",
         marginTop:8,
     },
+    nickNameWrap: {
+        paddingTop: 20,
+
+    }
 })
 
 export default SideMenuStyle;

@@ -34,10 +34,10 @@ const Chat = () => {
   }, [])
 
   return (
-    <CommonLayout footer={false} headerType={0}>
+    <CommonLayout footer={false} headerType={1}>
       <View style={ChatStyle.heightWrap}>
 
-        <View style={ChatStyle.chatTitleWrap}>
+        {/* <View style={ChatStyle.chatTitleWrap}>
           <TouchableOpacity activeOpacity={0.7}>
             <SvgXml
               xml={backIcon}
@@ -56,7 +56,7 @@ const Chat = () => {
               height={30}
             />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <View style={ChatStyle.chatContentWrap}>
           <ScrollView>

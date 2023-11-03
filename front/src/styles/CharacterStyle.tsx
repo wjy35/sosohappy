@@ -39,8 +39,11 @@ const CharacterStyle = StyleSheet.create({
         height:responsiveWidth(70),
         marginHorizontal:responsiveWidth(2),
     },
-
-
+    feedAnimalActive: {
+        borderWidth: 1,
+        borderColor: 'blue',
+        borderRadius: 20,
+    },
     selectedCharaterWrap:{
         marginHorizontal:responsiveWidth(4),
         display:"flex",
@@ -48,11 +51,11 @@ const CharacterStyle = StyleSheet.create({
         alignItems:"center",
     },
     selectedCharacterImg:{
-        width:68,
-        height:68,
+        width:100,
+        height:100,
     },
     selectedCharacterInfo:{
-        marginLeft:14,
+        marginLeft:4,
     },
     selectedCharacterInfoTitle:{
         fontSize:14,
@@ -84,7 +87,6 @@ const CharacterStyle = StyleSheet.create({
         backgroundColor:"#E4E8EB",
     },
     expStatusMy:{
-        width:"20%",
         height:28,
         borderRadius:10,
         backgroundColor:"#8B8BEF",

@@ -1,14 +1,19 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-
 import LoginStyle from "@/styles/LoginStyle"
 import useInput from "@/hooks/useInput";
 import PlainInput from "@/components/PlainInput";
 import memberApi from "@/apis/memberApi";
+import pushAlarmApi from "@/apis/pushAlarmApi";
+import RNSecureStorage, {ACCESSIBLE} from "rn-secure-storage";
+import {useNavigation} from "@react-navigation/native";
+import messaging from '@react-native-firebase/messaging'
+import {observer} from "mobx-react";
+import useStore from "@/hooks/useStore";
 
-const Login = () => {
+const Login = observer(() => {
+  const navigation = useNavigation();
+  const {userStore} = useStore();
 
   const checkId = (newText: string) => {
     inputId.updateIsValid(newText!=="");
@@ -30,19 +35,41 @@ const Login = () => {
     onChange: checkPassword,
   });
 
+  const getFcmToken = async () => {
+    const fcmToken = await messaging().getToken();
+    return fcmToken;
+  };
+
   const login = async () => {
     try {
       const res = await memberApi.login({
         memberSignId: inputId.text,
         memberSignPassword: inputPassword.text,
       });
-      if (res.status === 200){
-        console.log(res);
-      }
-    } catch (err) {
-      console.log(err);
-    }
 
+      if (res.status === 200){
+        await RNSecureStorage.set("accessToken", res.data.result.authorization.accessToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
+        await RNSecureStorage.set("refreshToken", res.data.result.authorization.refreshToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
+      }
+
+      const fcmToken = await getFcmToken();
+      const insertFcmTokenApi = await pushAlarmApi.insertFcmToken({fcmToken});
+
+      const userInfo = await memberApi.getMember();
+
+      if (userInfo.status === 200){
+        userStore.setUser(userInfo.data.result.member);
+        navigation.replace('Main');
+        // console.log(userInfo.data.result.member);
+      }
+
+      // if(insertFcmTokenApi.status === 200){
+      //   navigation.replace('Main');
+      // }
+
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -69,6 +96,6 @@ const Login = () => {
       </View>
     </CommonLayout>
   );
-};
+});
 
 export default Login;
