@@ -47,4 +47,17 @@ public class CategoryFeignTest {
         assertThat(result).isEqualTo(responseJson);
     }
 
+    @DisplayName("CategoryFeign을 이용해 요청을 보냈을 때 값이 존재하지 않는 경우 customException을 받는다.")
+    @Test
+    public void testGetCategoryDetailException() throws Exception {
+
+        // given
+        long categoryId = 12623; // 테스트할 카테고리 ID
+        String expectResult = "{\"status\":\"fail\",\"message\":\"categoryId가 존재하지 않습니다.\",\"result\":{}}";
+
+        // when / then
+        assertThat(categoryFeign.getCategoryDetail(categoryId)).isNotNull();
+        assertThat(categoryFeign.getCategoryDetail(categoryId)).isEqualTo(expectResult);
+
+    }
 }
