@@ -19,6 +19,7 @@ import {observer} from "mobx-react";
 import useStore from "@/hooks/useStore";
 import monsterApi from "@/apis/monsterApi";
 import memberApi from "@/apis/memberApi";
+import { type1, type2, type3, type4 } from "@/assets/sosomon";
 
 const MyPage = observer(() => {
   const navigation = useNavigation();
@@ -29,6 +30,8 @@ const MyPage = observer(() => {
   const [fortuneModalState, setFortuneModalState] = useState<Boolean>(false);
   const [myClover, setMyClover] = useState<any>(null);
   const loaderValue = useRef(new Animated.Value(0)).current;
+  const [profileMonsterType, setProfileMonsterType] = useState<number>(0);
+  const [profileMonsterLevel, setProfileMonsterLevel] = useState<number>(0);
 
   const load = (initialWidth: number) => {
     Animated.timing(loaderValue, {
@@ -89,6 +92,19 @@ const MyPage = observer(() => {
     setMyClover(res.data.result.clover);
   }
 
+  const whatIsMyThumbnail = () => {
+    if(userStore.user.profileMonsterId){
+      let temp;
+      if(Number(userStore.user.profileMonsterId) < 10){
+        temp = "0" + temp;
+      }else{
+        temp = userStore.user.profileMonsterId;
+      }
+      setProfileMonsterType(Number(String(temp).slice(0,1)));
+      setProfileMonsterLevel(Number(String(temp).slice(1,2))-1);
+    }
+  }
+
   useEffect(() => {
     if(defaultSosomon?.currentPoint){
       load(defaultSosomon.currentPoint);
@@ -101,14 +117,43 @@ const MyPage = observer(() => {
     
   }, [])
 
+  useEffect(() => {
+    whatIsMyThumbnail();
+  }, [])
+
   return (
     <>
     <CommonLayout headerType={0} footer={true}>
       <View style={MyPageStyle.myProfileWrap}>
-        <Image
-          source={FishThumbnail}
-          style={MyPageStyle.myProfileImg}
-        />
+        {
+          profileMonsterType === 0 &&
+          <Image
+            source={type1[profileMonsterLevel]}
+            style={MyPageStyle.myProfileImg}
+          />
+        }
+        {
+          profileMonsterType === 1 &&
+          <Image
+            source={type2[profileMonsterLevel]}
+            style={MyPageStyle.myProfileImg}
+          />
+        }
+        {
+          profileMonsterType === 2 &&
+          <Image
+            source={type3[profileMonsterLevel]}
+            style={MyPageStyle.myProfileImg}
+          />
+        }
+        {
+          profileMonsterType === 3 &&
+          <Image
+            source={type4[profileMonsterLevel]}
+            style={MyPageStyle.myProfileImg}
+          />
+        }
+        
         <View style={MyPageStyle.myProfileInfo}>
           {
             userStore.user &&
