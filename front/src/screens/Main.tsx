@@ -88,13 +88,26 @@ const Main = observer(() => {
       </View>
 
       <View style={MainStyle.happyWrap}>
-        <View>
-          <Text style={MainStyle.happyMainTitle}>김싸피님, 행운을 나누세요.</Text>
-          <Text style={MainStyle.happySubTitle}>
-                오늘도 김싸피님의 소소한 행운이 더 많이{"\n"}
-                전해질 수 있도록
-          </Text>
-        </View>
+        
+          {
+            userStore.user ?
+            <View>
+              <Text style={MainStyle.happyMainTitle}>{userStore.user.name}님, 행운을 나누세요.</Text>
+              <Text style={MainStyle.happySubTitle}>
+                    오늘도 {userStore.user.name}님의 소소한 행운이 더 많이{"\n"}
+                    전해질 수 있도록
+              </Text>
+            </View>
+            :
+            <View>
+              <Text style={MainStyle.happyMainTitle}>로그인을 하시면 소소몬을 만날 수 있어요.</Text>
+              <Text style={MainStyle.happySubTitle}>
+                    로그인을 하시면, 일상의 선행을 통해{"\n"}
+                    캐릭터를 키우실 수 있어요.
+              </Text>
+            </View>
+          }
+        
 
         <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('MyPage')}>
           <View style={MainStyle.moveMypageButton}>

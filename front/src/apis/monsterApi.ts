@@ -14,6 +14,12 @@ const monsterApi = {
     );
     return res;
   },
+  getMyClover: async () => {
+    const res = PrivateInstance.get(
+      `${domain}/clover`,
+    );
+    return res;
+  },
   getMyDict: async () => {
     const res = PrivateInstance.get(
       `${domain}/collection`,
