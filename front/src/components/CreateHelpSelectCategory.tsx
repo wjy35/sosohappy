@@ -49,22 +49,18 @@ const CreateHelpSelectCategory = () => {
             </View>
             {
                 category ? (
-                    <View style={CreateHelpStyle.helpDetailWrap}>
-                        <View style={{marginBottom: 20}}>
-                            <View style={{padding: 10}}>
-                                <Text style={{fontSize: 16, fontWeight: 'bold'}}>도움 내용을 입력해 주세요</Text>
-                            </View>
-                            <PlainInput {...helpContent}/>
+                    <View style={CreateHelpStyle.detailInputWrap}>
+                        <View style={CreateHelpStyle.inputTitle}>
+                            <Text style={CreateHelpStyle.inputTitleText}>도움 내용을 입력해 주세요</Text>
                         </View>
-                        <View style={{marginBottom: 20}}>
-                            <View style={{padding: 10}}>
-                                <Text style={{fontSize: 16, fontWeight: 'bold'}}>상세 위치를 입력해 주세요</Text>
-                            </View>
-                            <PlainInput {...locationDetail}/>
+                        <PlainInput {...helpContent}/>
+                        <View style={CreateHelpStyle.inputTitle}>
+                            <Text style={CreateHelpStyle.inputTitleText}>상세 위치를 입력해 주세요</Text>
                         </View>
-                        <View style={{width: '100%', padding: 10}}>
-                            <View style={{padding: 10}}>
-                                <Text style={{fontSize: 16, fontWeight: 'bold'}}>카테고리</Text>
+                        <PlainInput {...locationDetail}/>
+                        <View style={CreateHelpStyle.categoryWrap}>
+                            <View style={CreateHelpStyle.categoryTitle}>
+                                <Text style={CreateHelpStyle.categoryTitleText}>카테고리</Text>
                             </View>
                             <View style={[CategoryWrapStyle.categoryItemWrap]}>
                                 <SvgXml
@@ -76,8 +72,8 @@ const CreateHelpSelectCategory = () => {
                         </View>
                         <View>
                             <TouchableOpacity activeOpacity={0.7} onPress={()=>{}}>
-                                <View style={[AuthButtonStyle.nextButton, AuthButtonStyle.nextButtonActive]}>
-                                    <Text style={AuthButtonStyle.nextButtonText}>등록하기</Text>
+                                <View style={CreateHelpStyle.submitButtonWrap}>
+                                    <Text style={CreateHelpStyle.submitButtonText}>등록하기</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>

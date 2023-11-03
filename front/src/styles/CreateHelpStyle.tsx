@@ -78,6 +78,46 @@ const CreateHelpStyle = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center",
     },
+
+    detailInputWrap:{
+        marginHorizontal:responsiveWidth(4),
+    },
+    inputTitle:{
+        marginTop:10,
+        marginBottom:4,
+    },
+    inputTitleText:{
+        fontSize:14,
+        fontWeight:"700",
+        color:"#7C7C88",
+    },
+    categoryWrap:{
+        marginTop:16,
+    },
+    categoryTitle:{
+
+    },
+    categoryTitleText:{
+        fontSize:14,
+        fontWeight:"700",
+        color:"#7C7C88",
+    },
+    submitButtonWrap:{
+        width:"100%",
+        height:50,
+        backgroundColor:"#9D9AF9",
+        borderRadius:10,
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center",
+        marginBottom:30,
+    },
+    submitButtonText:{
+        fontSize:16,
+        fontWeight:"700",
+        color:"#FFF",
+    },
+
 })
 
 export default CreateHelpStyle;
