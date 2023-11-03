@@ -50,3 +50,44 @@ spring:
           filters:
             - RewritePath=/notification/(?<path>.*),/$\{path}
             - AuthorizationHeaderFilter
+        - id: help-history-command
+          uri: lb://HELP-HISTORY-COMMAND-SERVICE/
+          predicates:
+            - Path=/help-history-command/**
+          filters:
+            - RewritePath=/help-history-command/(?<path>.*),/$\{path}
+        - id: help-history-query
+          uri: lb://HELP-HISTORY-QUERY-SERVICE/
+          predicates:
+            - Path=/help-history-query/**
+          filters:
+            - RewritePath=/help-history-query/(?<path>.*),/$\{path}
+            - AuthorizationHeaderFilter
+        - id: category
+          uri: lb://CATEGORY-SERVICE/
+          predicates:
+            - Path=/category/default,/category/getCategoryInfo/**
+          filters:
+            - RewritePath=/category/(?<path>.*),/$\{path}
+        - id: category-authorization
+          uri: lb://CATEGORY-SERVICE/
+          predicates:
+            - Path=/category/**
+          filters:
+            - RewritePath=/category/(?<path>.*),/$\{path}
+            - AuthorizationHeaderFilter
+        - id: help-match
+          uri: lb://HELP-MATCH-SERVICE/
+          predicates:
+            - Path=/help-match/**
+          filters:
+            - RewritePath=/help-match/(?<path>.*),/$\{path}
+            - AuthorizationHeaderFilter
+        - id: help-match-socket
+          uri: lb:ws://HELP-MATCH-SERVICE/
+          predicates:
+            - Path=/help-match-socket/**
+          filters:
+            - RewritePath=/help-match-socket/(?<path>.*),/$\{path}
+        
+        
