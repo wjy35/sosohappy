@@ -48,12 +48,13 @@ public class Controller {
 
     @PatchMapping("/")
     ResponseEntity<FormattedResponse> modify(@RequestHeader Long memberId, @RequestBody MemberModifyRequest memberModifyRequest){
+
         memberManageService.modify(MemberMapper.INSTANCE.toEntity(memberId,memberModifyRequest));
 
         FormattedResponse formattedResponse = FormattedResponse
                 .builder()
                 .status("success")
-                .message("Sign Up Success")
+                .message("Modify Success")
                 .build();
 
         return new ResponseEntity<>(formattedResponse, HttpStatus.OK);
