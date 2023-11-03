@@ -12,4 +12,6 @@ public interface MemberPointRepository {
     void delete(Long memberId);
 
     GeoResults<RedisGeoCommands.GeoLocation<String>> search(Point point, double metric);
+
+    Double getDistance(Long memberId1,Long memberId2);
 }
