@@ -16,7 +16,7 @@ def custom_json_encoder(obj):
     raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
 
-def category_test_view(request):
+def category_recommend(request):
     category_list = Category.objects.all()
     pick_list = CategoryPick.objects.values('member_id','pick_count','category_id')
     pick_data = pd.DataFrame(pick_list)
@@ -36,7 +36,7 @@ def category_test_view(request):
     predictions = []
 
     for i in range(1, category_list.__len__()+1):
-        res = svd.predict(request.headers.get("memberId"), i)
+        res = svd.predict(int(request.headers.get("memberId")), i)
         predictions.append({
             'category_id': i,
             'predicted_rating': res.est
@@ -45,8 +45,22 @@ def category_test_view(request):
     sorted_predictions = sorted(predictions, key=lambda x: x['predicted_rating'], reverse=True)
     top_5 = sorted_predictions[:5]
 
+    recommendCategoryList = []
+
+    # category_list에서 해당 ID의 객체 찾기
+    for item in top_5:
+        category_id = item['category_id']
+        category = category_list.get(category_id=category_id)  
+        if category:
+            recommendCategoryList.append({
+                'category_id': category.category_id,
+                'predicted_rating': item['predicted_rating'],
+                'category_name': category.category_name,
+                'category_image': category.category_image
+            })
+
     response_data = {
-        'result': top_5,
+        'result': recommendCategoryList,
     }
     return JsonResponse(response_data, json_dumps_params={'default': custom_json_encoder})
 
