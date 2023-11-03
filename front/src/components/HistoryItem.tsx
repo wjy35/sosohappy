@@ -10,9 +10,10 @@ interface propsType{
     content: string,
     createdDate: string,
     openCookie: Function,
+    updateFortuneModalState: Function,
 }
 
-const HistoryItem = ({thumbnail, content, createdDate, openCookie} : propsType) => {
+const HistoryItem = ({thumbnail, content, createdDate, openCookie, updateFortuneModalState} : propsType) => {
     const [cookie, setCookie] = useState(true);
 
     const clickOpenCookie = () => {
@@ -22,7 +23,7 @@ const HistoryItem = ({thumbnail, content, createdDate, openCookie} : propsType) 
 
     return(
         <>
-            <TouchableOpacity activeOpacity={0.7}>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => updateFortuneModalState(true)}>
                 <View style={HistoryItemStyle.historyItemWrap}>
                     <View style={HistoryItemStyle.historyItemProfileBg}>
                         <SvgXml
