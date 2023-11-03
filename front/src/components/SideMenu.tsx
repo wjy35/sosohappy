@@ -17,15 +17,8 @@ const SideMenu = observer(({closeSide, nowPage}: props) => {
     const {userStore} = useStore();
 
     const logout = async () => {
-        try {
-            const res = await memberApi.logout();
-            if (res.status === 200){
-                userStore.setUser(null);
-                navigation.replace('Main');
-            }
-        } catch (err) {
-            console.log(err);
-        }
+        userStore.setUser(null);
+        Alert.alert("로그아웃 되었습니다.");
     };
 
     const goto = (next: string) => {
@@ -33,7 +26,7 @@ const SideMenu = observer(({closeSide, nowPage}: props) => {
     }
 
     const moveSettingPage = () => {
-        Alert.alert('향후 업데이트 예정입니다. 잠시만 기다려주세요.');
+        Alert.alert('향후 업데이트 예정입니다.');
     }
 
     return(

@@ -90,8 +90,18 @@ const MyPage = observer(() => {
           style={MyPageStyle.myProfileImg}
         />
         <View style={MyPageStyle.myProfileInfo}>
-          <Text style={[MyPageStyle.myName]}>김싸피</Text>
-          <Text style={[MyPageStyle.myRank]}>모음이</Text>
+          {
+            userStore.user &&
+            <>
+              <Text style={[MyPageStyle.myName]}>{userStore.user.name}</Text>
+                {
+                  userStore.user.disabled ?
+                  <Text style={[MyPageStyle.myRank]}>나눔이</Text>
+                  :
+                  <Text style={[MyPageStyle.myRank]}>모음이</Text>
+                }
+            </>
+          }
         </View>
         <View style={MyPageStyle.myProfileIconWrap}>
           <TouchableOpacity activeOpacity={0.7}>
