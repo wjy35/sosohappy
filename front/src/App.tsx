@@ -23,7 +23,7 @@ function App(): JSX.Element {
 
     return (
     <Provider userStore={userStore}>
-      <Navigation/>
+      <Navigation location={location.coordinate}/>
     </Provider>
     );
 }
