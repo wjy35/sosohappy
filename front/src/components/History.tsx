@@ -9,11 +9,15 @@ import HistoryStyle from "@/styles/HistoryStyle";
 import {useEffect, useState} from "react";
 import helpHistoryApi from "@/apis/helpHistoryApi";
 
-const History = () => {
+interface propsType{
+    updateFortuneModalState: Function,
+}
+
+const History = ({updateFortuneModalState}: propsType) => {
     const [historyList, setHistoryList] = useState([]);
 
     const openCookie = () => {
-
+        
     }
 
 
@@ -39,12 +43,11 @@ const History = () => {
                     historyList.map((el, idx)=>{
                         return (
                             <View style={HistoryStyle.historyWrap} key={`helpHistory${idx}`}>
-                                <HistoryItem thumbnail={el.categoryImage} content={el.content} createdDate={el.createdAt} openCookie={openCookie}/>
+                                <HistoryItem thumbnail={el.categoryImage} content={el.content} createdDate={el.createdAt} openCookie={openCookie} updateFortuneModalState={updateFortuneModalState}/>
                             </View>
                         )
                     })
                 }
-
             </View>
         </>
     );

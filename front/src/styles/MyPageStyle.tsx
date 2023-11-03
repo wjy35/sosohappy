@@ -155,7 +155,6 @@ const MyPageStyle = StyleSheet.create({
         borderRadius:50,
     },
     expBarMy:{
-        width:"40%",
         height:16,
         backgroundColor:"#306E69",
         borderRadius:50,
