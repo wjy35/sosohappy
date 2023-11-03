@@ -1,6 +1,7 @@
 package com.ssafy.help.match.db.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.help.match.config.RedisUUID;
 import com.ssafy.help.match.db.entity.HelpMatchStatus;
 import com.ssafy.help.match.db.entity.HelpMatchType;
 import com.ssafy.help.match.db.entity.MemberSessionEntity;
@@ -17,9 +18,7 @@ public class MemberSessionEntityRepository {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
     private final String PREFIX="memberSessionEntity:";
-
-    @Value("${spring.server.uuid}")
-    String uuid;
+    private final RedisUUID redisUUID;
 
     public void create(Long memberId) {
         MemberSessionEntity memberSessionEntity = MemberSessionEntity
@@ -27,6 +26,9 @@ public class MemberSessionEntityRepository {
                 .memberId(memberId)
                 .matchType(HelpMatchType.NONE)
                 .matchStatus(HelpMatchStatus.DEFAULT)
+                .isConnected(false)
+                .sessionId("")
+                .serverUUID("")
                 .build();
 
         redisTemplate.opsForHash().putAll(PREFIX+memberSessionEntity.getMemberId(),objectMapper.convertValue(memberSessionEntity,Map.class));
@@ -35,13 +37,13 @@ public class MemberSessionEntityRepository {
     public void connect(Long memberId,String sessionId){
         redisTemplate.opsForHash().put(PREFIX+memberId,"isConnected",true);
         redisTemplate.opsForHash().put(PREFIX+memberId,"sessionId",sessionId);
-        redisTemplate.opsForHash().put(PREFIX+memberId,"serverUUID",uuid);
+        redisTemplate.opsForHash().put(PREFIX+memberId,"serverUUID",redisUUID.get());
     }
 
     public void disconnect(Long memberId){
         redisTemplate.opsForHash().put(PREFIX+memberId,"isConnected",false);
-        redisTemplate.opsForHash().put(PREFIX+memberId,"sessionId",null);
-        redisTemplate.opsForHash().put(PREFIX+memberId,"serverUUID",null);
+        redisTemplate.opsForHash().put(PREFIX+memberId,"sessionId","");
+        redisTemplate.opsForHash().put(PREFIX+memberId,"serverUUID","");
     }
 
     public void setMatchType(Long memberId, HelpMatchType matchType){
