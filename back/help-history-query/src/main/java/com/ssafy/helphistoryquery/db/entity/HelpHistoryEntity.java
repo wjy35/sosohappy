@@ -14,6 +14,8 @@ public class HelpHistoryEntity {
     private long toMemberId;
     private long fromMemberId;
     private long categoryId;
+    private String categoryName;
+    private String categoryImage;
     private String content;
     private double x;
     private double y;
