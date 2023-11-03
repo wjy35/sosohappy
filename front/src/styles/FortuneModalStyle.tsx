@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native"
+import { responsiveWidth } from "react-native-responsive-dimensions";
 
 const FortuneModalStyle = StyleSheet.create({
     modalBg:{
@@ -7,6 +8,62 @@ const FortuneModalStyle = StyleSheet.create({
         backgroundColor:"#000",
         opacity:0.7,
         position:"absolute",
+    },
+    modalMain:{
+        width:responsiveWidth(80),
+        backgroundColor:"#FFF",
+        position:"absolute",
+        top:"20%",
+        left:responsiveWidth(20)/2,
+    },
+    modalTitleWrap:{
+        height:60,
+        display:"flex",
+        flexDirection:"row",
+        justifyContent:"space-between",
+        alignItems:"center",
+        padding:20,
+    },
+    modalTitleText:{
+        fontSize:16,
+        fontWeight:"700",
+        color:"#1F1F1F",
+    },
+    closeIcon:{
+        width:16,
+        height:16,
+    },
+    fortuneWrap:{
+        backgroundColor:"#FFF7EC",
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center",
+        paddingVertical:60,
+    },
+    fortuneImg:{
+        width:87,
+        height:87,
+    },
+    fortuneTextWrap:{
+        backgroundColor:"#FFF",
+        borderWidth:2,
+        borderColor:"#D8D8CE",
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center",
+        padding:20,
+        marginTop:25,
+    },
+    fortuneText:{
+        fontSize:14,
+        fontWeight:"700",
+        color:"#3D3D3D",
+    },
+    fortuneFooter:{
+        fontSize:12,
+        fontWeight:"500",
+        color:"#B8B8B8",
+        marginTop:6,
     },
 })
 

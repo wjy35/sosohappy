@@ -26,6 +26,7 @@ const MyPage = observer(() => {
   const {userStore} = useStore();
   const [myProfile, setMyProfile] = useState<any>(null);
   const [defaultSosomon, setDefaultSosomon] = useState<any>(null);
+  const [fortuneModalState, setFortuneModalState] = useState<Boolean>(false);
 
   const updateModalState = (status: Boolean) => {
     setModalState(status);
@@ -61,6 +62,10 @@ const MyPage = observer(() => {
     } catch (err){
       console.log(err);
     }
+  }
+
+  const updateFortuneModalState = (status: Boolean) => {
+    setFortuneModalState(status);
   }
 
   useEffect(()=>{
@@ -164,7 +169,7 @@ const MyPage = observer(() => {
 
       <View style={MyPageStyle.historyTitleWrap}>
         <Text style={MyPageStyle.historyTitle}>나의 최근 행운</Text>
-        <History/>
+        <History updateFortuneModalState={updateFortuneModalState}/>
         {/*<TouchableOpacity activeOpacity={0.7}>*/}
         {/*    <View style={MyPageStyle.moreButton}>*/}
         {/*        <Text style={MyPageStyle.moreButtonText}>더보기</Text>*/}
@@ -172,7 +177,10 @@ const MyPage = observer(() => {
         {/*</TouchableOpacity>*/}
       </View>
     </CommonLayout>
-    <FortuneModal/>
+    {
+      fortuneModalState &&
+      <FortuneModal updateFortuneModalState={updateFortuneModalState}/>
+    }
     </>
   );
 });
