@@ -20,5 +20,5 @@ from recommend import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('list/', views.category_test_view),
+    path('recommend/', views.category_recommend),
 ]
