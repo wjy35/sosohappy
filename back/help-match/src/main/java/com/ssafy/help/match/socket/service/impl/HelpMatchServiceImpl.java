@@ -72,11 +72,15 @@ public class HelpMatchServiceImpl implements HelpMatchService {
 
         for (String matchMemberId:matchMemberIdList){
             Optional.ofNullable(sendMatchEntityRepository.findByMemberId(Long.parseLong(matchMemberId)))
-                    .ifPresent(sendMatchEntity -> receiveMatchItemList.add(mapper.toItem(sendMatchEntity)));
+                    .ifPresent((sendMatchEntity) -> {
+                        Double distance = memberPointRepository.getDistance(memberId,Long.parseLong(matchMemberId));
+                        receiveMatchItemList.add(mapper.toItem(sendMatchEntity,distance));
+                    });
         }
 
         return receiveMatchItemList;
     }
+
 
     @Override
     public void match(Point point,double m,Long memberId) {

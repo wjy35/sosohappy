@@ -10,5 +10,6 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class ReceiveMatchListResponse {
+    ReceiveMatchType receiveMatchType;
     List<ReceiveMatchItem> receiveMatchList;
 }

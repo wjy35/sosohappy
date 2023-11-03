@@ -10,6 +10,6 @@ import org.mapstruct.factory.Mappers;
 public interface ReceiveMatchMapper {
     ReceiveMatchMapper INSTANCE = Mappers.getMapper(ReceiveMatchMapper.class);
 
-    ReceiveMatchItem toItem(SendMatchEntity sendMatchEntity);
+    ReceiveMatchItem toItem(SendMatchEntity sendMatchEntity,Double distance);
     SendMatchEntity toEntity(HelpMatchRequest request);
 }

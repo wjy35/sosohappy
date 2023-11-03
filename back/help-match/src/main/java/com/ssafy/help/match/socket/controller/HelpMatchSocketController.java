@@ -3,6 +3,7 @@ package com.ssafy.help.match.socket.controller;
 import com.ssafy.help.match.socket.request.HelpMatchRequest;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
 import com.ssafy.help.match.socket.response.ReceiveMatchListResponse;
+import com.ssafy.help.match.socket.response.ReceiveMatchType;
 import com.ssafy.help.match.util.ObjectSerializer;
 import com.ssafy.help.match.socket.service.HelpMatchService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class HelpMatchSocketController{
     void list(@DestinationVariable Long memberId){
         ReceiveMatchListResponse response = ReceiveMatchListResponse
                 .builder()
+                .receiveMatchType(ReceiveMatchType.PUSH)
                 .receiveMatchList(helpMatchService.list(memberId))
                 .build();
 
