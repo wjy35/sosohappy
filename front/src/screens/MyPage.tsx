@@ -27,6 +27,7 @@ const MyPage = observer(() => {
   const [myProfile, setMyProfile] = useState<any>(null);
   const [defaultSosomon, setDefaultSosomon] = useState<any>(null);
   const [fortuneModalState, setFortuneModalState] = useState<Boolean>(false);
+  const [myClover, setMyClover] = useState<any>(null);
 
   const updateModalState = (status: Boolean) => {
     setModalState(status);
@@ -68,8 +69,14 @@ const MyPage = observer(() => {
     setFortuneModalState(status);
   }
 
+  const getMyCloverApi = async () => {
+    const res = await monsterApi.getMyClover();
+    setMyClover(res.data.result.clover);
+  }
+
   useEffect(()=>{
     getProfileMonster();
+    getMyCloverApi();
   }, [])
 
 
@@ -107,7 +114,14 @@ const MyPage = observer(() => {
       </View>
 
       <View style={MyPageStyle.myPointInfo}>
-        <Text style={MyPageStyle.myPoint}>214P / <Text style={MyPageStyle.myAllPoint}>2400P</Text></Text>
+          {
+            myClover &&
+            <Text style={MyPageStyle.myPoint}>{myClover.memberClover} Clover /{" "}
+              <Text style={MyPageStyle.myAllPoint}>
+                {myClover.memberAccruedClover} Clover
+              </Text>
+            </Text>
+          }
         <Text style={MyPageStyle.myPointDesc}><Text style={MyPageStyle.myPointDescPoint}>행운력을</Text> 통해 성장시키세요!</Text>
       </View>
 
