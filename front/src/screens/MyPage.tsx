@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react"
-import {View, Text, Image, TouchableOpacity} from "react-native";
+import {useEffect, useState, useRef} from "react"
+import {View, Text, Image, TouchableOpacity, Animated} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import History from "@/components/History";
 import { useNavigation } from "@react-navigation/native";
@@ -28,6 +28,21 @@ const MyPage = observer(() => {
   const [defaultSosomon, setDefaultSosomon] = useState<any>(null);
   const [fortuneModalState, setFortuneModalState] = useState<Boolean>(false);
   const [myClover, setMyClover] = useState<any>(null);
+  const loaderValue = useRef(new Animated.Value(0)).current;
+
+  const load = (initialWidth: number) => {
+    Animated.timing(loaderValue, {
+      toValue: (initialWidth) * 100,
+      duration: 500,
+      useNativeDriver: false,
+    }).start();
+  }
+
+  const width = loaderValue.interpolate({
+    inputRange: [0, 100],
+    outputRange: ["0%", "100%"],
+    extrapolate: "clamp",
+  })
 
   const updateModalState = (status: Boolean) => {
     setModalState(status);
@@ -74,12 +89,18 @@ const MyPage = observer(() => {
     setMyClover(res.data.result.clover);
   }
 
+  useEffect(() => {
+    console.log("실행");
+    if(defaultSosomon?.currentPoint){
+      load(defaultSosomon.currentPoint);
+    }
+  }, [defaultSosomon]);
+
   useEffect(()=>{
     getProfileMonster();
     getMyCloverApi();
+    
   }, [])
-
-
 
   return (
     <>
@@ -182,7 +203,20 @@ const MyPage = observer(() => {
             <View style={MyPageStyle.expBarBg}></View>
             {
               defaultSosomon &&
-              <View style={[MyPageStyle.expBarMy, {width:`${defaultSosomon.currentPoint*100 + "%"}`}]}></View>
+              <>
+                {/* <View style={[MyPageStyle.expBarMy, {width:`${defaultSosomon.currentPoint*100 + "%"}`}]}></View> */}
+                <Animated.View
+                  style={{
+                    width,
+                    height:16,
+                    backgroundColor:"#306E69",
+                    borderRadius:50,
+                    position:"absolute",
+                  }}
+                >
+
+                </Animated.View>
+              </>
             }
           </View>
           <Text style={MyPageStyle.expInfo}>진화까지 얼마 안남았어요! 새로운 행운력을 모아보세요!</Text>
