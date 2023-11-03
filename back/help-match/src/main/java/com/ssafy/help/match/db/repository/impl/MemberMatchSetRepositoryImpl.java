@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Set;
+
 @Repository
 @RequiredArgsConstructor
 public class MemberMatchSetRepositoryImpl implements MemberMatchSetRepository {
@@ -21,4 +23,8 @@ public class MemberMatchSetRepositoryImpl implements MemberMatchSetRepository {
         redisTemplate.opsForSet().remove(PREFIX+memberId,matchedMember.toString());
     }
 
+    @Override
+    public Set<String> getSet(Long memberId) {
+        return redisTemplate.opsForSet().members(PREFIX+memberId);
+    }
 }
