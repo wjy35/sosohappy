@@ -33,7 +33,7 @@ const MyPage = observer(() => {
   const load = (initialWidth: number) => {
     Animated.timing(loaderValue, {
       toValue: (initialWidth) * 100,
-      duration: 500,
+      duration: 2000,
       useNativeDriver: false,
     }).start();
   }
@@ -90,7 +90,6 @@ const MyPage = observer(() => {
   }
 
   useEffect(() => {
-    console.log("실행");
     if(defaultSosomon?.currentPoint){
       load(defaultSosomon.currentPoint);
     }
