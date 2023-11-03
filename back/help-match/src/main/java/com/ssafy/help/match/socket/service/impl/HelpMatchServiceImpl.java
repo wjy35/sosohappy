@@ -54,7 +54,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
                 .getContent()
                 .stream()
                 .filter((geoResult)-> isGeoResultAvailable(geoResult,memberId))
-                .forEach((geoResult)-> createMatchEvent(memberId,Long.parseLong(geoResult.getContent().getName())));
+                .forEach((geoResult)-> emitMatchEvent(memberId,Long.parseLong(geoResult.getContent().getName())));
     }
 
     @Override
@@ -87,7 +87,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         return receiveMatchItemList;
     }
 
-    private void createMatchEvent(Long memberId, Long matchedMemberId){
+    private void emitMatchEvent(Long memberId, Long matchedMemberId){
         memberMatchSetRepository.save(matchedMemberId,memberId);
 
         if(memberSessionEntityRepository.isConnected(matchedMemberId)){
@@ -99,6 +99,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
                     .matchedMemberId(matchedMemberId)
                     .build();
             redisTemplate.convertAndSend(PREFIX+uuid, objectSerializer.serialize(matchEventDTO));
+
         }else{
             // ToDo Notification Event
         }
