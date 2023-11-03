@@ -64,11 +64,11 @@ const Main = observer(() => {
                 필요하신가요?
               </Text>
               <Text style={MainStyle.boxContentSubTitle}>글 작성하러 가기</Text>
+              <Image
+                source={HandShakeIcon}
+                style={MainStyle.boxContentImg}
+              />
             </View>
-            <Image
-              source={HandShakeIcon}
-              style={MainStyle.boxContentImg}
-            />
           </TouchableOpacity>
 
           <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('CreateHelp')}>
@@ -78,11 +78,11 @@ const Main = observer(() => {
                 찾으시나요?
               </Text>
               <Text style={MainStyle.boxContentSubTitle}>주변의 행운 찾으러가기</Text>
+              <Image
+                source={MegaphoneIcon}
+                style={MainStyle.boxContentImg}
+              />
             </View>
-            <Image
-              source={MegaphoneIcon}
-              style={MainStyle.boxContentImg}
-            />
           </TouchableOpacity>
         </View>
       </View>
