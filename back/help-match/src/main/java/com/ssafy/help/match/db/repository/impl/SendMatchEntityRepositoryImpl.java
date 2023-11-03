@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Repository
@@ -25,7 +26,15 @@ public class SendMatchEntityRepositoryImpl implements SendMatchEntityRepository 
 
     @Override
     public SendMatchEntity findByMemberId(Long memberId) {
-        return objectSerializer.deserialize(redisTemplate.opsForValue().get(PREFIX+memberId), SendMatchEntity.class);
+        String sendMatchEntityStr = redisTemplate.opsForValue().get(PREFIX+memberId);
+
+        SendMatchEntity sendMatchEntity = null;
+
+        if(Optional.ofNullable(sendMatchEntityStr).isPresent()){
+            sendMatchEntity =  objectSerializer.deserialize(redisTemplate.opsForValue().get(PREFIX+memberId), SendMatchEntity.class);
+        }
+
+        return sendMatchEntity;
     }
 
 }
