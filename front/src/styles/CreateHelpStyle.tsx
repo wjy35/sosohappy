@@ -73,8 +73,11 @@ const CreateHelpStyle = StyleSheet.create({
         fontWeight:"900",
         color:"#7773BF",
     },
-
-    
+    helpDetailWrap: {
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center",
+    },
 })
 
 export default CreateHelpStyle;

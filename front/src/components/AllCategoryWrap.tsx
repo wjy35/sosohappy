@@ -6,14 +6,18 @@ import CategoryWrapStyle from "@/styles/CategoryWrapStyle";
 
 import { SvgXml } from "react-native-svg";
 
-const AllCategoryWrap = () => {
+interface propsType{
+    category: any;
+    selectCategory: Function;
+}
+
+const AllCategoryWrap = ({category, selectCategory}: propsType) => {
     const [defaultCategories, setDefaultCategories] = useState<any[] | null>(null);
     useEffect(() => {
       const getCategories = async () => {
-        const defaultCategories = await helpCategoryApi.default();
-        setDefaultCategories(defaultCategories.data.result.defaultCategoryList);
+        const res = await helpCategoryApi.default();
+        setDefaultCategories(res.data.result.defaultCategoryList);
       }
-
       getCategories();
     }, [])
     return(
@@ -21,11 +25,10 @@ const AllCategoryWrap = () => {
           {
             defaultCategories &&
             defaultCategories.map((defaultCategory, index) => {
-              console.log(defaultCategory);
               return(
                 <>
-                <TouchableOpacity activeOpacity={0.7}>
-                  <View style={CategoryWrapStyle.categoryItemWrap}>
+                <TouchableOpacity activeOpacity={0.7} onPress={()=>selectCategory(defaultCategory)}>
+                  <View style={[CategoryWrapStyle.categoryItemWrap]}>
                     <SvgXml
                       xml={defaultCategory.categoryImage}
                       style={CategoryWrapStyle.categoryItemImg}
