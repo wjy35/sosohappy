@@ -14,6 +14,7 @@ const MyPageStyle = StyleSheet.create({
         width:48,
         height:48,
         borderRadius:50,
+        backgroundColor:"#6ED4E0",
     },
     myProfileInfo:{
         marginLeft:17,
