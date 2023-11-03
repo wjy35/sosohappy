@@ -1,6 +1,5 @@
 package com.ssafy.help.match.socket.service.impl;
 
-import com.ssafy.help.match.db.entity.SendMatchEntity;
 import com.ssafy.help.match.db.entity.HelpMatchStatus;
 import com.ssafy.help.match.db.entity.HelpMatchType;
 import com.ssafy.help.match.db.repository.SendMatchEntityRepository;
@@ -50,17 +49,18 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     }
 
     @Override
-    public void match(Point point,double m,Long memberId) {
-        memberPointRepository.search(point,m)
-                .getContent()
-                .stream()
-                .filter((geoResult)-> isGeoResultAvailable(geoResult,memberId))
-                .forEach((geoResult)->matchConfirmRequest(memberId,Long.parseLong(geoResult.getContent().getName())));
-    }
+    public MatchStatusResponse saveAndGetMatchStatus(HelpMatchRequest helpMatchRequest) {
+        MatchStatusResponse matchStatusResponse = MatchStatusResponse
+                .builder()
+                .helpMatchStatus(HelpMatchStatus.ON_MATCH_PROGRESS)
+                .helpMatchType(HelpMatchType.SINGLE)
+                .build();
 
-    @Override
-    public void save(HelpMatchRequest helpMatchRequest) {
+        memberSessionEntityRepository.setMatchStatus(helpMatchRequest.getMemberId(),matchStatusResponse.getHelpMatchStatus());
+        memberSessionEntityRepository.setMatchType(helpMatchRequest.getMemberId(), matchStatusResponse.getHelpMatchType());
         sendMatchEntityRepository.save(ReceiveMatchMapper.INSTANCE.toEntity(helpMatchRequest));
+
+        return matchStatusResponse;
     }
 
     @Override
@@ -72,13 +72,26 @@ public class HelpMatchServiceImpl implements HelpMatchService {
 
         for (String matchMemberId:matchMemberIdList){
             Optional.ofNullable(sendMatchEntityRepository.findByMemberId(Long.parseLong(matchMemberId)))
-                    .ifPresent(sendMatchEntity -> receiveMatchItemList.add(mapper.toItem(sendMatchEntity)));
+                    .ifPresent((sendMatchEntity) -> {
+                        Double distance = memberPointRepository.getDistance(memberId,Long.parseLong(matchMemberId));
+                        receiveMatchItemList.add(mapper.toItem(sendMatchEntity,distance));
+                    });
         }
 
         return receiveMatchItemList;
     }
 
-    private void matchConfirmRequest(Long memberId, Long matchedMemberId){
+
+    @Override
+    public void match(Point point,double m,Long memberId) {
+        memberPointRepository.search(point,m)
+                .getContent()
+                .stream()
+                .filter((geoResult)-> isGeoResultAvailable(geoResult,memberId))
+                .forEach((geoResult)-> emitMatchEvent(memberId,Long.parseLong(geoResult.getContent().getName())));
+    }
+
+    private void emitMatchEvent(Long memberId, Long matchedMemberId){
         memberMatchSetRepository.save(matchedMemberId,memberId);
 
         if(memberSessionEntityRepository.isConnected(matchedMemberId)){
@@ -90,6 +103,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
                     .matchedMemberId(matchedMemberId)
                     .build();
             redisTemplate.convertAndSend(PREFIX+uuid, objectSerializer.serialize(matchEventDTO));
+
         }else{
             // ToDo Notification Event
         }
@@ -103,4 +117,5 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         // ToDo 자기 자신 제외하기
 //                && !searchedMemberId.equals(memberId);
     }
+
 }

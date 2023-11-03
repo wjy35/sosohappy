@@ -29,4 +29,9 @@ public class MemberPointRepositoryImpl implements MemberPointRepository {
     public GeoResults<RedisGeoCommands.GeoLocation<String>> search(Point point, double metric) {
         return redisTemplate.opsForGeo().search(KEY,new Circle(point,metric));
     }
+
+    @Override
+    public Double getDistance(Long memberId1,Long memberId2) {
+        return redisTemplate.opsForGeo().distance(KEY,memberId1.toString(),memberId2.toString()).getValue();
+    }
 }
