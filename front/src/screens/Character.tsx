@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Image, Alert } from "react-native"
+import { useEffect, useState, useRef } from "react";
+import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Image, Alert, Animated } from "react-native"
 import CommonLayout from "@/components/CommonLayout";
 import monsterApi from "@/apis/monsterApi";
+import useStore from "@/hooks/useStore";
 
 import CloverIcon from "@/assets/img/clover-icon.png"
 import BearAnimationIcon from "@/assets/img/bear-animation-icon.png"
@@ -23,6 +24,8 @@ interface feedTypes{
 const Character = () => {
     const [categoryType, setCategoryType] = useState<CategoryType>(CategoryType.army);
     const [myMonsters, setMyMonsters] = useState<any[] | null>(null);
+    const loaderValue = useRef(new Animated.Value(0)).current;
+    const {userStore} = useStore();
 
     const feedSosomonCommon = async ({feedType}: feedTypes) => {
         if(myMonsters){
@@ -63,6 +66,36 @@ const Character = () => {
         }
     }
 
+    const load = (initialWidth: number) => {
+        Animated.timing(loaderValue, {
+            toValue: (initialWidth) * 100,
+            duration: 1500,
+            useNativeDriver: false,
+        }).start();
+    }
+    
+    const width = loaderValue.interpolate({
+        inputRange: [0, 100],
+        outputRange: ["0%", "100%"],
+        extrapolate: "clamp",
+    })
+
+    useEffect(() => {
+        if(myMonsters){
+            switch(categoryType){
+                case CategoryType.army:
+                    load(myMonsters[0].currentPoint);
+                    break;
+                case CategoryType.navy:
+                    load(myMonsters[1].currentPoint);
+                    break;
+                case CategoryType.airForce:
+                    load(myMonsters[2].currentPoint);
+                    break;
+            }
+        }
+      }, [myMonsters, categoryType]);
+
     useEffect(() => {
         const getMyDict = async () => {
             const collectedMonsterApi = await monsterApi.getMyDict();
@@ -79,10 +112,13 @@ const Character = () => {
         <CommonLayout headerType={0} footer={false}>
 
             <View style={CharacterStyle.characterTitleWrap}>
-                <Text style={CharacterStyle.characterTitle}>
-                    <Text style={CharacterStyle.characterTitleMyName}>김싸피</Text> 님 어떤 캐릭터를{"\n"}
-                    성장시킬까요?
-                </Text>
+                    {
+                        userStore.user.name &&
+                        <Text style={CharacterStyle.characterTitle}>
+                            <Text style={CharacterStyle.characterTitleMyName}>{userStore.user.name}</Text> 님 어떤 캐릭터를{"\n"}
+                            성장시킬까요?
+                        </Text>
+                    }
                 <TouchableOpacity activeOpacity={0.7} onPress={() => feedSosomon()}>
                     <View style={CharacterStyle.feedButton}>
                         {
@@ -210,15 +246,39 @@ const Character = () => {
                     <View style={CharacterStyle.expStatusBg}></View>
                     {
                         categoryType === CategoryType.army && myMonsters &&
-                        <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[0].currentPoint) * 100}` + "%"}]}></View>
+                        <Animated.View
+                        style={{
+                            width,
+                            height:28,
+                            borderRadius:10,
+                            backgroundColor:"#8B8BEF",
+                            position:"absolute",
+                        }}></Animated.View>
+                        // <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[0].currentPoint) * 100}` + "%"}]}></View>
                     }
                     {
                         categoryType === CategoryType.navy && myMonsters &&
-                        <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[1].currentPoint) * 100}` + "%"}]}></View>
+                        <Animated.View
+                        style={{
+                            width,
+                            height:28,
+                            borderRadius:10,
+                            backgroundColor:"#8B8BEF",
+                            position:"absolute",
+                        }}></Animated.View>
+                        // <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[1].currentPoint) * 100}` + "%"}]}></View>
                     }
                     {
                         categoryType === CategoryType.airForce && myMonsters &&
-                        <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[2].currentPoint) * 100}` + "%"}]}></View>
+                        <Animated.View
+                        style={{
+                            width,
+                            height:28,
+                            borderRadius:10,
+                            backgroundColor:"#8B8BEF",
+                            position:"absolute",
+                        }}></Animated.View>
+                        // <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[2].currentPoint) * 100}` + "%"}]}></View>
                     }
                     
                 </View>
