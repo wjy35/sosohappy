@@ -11,7 +11,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class MemberMatchSetRepositoryImpl implements MemberMatchSetRepository {
     private final RedisTemplate<String,String> redisTemplate;
-    private final String PREFIX="matchedSet:";
+    private final String PREFIX="matchMemberSet:";
 
     @Override
     public void save(Long memberId, Long matchedMember) {
