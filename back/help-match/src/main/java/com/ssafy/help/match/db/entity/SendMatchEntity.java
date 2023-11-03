@@ -1,6 +1,6 @@
 package com.ssafy.help.match.db.entity;
 
-import com.ssafy.help.match.socket.request.Category;
+import com.ssafy.help.match.socket.dto.CategoryDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,10 +12,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HelpEntity {
+public class SendMatchEntity {
     Long memberId;
     String nickname;
-    List<Category> categoryList;
+    List<CategoryDTO> categoryDTOList;
     Double latitude;
     Double longitude;
     String content;
