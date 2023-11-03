@@ -30,13 +30,13 @@ const Navigation = ({location}: propsType) => {
         <Stack.Screen name="CreateHelp" component={CreateHelp}/>
         <Stack.Screen name="Login" component={Login}/>
         <Stack.Screen name="Main" component={Main}/>
-        {/* <Stack.Screen name="Map">
+        <Stack.Screen name="Map">
           {
             props => (
                 <Map location={location} />
             )
           }
-        </Stack.Screen> */}
+        </Stack.Screen>
         <Stack.Screen name="MyPage" component={MyPage}/>
         <Stack.Screen name="SignUpAuth" component={SignUpAuth}/>
         <Stack.Screen name="SignUpInput" component={SignUpInput}/>
