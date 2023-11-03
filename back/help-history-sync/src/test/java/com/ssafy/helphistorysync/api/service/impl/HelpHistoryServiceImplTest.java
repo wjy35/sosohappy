@@ -3,11 +3,14 @@ package com.ssafy.helphistorysync.api.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.helphistorysync.api.request.CategoryRequest;
 import com.ssafy.helphistorysync.api.request.HelpHistoryRequest;
 import com.ssafy.helphistorysync.api.service.HelpHistoryService;
 import com.ssafy.helphistorysync.cloud.feign.CategoryFeign;
 import com.ssafy.helphistorysync.db.repository.HelpHistoryRepository;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.assertj.core.api.Assertions;
+import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,5 +83,33 @@ class HelpHistoryServiceImplTest {
         assertThatThrownBy(() -> {
             objectMapper.readTree(invalidJson);
         }).isInstanceOf(JsonProcessingException.class);
+    }
+
+    @DisplayName("생성한 CategoryRequest에 Null 값이 없는지 확인한다.")
+    @Test
+    void getCategory() {
+
+        //given
+        HelpHistoryRequest helpHistoryRequest = HelpHistoryRequest.builder()
+                .categoryId(1)
+                .build();
+        String jsonString = categoryFeign.getCategoryDetail(helpHistoryRequest.getCategoryId());
+        JSONObject jsonObject = new JSONObject(jsonString).getJSONObject("result").getJSONObject("category");
+        long categoryId = jsonObject.getLong("categoryId");
+        String categoryName = jsonObject.getString("categoryName");
+        String categoryImage = jsonObject.getString("categoryImage");
+
+        CategoryRequest categoryRequest = CategoryRequest.builder()
+                .categoryId(categoryId)
+                .categoryName(categoryName)
+                .categoryImage(categoryImage)
+                .build();
+
+        // when / then
+
+        Assertions.assertThat(categoryRequest).
+                extracting("categoryId","categoryName","categoryName")
+                .doesNotContainNull();
+
     }
 }
