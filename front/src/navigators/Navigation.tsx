@@ -16,7 +16,11 @@ import Character from '@/screens/Character';
 
 const Stack = createStackNavigator();
 
-const Navigation = () => {
+interface propsType{
+  location: any;
+}
+
+const Navigation = ({location}: propsType) => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false, animationEnabled: false }} initialRouteName='Main'>
@@ -26,8 +30,13 @@ const Navigation = () => {
         <Stack.Screen name="CreateHelp" component={CreateHelp}/>
         <Stack.Screen name="Login" component={Login}/>
         <Stack.Screen name="Main" component={Main}/>
-        <Stack.Screen name="Map" component={Map}/>
-        <Stack.Screen name="MyPage" component={MyPage}/>
+        <Stack.Screen name="Map">
+          {
+            props => (
+                <Map location={location} />
+            )
+          }
+        </Stack.Screen>        <Stack.Screen name="MyPage" component={MyPage}/>
         <Stack.Screen name="SignUpAuth" component={SignUpAuth}/>
         <Stack.Screen name="SignUpInput" component={SignUpInput}/>
         <Stack.Screen name="SignUpSeparate" component={SignUpSeparate}/>
