@@ -38,6 +38,7 @@ const PlainInput = ({title, placeholder, onChangeText, onPressIn, text, isValid,
                 <TextInput
                     style={[InputStyle.Input, (!isValid&&errorMessage&&text) && InputStyle.alertInput]}
                     placeholder={placeholder}
+                    placeholderTextColor={'grey'}
                     onChangeText={(newText) => onChangeText(newText)}
                     onPressIn={onPressIn&&onPressInFunction}
                     onSubmitEditing={onSubmit&&onSubmitFunction}
