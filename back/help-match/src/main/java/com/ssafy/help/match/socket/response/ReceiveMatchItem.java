@@ -13,4 +13,5 @@ public class ReceiveMatchItem {
     Double longitude;
     String content;
     String place;
+    Double distance;
 }
