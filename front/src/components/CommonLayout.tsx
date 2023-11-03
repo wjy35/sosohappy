@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react"
 import {ScrollView, View} from "react-native"
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import messaging from '@react-native-firebase/messaging'
 
 import SideMenu from "@/components/SideMenu";
 import Header from "@/components/Header";
@@ -13,6 +14,10 @@ interface props {
   nowPage?: string;
   children: React.ReactNode;
 }
+
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('[Background Remote Message]', remoteMessage);
+});
 
 const CommonLayout = ({footer, headerType, nowPage, children} : props) => {
     const [isVisible, setIsVisible] = useState(false);
@@ -33,6 +38,14 @@ const CommonLayout = ({footer, headerType, nowPage, children} : props) => {
         });
         return focusNav;
     }, [navigation]);
+
+    useEffect(() => {
+      const unsubscribe = messaging().onMessage(async remoteMessage => {
+        console.log('[Remote Message] ', JSON.stringify(remoteMessage));
+      });
+  
+      return unsubscribe;
+    }, []);
 
     return(
         <>

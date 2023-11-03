@@ -1,4 +1,4 @@
-import { View, Text, TextInput } from "react-native";
+import {View, Text, TextInput, TouchableOpacity} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import AuthTitle from "@/components/AuthTitle";
 import AuthButton from "@/components/AuthButton";
@@ -7,13 +7,20 @@ import SignUpInputStyle from "@/styles/SignUpInputStyle";
 import {useEffect, useState} from "react";
 import PlainInput from "@/components/PlainInput";
 import useInput from "@/hooks/useInput";
-import {useRoute} from "@react-navigation/native";
+import {useNavigation, useRoute} from "@react-navigation/native";
 import memberApi from "@/apis/memberApi";
+import DropDownPicker from "react-native-dropdown-picker";
+import InputStyle from "@/styles/InputStyle";
+import {SvgXml} from "react-native-svg";
+import {backIcon, check} from "@/assets/icons/icons";
 
 const SignUpInput = () => {
   const route = useRoute();
   const [isActive, setIsActive] = useState(false);
-  const [selectedGender, setSelectedGender] = useState(null);
+  const [selectedGender, setSelectedGender] = useState(2);
+  const navigation = useNavigation();
+  const [open, setOpen] = useState(false);
+
 
   const checkMemberId = async (newText: string) => {
     try {
@@ -37,6 +44,7 @@ const SignUpInput = () => {
   };
 
   const checkMemberName = (newText: string) => {
+    // TODO: 글자수제한 필요 5글자 넘어가면 에러남
     memberName.updateIsValid(newText !== "");
   };
 
@@ -98,6 +106,7 @@ const SignUpInput = () => {
   });
 
   const signUp = async () => {
+    // console.log(selectedGender);
     try {
       const res = await memberApi.signUp({
         memberSignId: memberId.text,
@@ -108,11 +117,17 @@ const SignUpInput = () => {
         gender: selectedGender,
       })
       if (res.status === 200){
-        console.log(res);
+        navigation.replace('Login');
       }
     } catch (err) {
       console.log(err);
     }
+  };
+
+
+  const selectGender = (gender: number) => {
+    setOpen(false);
+    setSelectedGender(gender);
   }
 
   return (
@@ -127,11 +142,68 @@ const SignUpInput = () => {
         <PlainInput {...memberNickname}/>
         <PlainInput {...memberType} editable={false}/>
         <Text style={SignUpInputStyle.signUpInputText}>성별을 입력해주세요.</Text>
+        <TouchableOpacity activeOpacity={0.7} onPress={()=>setOpen(!open)}>
+          <View style={[InputStyle.Input, {flexDirection: 'row', justifyContent: 'space-between'}]}>
+            <View style={{justifyContent: 'center'}}>
+              <Text style={[InputStyle.text]}>{selectedGender===1&&'남'}{selectedGender===0&&'여'}{selectedGender===2&&'성별을 선택해주세요'}</Text>
+            </View>
+            <View>
+                <SvgXml
+                    xml={backIcon}
+                    width={32}
+                    height={32}
+                    rotation={open?90:270}
+                />
+            </View>
+          </View>
+        </TouchableOpacity>
+        {
+          open && (
+                <View style={{top: -10, backgroundColor: 'white'}}>
+                  <TouchableOpacity onPress={()=>{selectGender(1)}} activeOpacity={0.7}>
+                    <View style={{height: 50, borderWidth: 1, padding:10, flexDirection: 'row', justifyContent: 'space-between'}}>
+                      <View style={{justifyContent: 'center'}}>
+                        <Text style={InputStyle.text}>남</Text>
+                      </View>
+                      {
+                        selectedGender===1 && (
+                              <View>
+                                <SvgXml
+                                    xml={check}
+                                    width={26}
+                                    height={26}
+                                />
+                              </View>
+                          )
+                      }
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={()=>{selectGender(0)}} activeOpacity={0.7}>
+                    <View style={{height: 50, borderWidth: 1, borderTopWidth: 0, padding:10, borderBottomLeftRadius: 16, borderBottomRightRadius: 16, flexDirection: 'row', justifyContent: 'space-between'}}>
+                      <View style={{justifyContent: 'center'}}>
+                        <Text style={InputStyle.text}>여</Text>
+                      </View>
+                      {
+                          selectedGender===0 && (
+                              <View>
+                                <SvgXml
+                                    xml={check}
+                                    width={26}
+                                    height={26}
+                                />
+                              </View>
+                          )
+                      }
+                    </View>
+                  </TouchableOpacity>
+                </View>
+            )
+        }
       </View>
 
       <AuthButton
           movePage="Main"
-          isActive={memberId.isValid&&memberPassword.isValid&&memberCheckPassword.isValid&&memberName.isValid&&memberNickname.isValid}
+          isActive={memberId.isValid&&memberPassword.isValid&&memberCheckPassword.isValid&&memberName.isValid&&memberNickname.isValid&&(selectedGender<2)}
           buttonText={'회원가입 완료하기'}
           goNext={signUp}
       />

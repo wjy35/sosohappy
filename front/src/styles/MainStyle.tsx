@@ -75,11 +75,16 @@ const MainStyle = StyleSheet.create({
         borderWidth:1,
         borderColor:"#F4F4F2",
         borderRadius:8,
-        padding:22,
+        marginHorizontal:responsiveWidth(2),
     },
     boxContentWrap:{
+        marginTop:14,
+        borderWidth:3,
+        borderColor:"#ddd",
+        borderRadius:10,
         paddingHorizontal:22,
-        marginTop:12,
+        paddingVertical:28,
+        marginHorizontal:responsiveWidth(2),
     },
     boxContentTitle:{
         fontSize:14,
@@ -96,6 +101,7 @@ const MainStyle = StyleSheet.create({
         width:40,
         height:40,
         marginLeft:"auto",
+        marginTop:10,
     },
 
     happyWrap:{
