@@ -1,6 +1,7 @@
 import Geolocation from "@react-native-community/geolocation";
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
 import {useState} from "react";
+import helpMatchApi from "@/apis/helpMatchApi";
 
 interface propsType {
 
@@ -15,26 +16,41 @@ function useLocation({}: propsType) {
         skipPermissionRequests: false,
     });
 
-    const backgroundPositionFunc = (y: string, x: string) => {
-        console.log('background longitude: ', x, 'latitude: ', y);
-        // TODO: background에서 사용될 작업
+    const sendPosition = async (latitude: number, longitude: number) => {
+        try {
+            const res = await helpMatchApi.sendPosition({
+                latitude: latitude,
+                longitude: longitude,
+            })
+            if (res.status === 200){
+            }
+        } catch (err) {
+            console.log(err)
+        }
     }
 
-    const foregroundPositionFunc = (y: string, x: string) => {
-        console.log('foreground longitude: ', x, 'latitude: ', y);
+    const backgroundPositionFunc = (lati: number, longi: number) => {
+        // TODO: background에서 사용될 작업
+        sendPosition(lati, longi)
+        setCoordinate({
+            latitude: lati,
+            longitude: longi,
+        });
+    }
+
+    const foregroundPositionFunc = (lati: number, longi: number) => {
         // TODO: foreground에서 사용될 작업
+        setCoordinate({
+            latitude: lati,
+            longitude: longi,
+        });
     }
 
     const getPosition = () => {
         Geolocation.getCurrentPosition(
             position => {
-                const latitude = JSON.stringify(position.coords.latitude);
-                const longitude = JSON.stringify(position.coords.longitude);
-
-                setCoordinate({
-                    y: latitude,
-                    x: longitude,
-                });
+                const latitude = Number(JSON.stringify(position.coords.latitude));
+                const longitude = Number(JSON.stringify(position.coords.longitude));
                 backgroundPositionFunc(latitude, longitude);
             },
             error => {console.log(error)},
@@ -53,7 +69,7 @@ function useLocation({}: propsType) {
                 getPosition();
             },
             {
-                delay: 300000,
+                delay: 60000,
                 onLoop: true,
                 taskId: 'taskid',
                 onError: (e) => console.log('Error logging:', e),
@@ -87,12 +103,8 @@ function useLocation({}: propsType) {
 
         watchId = Geolocation.watchPosition(
             position => {
-                const latitude = JSON.stringify(position.coords.latitude);
-                const longitude = JSON.stringify(position.coords.longitude);
-                setCoordinate({
-                    y: latitude,
-                    x: longitude,
-                });
+                const latitude = Number(JSON.stringify(position.coords.latitude));
+                const longitude = Number(JSON.stringify(position.coords.longitude));
                 foregroundPositionFunc(latitude, longitude);
             },
             error => {

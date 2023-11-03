@@ -1,7 +1,7 @@
 import {View, Text, Image, TouchableOpacity} from "react-native"
 
 import {SvgXml} from "react-native-svg";
-import {backIcon, hamburgerMenu} from "@/assets/icons/icons";
+import {backIcon, hamburgerMenu, sosohappyLogo} from "@/assets/icons/icons";
 
 import "@/styles/HeaderStyle";
 import HeaderStyle from "@/styles/HeaderStyle";
@@ -36,7 +36,11 @@ const Header = ({headerType, openSide}: props) => {
                     />
                 </TouchableOpacity>
                 <TouchableOpacity activeOpacity={0.7} onPress={goMain}>
-                    <Text style={HeaderStyle.serviceName}>LOGO</Text>
+                    <SvgXml
+                        xml={sosohappyLogo}
+                        width={100}
+                        height={60}
+                    />
                 </TouchableOpacity>
                 <TouchableOpacity activeOpacity={0.7} onPress={()=>openSide()}>
                     <SvgXml

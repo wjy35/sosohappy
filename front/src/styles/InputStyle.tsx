@@ -25,6 +25,14 @@ const InputStyle = StyleSheet.create({
     },
     alertText: {
         color: 'red',
+    },
+    dropdownInput: {
+
+    },
+    text: {
+        fontSize:14,
+        fontWeight:"900",
+        color:"#535353",
     }
 });
 
