@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "helphistory")
+@Table(name = "help_history")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,11 +29,11 @@ public class HelpHistoryEntity {
     @Column(name = "content", nullable = false)
     String content;
 
-    @Column(name = "x", columnDefinition = "decimal(18,10)", nullable = false)
-    long x;
+    @Column(name = "x", nullable = false)
+    double x;
 
-    @Column(name = "y", columnDefinition = "decimal(18,10)", nullable = false)
-    long y;
+    @Column(name = "y", nullable = false)
+    double y;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
     Timestamp createdAt;
