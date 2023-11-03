@@ -10,7 +10,7 @@ import java.util.List;
 public interface HelpMatchService {
     MatchStatusResponse viewStatusByMemberId(Long memberId);
     void match(Point point,double metric, Long memberId);
-    void save(HelpMatchRequest helpMatchRequest);
+    MatchStatusResponse saveAndGetMatchStatus(HelpMatchRequest helpMatchRequest);
 
     List<ReceiveMatchItem> list(Long memberId);
 }

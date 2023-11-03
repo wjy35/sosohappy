@@ -3,6 +3,7 @@ package com.ssafy.help.match.socket.controller;
 import com.ssafy.help.match.socket.request.HelpMatchRequest;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
 import com.ssafy.help.match.socket.response.ReceiveMatchListResponse;
+import com.ssafy.help.match.socket.response.ReceiveMatchType;
 import com.ssafy.help.match.util.ObjectSerializer;
 import com.ssafy.help.match.socket.service.HelpMatchService;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,10 @@ public class HelpMatchSocketController{
     private final ObjectSerializer objectSerializer;
     private final SimpMessageSendingOperations simpMessageSendingOperations;
     private final HelpMatchService helpMatchService;
+    private final double[] metricList = {500d,1000d,1500d};
 
     @SubscribeMapping("/topic/match/status/{memberId}")
-    void match(@DestinationVariable Long memberId){
+    void status(@DestinationVariable Long memberId){
         MatchStatusResponse response = helpMatchService.viewStatusByMemberId(memberId);
         simpMessageSendingOperations.convertAndSend("/topic/match/status/"+memberId, objectSerializer.serialize(response));
     }
@@ -31,6 +33,7 @@ public class HelpMatchSocketController{
     void list(@DestinationVariable Long memberId){
         ReceiveMatchListResponse response = ReceiveMatchListResponse
                 .builder()
+                .receiveMatchType(ReceiveMatchType.PUSH)
                 .receiveMatchList(helpMatchService.list(memberId))
                 .build();
 
@@ -39,10 +42,11 @@ public class HelpMatchSocketController{
 
     @MessageMapping("/match")
     void match(@Payload HelpMatchRequest helpMatchRequest){
-        helpMatchService.save(helpMatchRequest);
+        MatchStatusResponse response = helpMatchService.saveAndGetMatchStatus(helpMatchRequest);
+        simpMessageSendingOperations.convertAndSend("/topic/match/status/"+helpMatchRequest.getMemberId(), objectSerializer.serialize(response));
 
-        // 요청 정보 저장
-        helpMatchService.match(new Point(helpMatchRequest.getLongitude(),helpMatchRequest.getLatitude()),1000d, helpMatchRequest.getMemberId());
-
+        for(double metric: metricList){
+            helpMatchService.match(new Point(helpMatchRequest.getLongitude(),helpMatchRequest.getLatitude()),metric, helpMatchRequest.getMemberId());
+        }
     }
 }
