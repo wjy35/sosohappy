@@ -89,11 +89,12 @@ public class HelpMatchServiceImpl implements HelpMatchService {
                 .helpMatchType(HelpMatchType.SINGLE)
                 .build();
 
-        String uuid = memberSessionEntityRepository.getServerUUID(helpMatchRequest.getMemberId());
         memberSessionEntityRepository.setMatchStatus(helpMatchRequest.getMemberId(),statusChangeEventDTO.getHelpMatchStatus());
         memberSessionEntityRepository.setMatchType(helpMatchRequest.getMemberId(), statusChangeEventDTO.getHelpMatchType());
+
         sendMatchEntityRepository.save(MatchEntityMapper.INSTANCE.toEntity(helpMatchRequest));
 
+        String uuid = memberSessionEntityRepository.getServerUUID(helpMatchRequest.getMemberId());
         redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_PREFIX+uuid, objectSerializer.serialize(statusChangeEventDTO));
     }
 
