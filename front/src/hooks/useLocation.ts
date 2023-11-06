@@ -78,20 +78,11 @@ function useLocation({}: propsType) {
 
         ReactNativeForegroundService.start({
             id: 1244,
-            title: "Foreground Service",
-            message: "We are live World",
+            title: "소소하지만 소중한 행복",
+            message: "주변의 행운을 찾는 중입니다",
             icon: "ic_launcher",
-            button: true,
-            button2: true,
-            buttonText: "Button",
-            button2Text: "Anther Button",
-            buttonOnPress: "cray",
             setOnlyAlertOnce: true,
             color: "#000000",
-            progress: {
-                max: 100,
-                curr: 50,
-            },
         });
     };
 
