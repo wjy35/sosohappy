@@ -14,12 +14,9 @@ import com.ssafy.help.match.socket.response.ReceiveMatchItem;
 import com.ssafy.help.match.socket.service.HelpMatchService;
 import com.ssafy.help.match.util.ObjectSerializer;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.Point;
-import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -86,38 +83,45 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     public void match(Point point,double m,Long memberId) {
         memberPointRepository.search(point,m)
                 .getContent()
-                .forEach((geoResult)-> {
-                    if(isGeoResultAvailable(geoResult,memberId)){
-                        emitMatchEvent(memberId,Long.parseLong(geoResult.getContent().getName()));
-                    }
-                });
+                .stream()
+                .map((geoResult)->Long.parseLong(geoResult.getContent().getName()))
+                .forEach((searchedMemberId)-> emitMatchEvent(memberId,searchedMemberId));
     }
 
-    private void emitMatchEvent(Long memberId, Long matchedMemberId){
-        memberMatchSetRepository.save(matchedMemberId,memberId);
+    private void emitMatchEvent(Long memberId, Long searchedMemberId){
+        if(isNotMatchableMember(memberId,searchedMemberId)) return;
 
-        if(memberSessionEntityRepository.isConnected(matchedMemberId)){
-            String uuid = memberSessionEntityRepository.getServerUUID(matchedMemberId);
+        sendMatchEntityRepository.add(memberId,searchedMemberId);
+        memberMatchSetRepository.save(searchedMemberId,memberId);
+
+        if(memberSessionEntityRepository.isConnected(searchedMemberId)){
+            String uuid = memberSessionEntityRepository.getServerUUID(searchedMemberId);
 
             MatchEventDTO matchEventDTO = MatchEventDTO
                     .builder()
                     .memberId(memberId)
-                    .matchedMemberId(matchedMemberId)
+                    .matchedMemberId(searchedMemberId)
                     .build();
             redisTemplate.convertAndSend(PREFIX+uuid, objectSerializer.serialize(matchEventDTO));
-
         }else{
             // ToDo Notification Event
         }
     }
 
-    private boolean isGeoResultAvailable(GeoResult<RedisGeoCommands.GeoLocation<String>> geoResult, Long memberId){
-        Long searchedMemberId = Long.parseLong(geoResult.getContent().getName());
-        return memberSessionEntityRepository
-                .getMatchStatus(searchedMemberId)
-                .equals(HelpMatchStatus.DEFAULT);
-        // ToDo 자기 자신 제외하기
-//                && !searchedMemberId.equals(memberId);
+    private boolean isNotMatchableMember(Long memberId, Long searchedMemberId){
+        return isBusy(memberId) || isAlreadyMatched(memberId,searchedMemberId) || isSelf(memberId,searchedMemberId);
+    }
+
+    private boolean isBusy(Long memberId){
+        return memberSessionEntityRepository.getMatchStatus(memberId).equals(HelpMatchStatus.DEFAULT);
+    }
+
+    private boolean isSelf(Long memberId,Long searchedMemberId){
+        return searchedMemberId.equals(memberId);
+    }
+
+    private boolean isAlreadyMatched(Long memberId,Long searchedMemberId){
+        return sendMatchEntityRepository.isMember(memberId,searchedMemberId);
     }
 
 }
