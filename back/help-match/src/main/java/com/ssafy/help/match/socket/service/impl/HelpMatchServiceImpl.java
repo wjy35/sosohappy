@@ -86,9 +86,11 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     public void match(Point point,double m,Long memberId) {
         memberPointRepository.search(point,m)
                 .getContent()
-                .stream()
-                .filter((geoResult)-> isGeoResultAvailable(geoResult,memberId))
-                .forEach((geoResult)-> emitMatchEvent(memberId,Long.parseLong(geoResult.getContent().getName())));
+                .forEach((geoResult)-> {
+                    if(isGeoResultAvailable(geoResult,memberId)){
+                        emitMatchEvent(memberId,Long.parseLong(geoResult.getContent().getName()));
+                    }
+                });
     }
 
     private void emitMatchEvent(Long memberId, Long matchedMemberId){
