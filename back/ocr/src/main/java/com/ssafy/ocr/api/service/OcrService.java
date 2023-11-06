@@ -30,6 +30,26 @@ public class OcrService {
     @Value("${ocr.secret.key}")
     private String secretKey;
 
+    public void checkImage(MultipartFile multipartFile) {
+
+        Map<String,String> result;
+        String originalFileName = multipartFile.getOriginalFilename();
+        String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+        String base64EncodeFile = null;
+
+        try {
+            base64EncodeFile = base64Encoding(multipartFile);
+            String text = naverOcrApi(base64EncodeFile,ext);
+            result = jsonParse(text);
+            if (result.get("name") == null || result.get("documentRegistrationNumber") == null) {
+                // 예외 처리
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private Map<String,String> jsonParse(String text) {
 
         Map<String,String> result = new HashMap<>();
