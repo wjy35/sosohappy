@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.help.match.socket.dto.CategoryDTO;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class HelpMatchRequest {
     @JsonProperty("memberId")
@@ -14,8 +12,8 @@ public class HelpMatchRequest {
     @JsonProperty("nickname")
     String nickname;
 
-    @JsonProperty("categoryList")
-    List<CategoryDTO> categoryList;
+    @JsonProperty("category")
+    CategoryDTO category;
 
     @JsonProperty("latitude")
     Double latitude;
