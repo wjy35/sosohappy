@@ -7,6 +7,7 @@ import com.ssafy.help.match.db.repository.MemberMatchSetRepository;
 import com.ssafy.help.match.db.repository.MemberPointRepository;
 import com.ssafy.help.match.db.repository.MemberSessionEntityRepository;
 import com.ssafy.help.match.socket.dto.MatchEventDTO;
+import com.ssafy.help.match.socket.dto.StatusChangeEventDTO;
 import com.ssafy.help.match.socket.mapper.ReceiveMatchMapper;
 import com.ssafy.help.match.socket.request.HelpMatchRequest;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
@@ -28,9 +29,9 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     private final MemberPointRepository memberPointRepository;
     private final MemberMatchSetRepository memberMatchSetRepository;
     private final SendMatchEntityRepository sendMatchEntityRepository;
-
     private final RedisTemplate<String,String> redisTemplate;
-    private final String PREFIX="matchEvent:";
+    private final String MATCH_EVENT_PREFIX ="matchEvent:";
+    private final String STATUS_CHANGE_EVENT_PREFIX="statusChangeEvent:";
     private final ObjectSerializer objectSerializer;
 
     @Override
@@ -46,18 +47,19 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     }
 
     @Override
-    public MatchStatusResponse saveAndGetMatchStatus(HelpMatchRequest helpMatchRequest) {
-        MatchStatusResponse matchStatusResponse = MatchStatusResponse
+    public void saveAndChangeStatus(HelpMatchRequest helpMatchRequest) {
+        StatusChangeEventDTO statusChangeEventDTO = StatusChangeEventDTO
                 .builder()
+                .memberId(helpMatchRequest.getMemberId())
                 .helpMatchStatus(HelpMatchStatus.ON_MATCH_PROGRESS)
                 .helpMatchType(HelpMatchType.SINGLE)
                 .build();
 
-        memberSessionEntityRepository.setMatchStatus(helpMatchRequest.getMemberId(),matchStatusResponse.getHelpMatchStatus());
-        memberSessionEntityRepository.setMatchType(helpMatchRequest.getMemberId(), matchStatusResponse.getHelpMatchType());
+        String uuid = memberSessionEntityRepository.getServerUUID(helpMatchRequest.getMemberId());
+        memberSessionEntityRepository.setMatchStatus(helpMatchRequest.getMemberId(),statusChangeEventDTO.getHelpMatchStatus());
+        memberSessionEntityRepository.setMatchType(helpMatchRequest.getMemberId(), statusChangeEventDTO.getHelpMatchType());
         sendMatchEntityRepository.save(ReceiveMatchMapper.INSTANCE.toEntity(helpMatchRequest));
-
-        return matchStatusResponse;
+        redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_PREFIX+uuid, objectSerializer.serialize(statusChangeEventDTO));
     }
 
     @Override
@@ -102,18 +104,18 @@ public class HelpMatchServiceImpl implements HelpMatchService {
                     .memberId(memberId)
                     .matchedMemberId(searchedMemberId)
                     .build();
-            redisTemplate.convertAndSend(PREFIX+uuid, objectSerializer.serialize(matchEventDTO));
+            redisTemplate.convertAndSend(MATCH_EVENT_PREFIX +uuid, objectSerializer.serialize(matchEventDTO));
         }else{
             // ToDo Notification Event
         }
     }
 
     private boolean isNotMatchableMember(Long memberId, Long searchedMemberId){
-        return isBusy(memberId) || isAlreadyMatched(memberId,searchedMemberId) || isSelf(memberId,searchedMemberId);
+        return isBusy(searchedMemberId) || isAlreadyMatched(memberId,searchedMemberId) || isSelf(memberId,searchedMemberId);
     }
 
     private boolean isBusy(Long memberId){
-        return memberSessionEntityRepository.getMatchStatus(memberId).equals(HelpMatchStatus.DEFAULT);
+        return !memberSessionEntityRepository.getMatchStatus(memberId).equals(HelpMatchStatus.DEFAULT);
     }
 
     private boolean isSelf(Long memberId,Long searchedMemberId){
