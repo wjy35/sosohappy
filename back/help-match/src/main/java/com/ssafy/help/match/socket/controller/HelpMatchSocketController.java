@@ -42,9 +42,7 @@ public class HelpMatchSocketController{
 
     @MessageMapping("/match")
     void match(@Payload HelpMatchRequest helpMatchRequest){
-        MatchStatusResponse response = helpMatchService.saveAndGetMatchStatus(helpMatchRequest);
-        simpMessageSendingOperations.convertAndSend("/topic/match/status/"+helpMatchRequest.getMemberId(), objectSerializer.serialize(response));
-
+        helpMatchService.saveAndChangeStatus(helpMatchRequest);
         for(double metric: metricList){
             helpMatchService.match(new Point(helpMatchRequest.getLongitude(),helpMatchRequest.getLatitude()),metric, helpMatchRequest.getMemberId());
         }
