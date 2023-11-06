@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Image, Alert
 import CommonLayout from "@/components/CommonLayout";
 import monsterApi from "@/apis/monsterApi";
 import useStore from "@/hooks/useStore";
+import { useNavigation } from "@react-navigation/native";
 
 import CloverIcon from "@/assets/img/clover-icon.png"
 import BearAnimationIcon from "@/assets/img/bear-animation-icon.png"
@@ -26,6 +27,7 @@ const Character = () => {
     const [myMonsters, setMyMonsters] = useState<any[] | null>(null);
     const loaderValue = useRef(new Animated.Value(0)).current;
     const {userStore} = useStore();
+    const navigation = useNavigation();
 
     const feedSosomonCommon = async ({feedType}: feedTypes) => {
         if(myMonsters){
@@ -33,12 +35,14 @@ const Character = () => {
                 memberMonsterId: myMonsters[feedType].memberMonsterId,
                 clover: 1,
             });
-            console.log("levelUpApi", levelUpApi);
+            console.log("levelUpApi", levelUpApi.data.message);
             if(levelUpApi.status === 200){
                 if(levelUpApi.data.message === "보유중인 클로버가 부족합니다."){
                     Alert.alert("보유중인 클로버가 부족하여 먹이를 줄 수 없습니다.");
-                }else if(levelUpApi.data.message === "경험치 등록 완료"){
+                }else if(levelUpApi.data.message === "클로버를 성공적으로 반영하였습니다."){
                     Alert.alert("소소몬에게 성공적으로 먹이를 주었습니다.");
+                    navigation.navigate("MyPage");
+                    navigation.navigate("Character");
                 }
             }else{
                 Alert.alert("시스템 오류, 관리자에게 문의하세요.");
