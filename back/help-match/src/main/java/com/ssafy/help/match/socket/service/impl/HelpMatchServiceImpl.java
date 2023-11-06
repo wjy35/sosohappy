@@ -15,12 +15,13 @@ import com.ssafy.help.match.socket.response.ReceiveMatchItem;
 import com.ssafy.help.match.socket.service.HelpMatchService;
 import com.ssafy.help.match.util.ObjectSerializer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.Point;
+import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +34,8 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     private final String MATCH_EVENT_PREFIX ="matchEvent:";
     private final String STATUS_CHANGE_EVENT_PREFIX="statusChangeEvent:";
     private final ObjectSerializer objectSerializer;
+    private final double[] maxDistanceList = {500d,1000d,1500d};
+
 
     @Override
     public MatchStatusResponse viewStatusByMemberId(Long memberId) {
@@ -46,21 +49,6 @@ public class HelpMatchServiceImpl implements HelpMatchService {
                 .build();
     }
 
-    @Override
-    public void saveAndChangeStatus(HelpMatchRequest helpMatchRequest) {
-        StatusChangeEventDTO statusChangeEventDTO = StatusChangeEventDTO
-                .builder()
-                .memberId(helpMatchRequest.getMemberId())
-                .helpMatchStatus(HelpMatchStatus.ON_MATCH_PROGRESS)
-                .helpMatchType(HelpMatchType.SINGLE)
-                .build();
-
-        String uuid = memberSessionEntityRepository.getServerUUID(helpMatchRequest.getMemberId());
-        memberSessionEntityRepository.setMatchStatus(helpMatchRequest.getMemberId(),statusChangeEventDTO.getHelpMatchStatus());
-        memberSessionEntityRepository.setMatchType(helpMatchRequest.getMemberId(), statusChangeEventDTO.getHelpMatchType());
-        sendMatchEntityRepository.save(MatchEntityMapper.INSTANCE.toEntity(helpMatchRequest));
-        redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_PREFIX+uuid, objectSerializer.serialize(statusChangeEventDTO));
-    }
 
     @Override
     public List<ReceiveMatchItem> list(Long memberId) {
@@ -82,18 +70,50 @@ public class HelpMatchServiceImpl implements HelpMatchService {
 
 
     @Override
-    public void match(Point point,double m,Long memberId) {
-        memberPointRepository.search(point,m)
-                .getContent()
-                .stream()
-                .map((geoResult)->Long.parseLong(geoResult.getContent().getName()))
-                .forEach((searchedMemberId)-> emitMatchEvent(memberId,searchedMemberId));
+    public void match(HelpMatchRequest helpMatchRequest) {
+        saveAndChangeStatus(helpMatchRequest);
+
+        Set<Long> matchedMemberIdSet = new HashSet<>();
+        Point centerPoint = new Point(helpMatchRequest.getLongitude(),helpMatchRequest.getLatitude());
+
+        for(double maxDistance:maxDistanceList){
+            matchInRange(helpMatchRequest.getMemberId(), centerPoint, maxDistance, matchedMemberIdSet);
+        }
     }
 
-    private void emitMatchEvent(Long memberId, Long searchedMemberId){
-        if(isNotMatchableMember(memberId,searchedMemberId)) return;
+    private void saveAndChangeStatus(HelpMatchRequest helpMatchRequest) {
+        StatusChangeEventDTO statusChangeEventDTO = StatusChangeEventDTO
+                .builder()
+                .memberId(helpMatchRequest.getMemberId())
+                .helpMatchStatus(HelpMatchStatus.ON_MATCH_PROGRESS)
+                .helpMatchType(HelpMatchType.SINGLE)
+                .build();
 
-        sendMatchEntityRepository.add(memberId,searchedMemberId);
+        String uuid = memberSessionEntityRepository.getServerUUID(helpMatchRequest.getMemberId());
+        memberSessionEntityRepository.setMatchStatus(helpMatchRequest.getMemberId(),statusChangeEventDTO.getHelpMatchStatus());
+        memberSessionEntityRepository.setMatchType(helpMatchRequest.getMemberId(), statusChangeEventDTO.getHelpMatchType());
+        sendMatchEntityRepository.save(MatchEntityMapper.INSTANCE.toEntity(helpMatchRequest));
+
+        redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_PREFIX+uuid, objectSerializer.serialize(statusChangeEventDTO));
+    }
+
+
+    private void matchInRange(Long memberId, Point point, double maxDistance,Set<Long> matchedMemberIdSet) {
+        Long searchedMemberId;
+
+        for(GeoResult<RedisGeoCommands.GeoLocation<String>> geoResult:memberPointRepository.search(point,maxDistance).getContent()){
+            searchedMemberId = Long.parseLong(geoResult.getContent().getName());
+
+            if(isMatchedAlready(searchedMemberId,matchedMemberIdSet)) continue;
+            if(isMemberBusy(searchedMemberId)) continue;
+            if(isMemberSelf(searchedMemberId,memberId)) continue;
+
+            emitMatchEvent(memberId, searchedMemberId, matchedMemberIdSet);
+        }
+    }
+
+    private void emitMatchEvent(Long memberId, Long searchedMemberId, Set<Long> matchedMemberIdSet){
+        matchedMemberIdSet.add(searchedMemberId);
         memberMatchSetRepository.save(searchedMemberId,memberId);
 
         if(memberSessionEntityRepository.isConnected(searchedMemberId)){
@@ -110,20 +130,16 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         }
     }
 
-    private boolean isNotMatchableMember(Long memberId, Long searchedMemberId){
-        return isBusy(searchedMemberId) || isAlreadyMatched(memberId,searchedMemberId) || isSelf(memberId,searchedMemberId);
-    }
-
-    private boolean isBusy(Long memberId){
+    private boolean isMemberBusy(Long memberId){
         return !memberSessionEntityRepository.getMatchStatus(memberId).equals(HelpMatchStatus.DEFAULT);
     }
 
-    private boolean isSelf(Long memberId,Long searchedMemberId){
+    private boolean isMemberSelf(Long memberId,Long searchedMemberId){
         return searchedMemberId.equals(memberId);
     }
 
-    private boolean isAlreadyMatched(Long memberId,Long searchedMemberId){
-        return sendMatchEntityRepository.isMember(memberId,searchedMemberId);
+    private boolean isMatchedAlready(Long searchedMemberId,Set<Long> matchedMemberIdSet){
+        return matchedMemberIdSet.contains(searchedMemberId);
     }
 
 }
