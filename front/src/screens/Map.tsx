@@ -16,8 +16,7 @@ interface propsType{
     send: Function,
     status: String,
     helpList: helpDetail[]
-    },
-  }
+  },
 }
 
 interface helpDetail {
