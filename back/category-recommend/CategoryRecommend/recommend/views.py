@@ -2,10 +2,7 @@ from django.shortcuts import render
 from .models import Category, CategoryPick
 import numpy as np
 import pandas as pd
-import json
-from django.http import HttpResponse
 from django.http import JsonResponse
-import surprise
 from surprise import Reader, Dataset, SVD
 from surprise.model_selection import cross_validate
 
@@ -28,7 +25,7 @@ def category_recommend(request):
     data = Dataset.load_from_df(pick_data[['member_id', 'category_id', 'pick_count']], reader=reader)
     svd = SVD(random_state=0)
 
-    cross_validate(svd, data, measures=['RMSE','MAE'], cv=5, verbose=True)
+    # cross_validate(svd, data, measures=['RMSE','MAE'], cv=5, verbose=True)
 
     trainset = data.build_full_trainset()
     svd.fit(trainset)
@@ -45,14 +42,14 @@ def category_recommend(request):
     sorted_predictions = sorted(predictions, key=lambda x: x['predicted_rating'], reverse=True)
     top_5 = sorted_predictions[:5]
 
-    recommendCategoryList = []
+    result_list = []
 
     # category_list에서 해당 ID의 객체 찾기
     for item in top_5:
         category_id = item['category_id']
         category = category_list.get(category_id=category_id)  
         if category:
-            recommendCategoryList.append({
+            result_list.append({
                 'category_id': category.category_id,
                 'predicted_rating': item['predicted_rating'],
                 'category_name': category.category_name,
@@ -60,7 +57,11 @@ def category_recommend(request):
             })
 
     response_data = {
-        'result': recommendCategoryList,
+        'status': "success",
+        'message' : "추천 카테고리 조회 완료",
+        'result': {
+            'recommendCategoryList': result_list,
+        }
     }
     return JsonResponse(response_data, json_dumps_params={'default': custom_json_encoder})
 
