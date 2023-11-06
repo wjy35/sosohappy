@@ -28,7 +28,7 @@ public class MatchEventListener implements MessageListener {
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        MatchEventDTO matchEventDTO = objectSerializer.deserialize(message.getBody().toString(), MatchEventDTO.class);
+        MatchEventDTO matchEventDTO = objectSerializer.deserialize(message.toString(), MatchEventDTO.class);
         SendMatchEntity sendMatchEntity = sendMatchEntityRepository.findByMemberId(matchEventDTO.getMemberId());
         if(Optional.ofNullable(sendMatchEntity).isEmpty()) return;
 
