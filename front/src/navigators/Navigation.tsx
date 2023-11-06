@@ -12,6 +12,10 @@ import SignUpInput from '@/screens/SignUpInput';
 import SignUpSeparate from '@/screens/SignUpSeparate';
 import NavigatorDummy from '@/screens/NavigatorDummy';
 import Character from '@/screens/Character';
+import {observer} from "mobx-react";
+import useStore from "@/hooks/useStore";
+import useSocket from "@/hooks/useSocket";
+import {useEffect} from "react";
 
 
 const Stack = createStackNavigator();
@@ -20,7 +24,10 @@ interface propsType{
   location: any;
 }
 
-const Navigation = ({location}: propsType) => {
+const Navigation = observer(({location}: propsType) => {
+  const {userStore} = useStore();
+  const socket = useSocket();
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false, animationEnabled: false }} initialRouteName='Main'>
@@ -33,7 +40,7 @@ const Navigation = ({location}: propsType) => {
         <Stack.Screen name="Map">
           {
             props => (
-                <Map location={location} />
+                <Map location={location} socket={socket}/>
             )
           }
         </Stack.Screen>
@@ -45,7 +52,7 @@ const Navigation = ({location}: propsType) => {
       </Stack.Navigator>
     </NavigationContainer>
   );
-};
+});
 
 export default Navigation;
 

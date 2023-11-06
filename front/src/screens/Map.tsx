@@ -4,6 +4,7 @@ import CommonLayout from "@/components/CommonLayout";
 import BottomSheet from "@/components/BottomSheet";
 import MapView, {PROVIDER_GOOGLE, Marker, Polyline} from "react-native-maps";
 import {MAP_LINE_API_KEY} from "@env"
+import {clover} from "@/assets/icons/icons";
 
 import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 
@@ -11,18 +12,74 @@ import MapStyle from "@/styles/MapStyle";
 
 interface propsType{
   location: any;
+  socket: {
+    connect: Function,
+    send: Function,
+    status: String,
+    helpList: helpDetail[]
+  },
 }
 
-const Map = ({location}: propsType) => {
+interface helpDetail {
+  memberId: number,
+  nickname: string,
+  categoryList: {
+    categoryId: number,
+    categoryName: string,
+    categoryImage: string,
+  }[],
+  longitude: number,
+  latitude: number,
+  content: string,
+  place: string,
+}
+
+const Map = ({location, socket}: propsType) => {
   const mapWidth = Dimensions.get("window").width;
   const mapHeight = Dimensions.get("window").height;
   const [bottomSheetStatus, setBottomSheetStatus] = useState<Boolean>(false);
+  const [selectedHelp, setSelectedHelp] = useState<helpDetail>();
   // 이곳에 GPS에서 가져온 내 위치 정보를 넣으면 됩니다, 지금 default 정적으로 넣은 거는 멀티캠퍼스 역삼 위도 경도입니다.
-  const [aroundPositions, setAroundPositions] = useState<any[]>([
+  const [aroundPositions, setAroundPositions] = useState<helpDetail[]>([
     {
-      latitude: 37.500069,
+      memberId: 1,
+      nickname: 'test1',
+      categoryList: [{
+        categoryId: 1,
+        categoryName: '몰라',
+        categoryImage: clover,
+      }],
       longitude: 127.036841,
+      latitude: 37.500069,
+      content: 'test1',
+      place: 'test1',
     },
+    {
+      memberId: 2,
+      nickname: 'test2',
+      categoryList: [{
+        categoryId: 2,
+        categoryName: '몰라요',
+        categoryImage: clover,
+      }],
+      longitude: 127.046841,
+      latitude: 37.504069,
+      content: 'test2',
+      place: 'test2',
+    },
+    {
+      memberId: 3,
+      nickname: 'test3',
+      categoryList: [{
+        categoryId: 3,
+        categoryName: '몰라유',
+        categoryImage: clover,
+      }],
+      longitude: 127.032841,
+      latitude: 37.499069,
+      content: 'test3',
+      place: 'test3',
+    }
   ]);
   const [points, setPoints] = useState<any>();
 
@@ -30,7 +87,8 @@ const Map = ({location}: propsType) => {
     setBottomSheetStatus(updateStatus);
   }
 
-  const pressAroundMarker = () => {
+  const pressAroundMarker = (aroundMarker: helpDetail) => {
+    setSelectedHelp(aroundMarker);
     setBottomSheetStatus(true);
   }
 
@@ -68,11 +126,8 @@ const Map = ({location}: propsType) => {
   }
 
   useEffect(() => {
-    const getApi = async () => {
-      await getArrivalToDesinationPointLine();
-    }
+    socket.connect();
 
-    getApi();
   }, [])
 
   return (
@@ -109,7 +164,7 @@ const Map = ({location}: propsType) => {
                                 description="around"
                                 coordinate={{latitude: aroundMarker.latitude, longitude: aroundMarker.longitude}}
                                 pinColor="#E9747A"
-                                onPress={() => pressAroundMarker()}
+                                onPress={() => pressAroundMarker(aroundMarker)}
                             />
                           </React.Fragment>
                       );
@@ -156,7 +211,7 @@ const Map = ({location}: propsType) => {
       </TouchableOpacity>
       {
         bottomSheetStatus ?
-        <BottomSheet updateBottomSheetStatus={(updateStatus:Boolean) => updateBottomSheetStatus(updateStatus)}/>
+        <BottomSheet selectedHelp={selectedHelp} updateBottomSheetStatus={(updateStatus:Boolean) => updateBottomSheetStatus(updateStatus)}/>
         :
         <></>
       }
