@@ -1,11 +1,10 @@
 package com.ssafy.help.match.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.help.match.db.entity.SendMatchEntity;
 import com.ssafy.help.match.db.repository.MemberPointRepository;
 import com.ssafy.help.match.db.repository.SendMatchEntityRepository;
 import com.ssafy.help.match.socket.dto.MatchEventDTO;
-import com.ssafy.help.match.socket.mapper.ReceiveMatchMapper;
+import com.ssafy.help.match.socket.mapper.MatchEntityMapper;
 import com.ssafy.help.match.socket.response.ReceiveMatchItem;
 import com.ssafy.help.match.socket.response.ReceiveMatchListResponse;
 import com.ssafy.help.match.socket.response.ReceiveMatchType;
@@ -34,7 +33,7 @@ public class MatchEventListener implements MessageListener {
 
         Double distance = memberPointRepository.getDistance(matchEventDTO.getMemberId(), matchEventDTO.getMatchedMemberId());
 
-        List<ReceiveMatchItem> receiveMatchList = List.of(ReceiveMatchMapper.INSTANCE.toItem(sendMatchEntity, distance));
+        List<ReceiveMatchItem> receiveMatchList = List.of(MatchEntityMapper.INSTANCE.toItem(sendMatchEntity, distance));
 
         ReceiveMatchListResponse response = ReceiveMatchListResponse
                 .builder()

@@ -8,7 +8,7 @@ import com.ssafy.help.match.db.repository.MemberPointRepository;
 import com.ssafy.help.match.db.repository.MemberSessionEntityRepository;
 import com.ssafy.help.match.socket.dto.MatchEventDTO;
 import com.ssafy.help.match.socket.dto.StatusChangeEventDTO;
-import com.ssafy.help.match.socket.mapper.ReceiveMatchMapper;
+import com.ssafy.help.match.socket.mapper.MatchEntityMapper;
 import com.ssafy.help.match.socket.request.HelpMatchRequest;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
 import com.ssafy.help.match.socket.response.ReceiveMatchItem;
@@ -58,7 +58,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         String uuid = memberSessionEntityRepository.getServerUUID(helpMatchRequest.getMemberId());
         memberSessionEntityRepository.setMatchStatus(helpMatchRequest.getMemberId(),statusChangeEventDTO.getHelpMatchStatus());
         memberSessionEntityRepository.setMatchType(helpMatchRequest.getMemberId(), statusChangeEventDTO.getHelpMatchType());
-        sendMatchEntityRepository.save(ReceiveMatchMapper.INSTANCE.toEntity(helpMatchRequest));
+        sendMatchEntityRepository.save(MatchEntityMapper.INSTANCE.toEntity(helpMatchRequest));
         redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_PREFIX+uuid, objectSerializer.serialize(statusChangeEventDTO));
     }
 
@@ -67,7 +67,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         List<String> matchMemberIdList = new ArrayList<>(memberMatchSetRepository.getSet(memberId));
         List<ReceiveMatchItem> receiveMatchItemList = new ArrayList<>();
 
-        ReceiveMatchMapper mapper = ReceiveMatchMapper.INSTANCE;
+        MatchEntityMapper mapper = MatchEntityMapper.INSTANCE;
 
         for (String matchMemberId:matchMemberIdList){
             Optional.ofNullable(sendMatchEntityRepository.findByMemberId(Long.parseLong(matchMemberId)))
