@@ -40,6 +40,7 @@ function useLocation({}: propsType) {
 
     const foregroundPositionFunc = (lati: number, longi: number) => {
         // TODO: foreground에서 사용될 작업
+        sendPosition(lati, longi)
         setCoordinate({
             latitude: lati,
             longitude: longi,
