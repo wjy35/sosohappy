@@ -30,6 +30,32 @@ public class OcrService {
     @Value("${ocr.secret.key}")
     private String secretKey;
 
+    private Map<String,String> jsonParse(String text) {
+
+        Map<String,String> result = new HashMap<>();
+        JsonNode root = null;
+
+        try {
+            root = objectMapper.readTree(text);
+            String documentRegistrationNumber = root.path("images").
+                    get(0).path("fields").
+                    get(0).path("subFields").
+                    get(0).path("inferText").asText();
+
+            String name = root.path("images").
+                    get(0).path("fields").
+                    get(1).path("subFields").
+                    get(0).path("inferText").asText();
+
+            result.put("documentRegistrationNumber",documentRegistrationNumber);
+            result.put("name",name);
+
+        } catch(Exception e) {
+            e.getMessage(); // throw Error
+        }
+
+        return result;
+    }
     private String naverOcrApi(String base64EncodeFile, String ext) {
 
         String apiURL = this.apiURL;
