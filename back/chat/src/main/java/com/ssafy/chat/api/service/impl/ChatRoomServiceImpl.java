@@ -8,6 +8,8 @@ import com.ssafy.chat.db.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class ChatRoomServiceImpl implements ChatRoomService {
@@ -16,10 +18,13 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
     private final ChatRoomMapper chatRoomMapper;
     @Override
-    public void creatChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) {
-        ChatRoomEntity chatRoomEntity = chatRoomMapper.createRequestToEntity(chatRoomCreateRequest);
-
-        System.out.println("chatRoomEntity = " + chatRoomEntity);
-        chatRoomRepository.save(chatRoomEntity);
+    public Integer creatChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) {
+        Optional<ChatRoomEntity> chatRoomEntityOption = chatRoomRepository.findByChatRoomByUserIds(chatRoomCreateRequest.getSenderMemberId(), chatRoomCreateRequest.getReceiverMemberId());
+        if(chatRoomEntityOption.isEmpty()){
+            ChatRoomEntity chatRoomEntity = chatRoomMapper.createRequestToEntity(chatRoomCreateRequest);
+            return chatRoomRepository.save(chatRoomEntity).getChatRoomId();
+        }else {
+            return chatRoomEntityOption.get().getChatRoomId();
+        }
     }
 }

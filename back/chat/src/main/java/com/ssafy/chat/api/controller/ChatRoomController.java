@@ -6,9 +6,7 @@ import com.ssafy.chat.api.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,16 +14,22 @@ public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
 
-    @PostMapping
+    @PostMapping("/chatroom")
     public ResponseEntity<?> createChatRoom(@RequestBody ChatRoomCreateRequest chatRoomCreateRequest){
-        chatRoomService.creatChatRoom(chatRoomCreateRequest);
+        Integer chatRoomId = chatRoomService.creatChatRoom(chatRoomCreateRequest);
 
         FormattedResponse response = FormattedResponse.builder()
                 .status("success")
                 .message("GET HELP COUNT")
+                .result("chatRoomId", chatRoomId)
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
+
+
+//    @GetMapping("/chatroom")
+//    public ResponseEntity<?> getChatRoomList(@RequestHeader("memberId") long memberId){
+//
+//    }
 }

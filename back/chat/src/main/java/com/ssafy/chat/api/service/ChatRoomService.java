@@ -4,5 +4,5 @@ import com.ssafy.chat.api.request.ChatRoomCreateRequest;
 
 public interface ChatRoomService {
 
-    void creatChatRoom(ChatRoomCreateRequest chatRoomCreateRequest);
+    Integer creatChatRoom(ChatRoomCreateRequest chatRoomCreateRequest);
 }
