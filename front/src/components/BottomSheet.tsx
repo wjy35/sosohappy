@@ -27,7 +27,7 @@ const BottomSheet = ({updateBottomSheetStatus}: propsType) => {
             <Modal
                 isVisible={true}
                 style={BottomSheetStyle.modal}
-
+                onBackdropPress={()=>updateBottomSheetStatus(false)}
             >
                 <View style={BottomSheetStyle.modalContent}>
                     <View style={BottomSheetStyle.styleLine}></View>
