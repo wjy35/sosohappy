@@ -2,6 +2,7 @@ package com.ssafy.ocr.api.controller;
 
 
 import com.ssafy.ocr.api.response.FormattedResponse;
+import com.ssafy.ocr.api.service.OcrService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
