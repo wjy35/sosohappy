@@ -11,9 +11,30 @@ import MapStyle from "@/styles/MapStyle";
 
 interface propsType{
   location: any;
+  socket: {
+    connect: Function,
+    send: Function,
+    status: String,
+    helpList: helpDetail[]
+    },
+  }
 }
 
-const Map = ({location}: propsType) => {
+interface helpDetail {
+  memberId: number,
+  nickname: string,
+  categoryList: {
+    categoryId: number,
+    categoryName: string,
+    categoryImage: string,
+  }[],
+  longitude: number,
+  latitude: number,
+  content: string,
+  place: string,
+}
+
+const Map = ({location, socket}: propsType) => {
   const mapWidth = Dimensions.get("window").width;
   const mapHeight = Dimensions.get("window").height;
   const [bottomSheetStatus, setBottomSheetStatus] = useState<Boolean>(false);
@@ -68,11 +89,8 @@ const Map = ({location}: propsType) => {
   }
 
   useEffect(() => {
-    const getApi = async () => {
-      await getArrivalToDesinationPointLine();
-    }
+    socket.connect();
 
-    getApi();
   }, [])
 
   return (
