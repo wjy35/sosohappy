@@ -9,8 +9,7 @@ function useSocket(){
 
     function connect() {
         // wss://sosohappy.co.kr/help-match-socket/endpoint
-        const clientInit = Stomp.client("wss://sosohappy.co.kr/help-match-socket/endpoint");
-        clientInit.isBinary = true;
+        const clientInit = Stomp.client("wss://sosohappy.co.kr/help-match-socket/endpoint", {debug: false, binary: true});
         setClient(clientInit);
         clientInit.connect(
             {
