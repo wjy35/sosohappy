@@ -204,7 +204,7 @@ const MyPage = observer(() => {
         {
           myProfile && (
                 <WebView
-                    source={{uri: `http://sosohappy.co.kr:8888/sosomon/${myProfile.type}/${myProfile.level}`}}
+                    source={{uri: `http://10.0.2.2:5173/sosomon/${myProfile.type}/${myProfile.level}`}}
                     style={MyPageStyle.MySelectedCharImg}
                 />
             )

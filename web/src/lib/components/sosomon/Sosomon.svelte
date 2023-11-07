@@ -3,7 +3,7 @@
     import { T, forwardEventHandlers } from '@threlte/core'
     import { useGltf, useGltfAnimations } from '@threlte/extras'
     import {onMount} from "svelte";
-    // import {LoopOnce} from "three/src/constants";
+    import {LoopOnce} from "three/src/constants";
 
     type ActionName =
         | 'Attack'
@@ -28,6 +28,8 @@
     export let sosomon;
     export let type;
     export let level;
+    export let animationStatus:boolean;
+    export let updateAnimationStatus:Function;
 
     export const ref = new Group()
 
@@ -48,9 +50,15 @@
         startAction();
     })
 
-    // $: mixer.timeScale = 0.5
-    // $: $actions['Death']?.setLoop(LoopOnce, 1)
-    // $: $actions['Death']?.play()
+    $:console.log("animationStatus",animationStatus)
+
+    $: if(animationStatus === true){
+        mixer.timeScale = 0.5
+        $actions['Death']?.setLoop(LoopOnce, 1)
+        $actions['Death']?.play()
+        animationStatus = false
+    }
+
 </script>
 
 <T is={ref} dispose={false} {...$$restProps} bind:this={$component} on:click={onEvent}>
@@ -61,18 +69,17 @@
             <T.Group name="Rig" scale={0.4} on:click={onEvent} >
                 <T is={gltf.nodes.root}/>
                 <T.SkinnedMesh
-                        name="Mesh"
-                        geometry={gltf.nodes.Mesh.geometry}
-                        material={gltf.materials[sosomon.name]}
-                        material.color="white"
-                        skeleton={gltf.nodes.Mesh.skeleton}
-                        on:click={onEvent}
+                    name="Mesh"
+                    geometry={gltf.nodes.Mesh.geometry}
+                    material={gltf.materials[sosomon.name]}
+                    material.color="white"
+                    skeleton={gltf.nodes.Mesh.skeleton}
+                    on:click={onEvent}
                 />
             </T.Group>
         </T.Group>
     {:catch error}
         <slot name="error" {error} />
     {/await}
-
     <slot {ref} />
 </T>
