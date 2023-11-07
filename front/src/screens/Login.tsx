@@ -10,8 +10,34 @@ import {useNavigation} from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging'
 import {observer} from "mobx-react";
 import useStore from "@/hooks/useStore";
+import {useEffect} from "react";
 
-const Login = observer(() => {
+interface propsType{
+  socket: {
+    connect: Function,
+    send: Function,
+    status: String,
+    helpList: helpDetail[],
+    connected: boolean,
+    disConnect: Function,
+  };
+}
+
+interface helpDetail {
+  memberId: number;
+  nickname: string;
+  category: {
+    categoryId: number,
+    categoryName: string,
+    categoryImage: string,
+  };
+  longitude: number;
+  latitude: number;
+  content: string;
+  place: string;
+}
+
+const Login = observer(({socket}: propsType) => {
   const navigation = useNavigation();
   const {userStore} = useStore();
 
@@ -71,6 +97,14 @@ const Login = observer(() => {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    const focusNav = navigation.addListener('focus', () => {
+      // do something
+      socket.connected&&socket.disConnect()
+    });
+    return focusNav;
+  }, [navigation]);
 
   return (
     <CommonLayout headerType={0} footer={true}>

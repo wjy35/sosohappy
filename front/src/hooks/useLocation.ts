@@ -10,6 +10,7 @@ interface propsType {
 function useLocation({}: propsType) {
     const [coordinate, setCoordinate] = useState<any>();
     let watchId:number;
+    const [status, setStatus] = useState(0);
 
     Geolocation.setRNConfiguration({
         authorizationLevel: 'auto',
@@ -23,9 +24,11 @@ function useLocation({}: propsType) {
                 longitude: longitude,
             })
             if (res.status === 200){
+                console.log('uselocation success');
             }
         } catch (err) {
-            console.log(err)
+            console.log('uselocation error');
+            console.log(err);
         }
     }
 
@@ -64,6 +67,7 @@ function useLocation({}: propsType) {
 
     const setBackground = () => {
         console.log('background start');
+        setStatus(2);
         stopWatchPosition();
         ReactNativeForegroundService.add_task(
             () => {
@@ -88,6 +92,7 @@ function useLocation({}: propsType) {
     };
 
     const setForeground = () => {
+        setStatus(1);
         ReactNativeForegroundService.remove_all_tasks(); // 앱 실행 시 백그라운드 태스크 전부 제거
         ReactNativeForegroundService.stopAll();
 
@@ -124,7 +129,7 @@ function useLocation({}: propsType) {
         );
     }
 
-    return {coordinate, setBackground, setForeground};
+    return {coordinate, setBackground, setForeground, status};
 }
 
 export default useLocation;
