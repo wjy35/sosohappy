@@ -31,7 +31,7 @@ public class SendMatchEntityRepositoryImpl implements SendMatchEntityRepository 
         SendMatchEntity sendMatchEntity = null;
 
         if(Optional.ofNullable(sendMatchEntityStr).isPresent()){
-            sendMatchEntity =  objectSerializer.deserialize(redisTemplate.opsForValue().get(PREFIX+memberId), SendMatchEntity.class);
+            sendMatchEntity =  objectSerializer.deserialize(sendMatchEntityStr, SendMatchEntity.class);
         }
 
         return sendMatchEntity;
@@ -45,7 +45,7 @@ public class SendMatchEntityRepositoryImpl implements SendMatchEntityRepository 
         SendMatchEntity sendMatchEntity = null;
 
         if(Optional.ofNullable(sendMatchEntityStr).isPresent()){
-            sendMatchEntity =  objectSerializer.deserialize(redisTemplate.opsForValue().get(PREFIX+memberId), SendMatchEntity.class);
+            sendMatchEntity =  objectSerializer.deserialize(sendMatchEntityStr, SendMatchEntity.class);
         }
 
         return sendMatchEntity;

@@ -1,5 +1,6 @@
 package com.ssafy.help.match.socket.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.help.match.db.entity.HelpEntity;
 import com.ssafy.help.match.db.entity.HelpMatchStatus;
 import com.ssafy.help.match.db.entity.HelpMatchType;
@@ -21,8 +22,8 @@ import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.Point;
 import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Service
@@ -39,6 +40,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     private final double[] maxDistanceList = {500d,1000d,1500d};
 
     private final HelpEntityRepository helpEntityRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void accept(HelpAcceptRequest helpAcceptRequest) {
@@ -49,11 +51,14 @@ public class HelpMatchServiceImpl implements HelpMatchService {
                 .orElseThrow(UnAcceptableException::new);
         if(isMatchCanceled(disabledMemberId)) throw new UnAcceptableException();
 
+        HelpEntity helperHelpEntity = null;
+        HelpEntity disabledHelpEntity = null;
+
         try{
             memberSessionEntityRepository.setMatchStatus(helperMemberId, HelpMatchStatus.ON_MOVE);
             memberSessionEntityRepository.setMatchStatus(disabledMemberId, HelpMatchStatus.WAIT_COMPLETE);
-            HelpEntity disabledHelpEntity = HelpEntityMapper.INSTANCE.matchToHelp(helperMemberId,sendMatchEntity);
-            HelpEntity helperHelpEntity = HelpEntityMapper.INSTANCE.matchToHelp(disabledMemberId,sendMatchEntity);
+            disabledHelpEntity = HelpEntityMapper.INSTANCE.matchToHelp(helperMemberId,sendMatchEntity);
+            helperHelpEntity = HelpEntityMapper.INSTANCE.matchToHelp(disabledMemberId,sendMatchEntity);
             helpEntityRepository.save(disabledMemberId, disabledHelpEntity);
             helpEntityRepository.save(helperMemberId, helperHelpEntity);
         }catch (Exception e){
@@ -62,6 +67,23 @@ public class HelpMatchServiceImpl implements HelpMatchService {
             helpEntityRepository.getAndDeleteByMemberId(disabledMemberId);
             helpEntityRepository.getAndDeleteByMemberId(helperMemberId);
         }
+
+        sendHelpEntity(helperMemberId,helperHelpEntity,HelpMatchStatus.ON_MOVE);
+        sendHelpEntity(disabledMemberId,disabledHelpEntity,HelpMatchStatus.WAIT_COMPLETE);
+    }
+
+    @Async
+    void sendHelpEntity(Long memberId, HelpEntity helpEntity, HelpMatchStatus helpMatchStatus){
+        String uuid = memberSessionEntityRepository.getServerUUID(memberId);
+        StatusChangeEventDTO eventDTO = StatusChangeEventDTO
+                .builder()
+                .memberId(memberId)
+                .helpMatchStatus(helpMatchStatus)
+                .helpMatchType(HelpMatchType.SINGLE)
+                .data(objectMapper.convertValue(helpEntity,Map.class))
+                .build();
+
+        redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_PREFIX+uuid,objectSerializer.serialize(eventDTO));
     }
 
     private boolean isMatchCanceled(Long disabledMemberId){

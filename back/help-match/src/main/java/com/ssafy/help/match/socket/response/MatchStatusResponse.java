@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -14,4 +16,5 @@ import lombok.NoArgsConstructor;
 public class MatchStatusResponse {
     HelpMatchType helpMatchType;
     HelpMatchStatus helpMatchStatus;
+    Map<String,Object> data;
 }

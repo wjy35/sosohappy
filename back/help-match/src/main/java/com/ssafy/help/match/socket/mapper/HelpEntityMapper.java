@@ -9,5 +9,5 @@ import org.mapstruct.factory.Mappers;
 public interface HelpEntityMapper {
     HelpEntityMapper INSTANCE = Mappers.getMapper(HelpEntityMapper.class);
 
-    HelpEntity matchToHelp(Long otherMemberId,SendMatchEntity sendMatchEntity);
+    HelpEntity matchToHelp(Long otherMemberId, SendMatchEntity sendMatchEntity);
 }
