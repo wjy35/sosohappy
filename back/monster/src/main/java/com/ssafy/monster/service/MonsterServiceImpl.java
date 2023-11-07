@@ -85,9 +85,9 @@ public class MonsterServiceImpl implements MonsterService{
         int currentClover = growth.getMonsterClover();
         Pair<Integer, Double> pair = getCurrentPoint(currentClover);
         // result
-        MonsterRes mosterRes = MonsterMapper.INSTANCE.toRepresentativeMonsterRes(profile, growth, pair.second());
+        MonsterRes monsterRes = MonsterMapper.INSTANCE.toRepresentativeMonsterRes(profile, growth, pair.second());
 
-        return mosterRes;
+        return monsterRes;
     }
 
     /**
