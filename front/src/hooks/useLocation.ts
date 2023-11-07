@@ -10,6 +10,7 @@ interface propsType {
 function useLocation({}: propsType) {
     const [coordinate, setCoordinate] = useState<any>();
     let watchId:number;
+    const [status, setStatus] = useState(0);
 
     Geolocation.setRNConfiguration({
         authorizationLevel: 'auto',
