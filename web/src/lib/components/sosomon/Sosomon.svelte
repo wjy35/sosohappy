@@ -25,11 +25,12 @@
         | 'Swim'
         | 'Walk'
 
-    export let sosomon;
+    export let sosomon: any;
     export let type;
     export let level;
     export let animationStatus:boolean;
     export let updateAnimationStatus:Function;
+    $: animationStatus;
 
     export const ref = new Group()
 
@@ -50,13 +51,14 @@
         startAction();
     })
 
-    $:console.log("animationStatus",animationStatus)
+    $: updateAnimationStatus = () => {
+        animationStatus = true;
+    };
 
     $: if(animationStatus === true){
         mixer.timeScale = 0.5
         $actions['Death']?.setLoop(LoopOnce, 1)
         $actions['Death']?.play()
-        animationStatus = false
     }
 
 </script>

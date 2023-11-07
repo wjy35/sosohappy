@@ -2,7 +2,7 @@
   import { Canvas } from '@threlte/core'
   import Scene from '$lib/components/Scene.svelte'
   import Sosomon from "$lib/components/sosomon/Sosomon.svelte";
-  export let data;
+  export let data: any;
   const type = Number(data.type);
   const level = Number(data.level)-1;
   let animationStatus = false;
