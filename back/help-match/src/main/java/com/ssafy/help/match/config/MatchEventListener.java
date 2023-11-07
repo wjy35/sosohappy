@@ -1,11 +1,10 @@
 package com.ssafy.help.match.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.help.match.db.entity.SendMatchEntity;
 import com.ssafy.help.match.db.repository.MemberPointRepository;
 import com.ssafy.help.match.db.repository.SendMatchEntityRepository;
 import com.ssafy.help.match.socket.dto.MatchEventDTO;
-import com.ssafy.help.match.socket.mapper.ReceiveMatchMapper;
+import com.ssafy.help.match.socket.mapper.MatchEntityMapper;
 import com.ssafy.help.match.socket.response.ReceiveMatchItem;
 import com.ssafy.help.match.socket.response.ReceiveMatchListResponse;
 import com.ssafy.help.match.socket.response.ReceiveMatchType;
@@ -28,13 +27,13 @@ public class MatchEventListener implements MessageListener {
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        MatchEventDTO matchEventDTO = objectSerializer.deserialize(message.getBody().toString(), MatchEventDTO.class);
+        MatchEventDTO matchEventDTO = objectSerializer.deserialize(message.toString(), MatchEventDTO.class);
         SendMatchEntity sendMatchEntity = sendMatchEntityRepository.findByMemberId(matchEventDTO.getMemberId());
         if(Optional.ofNullable(sendMatchEntity).isEmpty()) return;
 
         Double distance = memberPointRepository.getDistance(matchEventDTO.getMemberId(), matchEventDTO.getMatchedMemberId());
 
-        List<ReceiveMatchItem> receiveMatchList = List.of(ReceiveMatchMapper.INSTANCE.toItem(sendMatchEntity, distance));
+        List<ReceiveMatchItem> receiveMatchList = List.of(MatchEntityMapper.INSTANCE.toItem(sendMatchEntity, distance));
 
         ReceiveMatchListResponse response = ReceiveMatchListResponse
                 .builder()

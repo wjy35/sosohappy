@@ -6,17 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SendMatchEntity {
-    Long memberId;
-    String nickname;
+public class HelpEntity {
+    Long otherMemberId;
     CategoryDTO category;
-    Double latitude;
-    Double longitude;
     String content;
     String place;
 }
