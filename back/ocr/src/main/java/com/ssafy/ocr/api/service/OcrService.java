@@ -1,5 +1,7 @@
 package com.ssafy.ocr.api.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ssafy.ocr.api.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.*;
+
+import static com.ssafy.ocr.api.exception.ErrorCode.INTERNAL_SERVER_ERROR;
+import static com.ssafy.ocr.api.exception.ErrorCode.INVALID_IMAGE_ERROR;
 
 @Service
 @RequiredArgsConstructor
@@ -41,38 +46,31 @@ public class OcrService {
             base64EncodeFile = base64Encoding(multipartFile);
             String text = naverOcrApi(base64EncodeFile,ext);
             result = jsonParse(text);
-            if (result.get("name") == null || result.get("documentRegistrationNumber") == null) {
-                // 예외 처리
-            }
-        } catch(IOException e) {
-            e.printStackTrace();
+        }
+        catch (Exception e) {
+            throw new CustomException(INVALID_IMAGE_ERROR);
         }
 
     }
 
-    private Map<String,String> jsonParse(String text) {
+    private Map<String,String> jsonParse(String text) throws JsonProcessingException {
 
         Map<String,String> result = new HashMap<>();
         JsonNode root = null;
 
-        try {
-            root = objectMapper.readTree(text);
-            String documentRegistrationNumber = root.path("images").
-                    get(0).path("fields").
-                    get(0).path("subFields").
-                    get(0).path("inferText").asText();
+        root = objectMapper.readTree(text);
+        String documentRegistrationNumber = root.path("images").
+                get(0).path("fields").
+                get(0).path("subFields").
+                get(0).path("inferText").asText();
 
-            String name = root.path("images").
-                    get(0).path("fields").
-                    get(1).path("subFields").
-                    get(0).path("inferText").asText();
+        String name = root.path("images").
+                get(0).path("fields").
+                get(1).path("subFields").
+                get(0).path("inferText").asText();
 
-            result.put("documentRegistrationNumber",documentRegistrationNumber);
-            result.put("name",name);
-
-        } catch(Exception e) {
-            e.getMessage(); // throw Error
-        }
+        result.put("documentRegistrationNumber",documentRegistrationNumber);
+        result.put("name",name);
 
         return result;
     }
@@ -124,8 +122,8 @@ public class OcrService {
             result = response.toString();
             br.close();
 
-        } catch (Exception e) {
-            e.getMessage();
+        } catch (IOException e) {
+            throw new CustomException(INTERNAL_SERVER_ERROR);
         }
 
         return result;
