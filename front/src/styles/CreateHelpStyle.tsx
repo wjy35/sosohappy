@@ -105,12 +105,15 @@ const CreateHelpStyle = StyleSheet.create({
     submitButtonWrap:{
         width:"100%",
         height:50,
-        backgroundColor:"#9D9AF9",
+        backgroundColor:"#B6B2C0",
         borderRadius:10,
         display:"flex",
         justifyContent:"center",
         alignItems:"center",
         marginBottom:30,
+    },
+    submitButtonActive: {
+        backgroundColor:"#9D9AF9",
     },
     submitButtonText:{
         fontSize:16,
