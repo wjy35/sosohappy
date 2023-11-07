@@ -1,4 +1,4 @@
-const FortuneCookies = [
+export const FortuneCookies = [
     "일생일대의 기회가 찾아옵니다.",
     "당신이 얼마나 행복한가는 당신의 감사의 깊이에 달려있습니다.",
     "기억하세요. 당신은 눈부시고 아름답습니다.",
