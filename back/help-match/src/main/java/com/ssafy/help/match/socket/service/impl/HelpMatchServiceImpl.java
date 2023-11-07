@@ -7,6 +7,7 @@ import com.ssafy.help.match.db.entity.SendMatchEntity;
 import com.ssafy.help.match.db.repository.*;
 import com.ssafy.help.match.socket.dto.MatchEventDTO;
 import com.ssafy.help.match.socket.dto.StatusChangeEventDTO;
+import com.ssafy.help.match.socket.exception.UnAcceptableException;
 import com.ssafy.help.match.socket.mapper.HelpEntityMapper;
 import com.ssafy.help.match.socket.mapper.MatchEntityMapper;
 import com.ssafy.help.match.socket.request.HelpAcceptRequest;
@@ -45,8 +46,8 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         Long disabledMemberId = helpAcceptRequest.getDisabledMemberId();
 
         SendMatchEntity sendMatchEntity = Optional.ofNullable(sendMatchEntityRepository.getAndDeleteByMemberId(disabledMemberId))
-                .orElseThrow(); // ToDO UnAcceptable Exception
-        if(isMatchCanceled(disabledMemberId)) throw new RuntimeException(); // UnAcceptable Exception
+                .orElseThrow(UnAcceptableException::new);
+        if(isMatchCanceled(disabledMemberId)) throw new UnAcceptableException();
 
         try{
             memberSessionEntityRepository.setMatchStatus(helperMemberId, HelpMatchStatus.ON_MOVE);
