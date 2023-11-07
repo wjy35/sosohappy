@@ -9,10 +9,5 @@ public interface SendMatchEntityRepository {
 
     SendMatchEntity findByMemberId(Long memberId);
 
-    void add(Long memberId,Long matchedMemberId);
-    boolean isMember(Long memberId,Long matchedMemberId);
-
-    Set<String> findSetByMemberId(Long memberId);
-
-    void deleteSet(Long memberId);
+    SendMatchEntity getAndDeleteByMemberId(Long memberId);
 }
