@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface HelpMatchService {
     MatchStatusResponse viewStatusByMemberId(Long memberId);
-    void match(Point point,double metric, Long memberId);
-    void saveAndChangeStatus(HelpMatchRequest helpMatchRequest);
-
+    void match(HelpMatchRequest helpMatchRequest);
     List<ReceiveMatchItem> list(Long memberId);
 }
