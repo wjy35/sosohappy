@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class SendMatchEntityRepositoryImpl implements SendMatchEntityRepository {
     private final RedisTemplate<String,String> redisTemplate;
     private final ObjectSerializer objectSerializer;
-    private final String PREFIX="helpEntity:";
+    private final String PREFIX="matchEntity:";
     private final Long MAX_HELP_MATCH_SECOND=60l;
 
 
@@ -37,4 +37,17 @@ public class SendMatchEntityRepositoryImpl implements SendMatchEntityRepository 
         return sendMatchEntity;
     }
 
+
+    @Override
+    public SendMatchEntity getAndDeleteByMemberId(Long memberId) {
+        String sendMatchEntityStr = redisTemplate.opsForValue().getAndDelete(PREFIX+memberId);
+
+        SendMatchEntity sendMatchEntity = null;
+
+        if(Optional.ofNullable(sendMatchEntityStr).isPresent()){
+            sendMatchEntity =  objectSerializer.deserialize(redisTemplate.opsForValue().get(PREFIX+memberId), SendMatchEntity.class);
+        }
+
+        return sendMatchEntity;
+    }
 }
