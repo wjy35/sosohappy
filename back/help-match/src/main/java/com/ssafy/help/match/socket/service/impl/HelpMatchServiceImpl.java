@@ -1,14 +1,15 @@
 package com.ssafy.help.match.socket.service.impl;
 
+import com.ssafy.help.match.db.entity.HelpEntity;
 import com.ssafy.help.match.db.entity.HelpMatchStatus;
 import com.ssafy.help.match.db.entity.HelpMatchType;
-import com.ssafy.help.match.db.repository.SendMatchEntityRepository;
-import com.ssafy.help.match.db.repository.MemberMatchSetRepository;
-import com.ssafy.help.match.db.repository.MemberPointRepository;
-import com.ssafy.help.match.db.repository.MemberSessionEntityRepository;
+import com.ssafy.help.match.db.entity.SendMatchEntity;
+import com.ssafy.help.match.db.repository.*;
 import com.ssafy.help.match.socket.dto.MatchEventDTO;
 import com.ssafy.help.match.socket.dto.StatusChangeEventDTO;
+import com.ssafy.help.match.socket.mapper.HelpEntityMapper;
 import com.ssafy.help.match.socket.mapper.MatchEntityMapper;
+import com.ssafy.help.match.socket.request.HelpAcceptRequest;
 import com.ssafy.help.match.socket.request.HelpMatchRequest;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
 import com.ssafy.help.match.socket.response.ReceiveMatchItem;
@@ -36,6 +37,35 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     private final ObjectSerializer objectSerializer;
     private final double[] maxDistanceList = {500d,1000d,1500d};
 
+    private final HelpEntityRepository helpEntityRepository;
+
+    @Override
+    public void accept(HelpAcceptRequest helpAcceptRequest) {
+        Long helperMemberId = helpAcceptRequest.getHelperMemberId();
+        Long disabledMemberId = helpAcceptRequest.getDisabledMemberId();
+
+        SendMatchEntity sendMatchEntity = Optional.ofNullable(sendMatchEntityRepository.getAndDeleteByMemberId(disabledMemberId))
+                .orElseThrow(); // ToDO UnAcceptable Exception
+        if(isMatchCanceled(disabledMemberId)) throw new RuntimeException(); // UnAcceptable Exception
+
+        try{
+            memberSessionEntityRepository.setMatchStatus(helperMemberId, HelpMatchStatus.ON_MOVE);
+            memberSessionEntityRepository.setMatchStatus(disabledMemberId, HelpMatchStatus.WAIT_COMPLETE);
+            HelpEntity disabledHelpEntity = HelpEntityMapper.INSTANCE.matchToHelp(helperMemberId,sendMatchEntity);
+            HelpEntity helperHelpEntity = HelpEntityMapper.INSTANCE.matchToHelp(disabledMemberId,sendMatchEntity);
+            helpEntityRepository.save(disabledMemberId, disabledHelpEntity);
+            helpEntityRepository.save(helperMemberId, helperHelpEntity);
+        }catch (Exception e){
+            memberSessionEntityRepository.setMatchStatus(helperMemberId, HelpMatchStatus.DEFAULT);
+            memberSessionEntityRepository.setMatchStatus(disabledMemberId, HelpMatchStatus.DEFAULT);
+            helpEntityRepository.getAndDeleteByMemberId(disabledMemberId);
+            helpEntityRepository.getAndDeleteByMemberId(helperMemberId);
+        }
+    }
+
+    private boolean isMatchCanceled(Long disabledMemberId){
+        return !memberSessionEntityRepository.getMatchStatus(disabledMemberId).equals(HelpMatchStatus.ON_MATCH_PROGRESS);
+    }
 
     @Override
     public MatchStatusResponse viewStatusByMemberId(Long memberId) {
