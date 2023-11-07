@@ -17,5 +17,4 @@ public class StatusChangeEventDTO {
     Long memberId;
     HelpMatchType helpMatchType;
     HelpMatchStatus helpMatchStatus;
-    Map<String,Object> data;
 }
