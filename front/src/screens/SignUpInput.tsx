@@ -14,7 +14,32 @@ import InputStyle from "@/styles/InputStyle";
 import {SvgXml} from "react-native-svg";
 import {backIcon, check} from "@/assets/icons/icons";
 
-const SignUpInput = () => {
+interface propsType{
+  socket: {
+    connect: Function,
+    send: Function,
+    status: String,
+    helpList: helpDetail[],
+    connected: boolean,
+    disConnect: Function,
+  };
+}
+
+interface helpDetail {
+  memberId: number;
+  nickname: string;
+  category: {
+    categoryId: number,
+    categoryName: string,
+    categoryImage: string,
+  };
+  longitude: number;
+  latitude: number;
+  content: string;
+  place: string;
+}
+
+const SignUpInput = ({socket}: propsType) => {
   const route = useRoute();
   const [isActive, setIsActive] = useState(false);
   const [selectedGender, setSelectedGender] = useState(2);
@@ -129,6 +154,14 @@ const SignUpInput = () => {
     setOpen(false);
     setSelectedGender(gender);
   }
+
+  useEffect(() => {
+    const focusNav = navigation.addListener('focus', () => {
+      // do something
+      socket.connected&&socket.disConnect()
+    });
+    return focusNav;
+  }, [navigation]);
 
   return (
     <CommonLayout headerType={0} footer={true}>

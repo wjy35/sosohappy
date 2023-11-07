@@ -21,7 +21,32 @@ interface feedTypes{
     feedType: number,
 }
 
-const Character = () => {
+interface propsType{
+    socket: {
+        connect: Function,
+        send: Function,
+        status: String,
+        helpList: helpDetail[],
+        connected: boolean,
+        disConnect: Function,
+    };
+}
+
+interface helpDetail {
+    memberId: number;
+    nickname: string;
+    category: {
+        categoryId: number,
+        categoryName: string,
+        categoryImage: string,
+    };
+    longitude: number;
+    latitude: number;
+    content: string;
+    place: string;
+}
+
+const Character = ({socket}: propsType) => {
     const [categoryType, setCategoryType] = useState<CategoryType>(CategoryType.army);
     const [myMonsters, setMyMonsters] = useState<any[] | null>(null);
     const loaderValue = useRef(new Animated.Value(0)).current;
@@ -73,7 +98,7 @@ const Character = () => {
             useNativeDriver: false,
         }).start();
     }
-    
+
     const width = loaderValue.interpolate({
         inputRange: [0, 100],
         outputRange: ["0%", "100%"],
@@ -107,6 +132,14 @@ const Character = () => {
         }
         getMyDict();
     }, [])
+
+    useEffect(() => {
+        const focusNav = navigation.addListener('focus', () => {
+            // do something
+            socket.connected&&socket.disConnect()
+        });
+        return focusNav;
+    }, [navigation]);
 
     return(
         <CommonLayout headerType={0} footer={false}>
@@ -280,7 +313,7 @@ const Character = () => {
                         }}></Animated.View>
                         // <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[2].currentPoint) * 100}` + "%"}]}></View>
                     }
-                    
+
                 </View>
             </View>
 
