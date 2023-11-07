@@ -7,7 +7,7 @@ import SignUpInputStyle from "@/styles/SignUpInputStyle";
 import {useEffect, useState} from "react";
 import PlainInput from "@/components/PlainInput";
 import useInput from "@/hooks/useInput";
-import {useNavigation, useRoute} from "@react-navigation/native";
+import {useFocusEffect, useNavigation, useRoute} from "@react-navigation/native";
 import memberApi from "@/apis/memberApi";
 import DropDownPicker from "react-native-dropdown-picker";
 import InputStyle from "@/styles/InputStyle";
@@ -155,13 +155,10 @@ const SignUpInput = ({socket}: propsType) => {
     setSelectedGender(gender);
   }
 
-  useEffect(() => {
-    const focusNav = navigation.addListener('focus', () => {
-      // do something
-      socket.connected&&socket.disConnect()
-    });
-    return focusNav;
-  }, [navigation]);
+  useFocusEffect(()=>{
+    if (!socket.connected) return;
+    socket.disConnect();
+  })
 
   return (
     <CommonLayout headerType={0} footer={true}>

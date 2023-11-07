@@ -11,7 +11,7 @@ import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 
 import ChatListStyle from "@/styles/ChatListStyle"
 import ChatListItem from "@/components/ChatListItem";
-import {useNavigation} from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 
 interface propsType{
   socket: {
@@ -53,13 +53,10 @@ const ChatList = ({socket}: propsType) => {
     setNoneCheckedState(false);
   }
 
-  useEffect(() => {
-    const focusNav = navigation.addListener('focus', () => {
-      // do something
-      socket.connected&&socket.disConnect()
-    });
-    return focusNav;
-  }, [navigation]);
+  useFocusEffect(()=>{
+    if (!socket.connected) return;
+    socket.disConnect();
+  })
 
   return (
     <CommonLayout>

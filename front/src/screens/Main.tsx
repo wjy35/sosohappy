@@ -10,7 +10,7 @@ import MainStyle from "@/styles/MainStyle";
 
 import {observer} from 'mobx-react';
 import useStore from "@/hooks/useStore";
-import {useNavigation} from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {useEffect} from "react";
 
 interface propsType{
@@ -46,13 +46,10 @@ const Main = observer(({socket}: propsType) => {
     userStore.user?(navigation.navigate(next)):(navigation.navigate('Login'));
   }
 
-  useEffect(() => {
-    const focusNav = navigation.addListener('focus', () => {
-      // do something
-      socket.connected&&socket.disConnect()
-    });
-    return focusNav;
-  }, [navigation]);
+  useFocusEffect(()=>{
+    if (!socket.connected) return;
+    socket.disConnect();
+  })
 
   return (
     <CommonLayout footer={true} headerType={0} nowPage={'Main'}>

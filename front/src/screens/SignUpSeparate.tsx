@@ -11,7 +11,7 @@ import MoeumImg from "@/assets/img/moeum-img.png"
 
 import SignUpSeparateStyle from "@/styles/SignUpSeparateStyle";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import {useNavigation} from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 
 interface propsType{
   socket: {
@@ -61,13 +61,10 @@ const SignUpSeparate = ({socket}: propsType) => {
     }
   }
 
-  useEffect(() => {
-    const focusNav = navigation.addListener('focus', () => {
-      // do something
-      socket.connected&&socket.disConnect()
-    });
-    return focusNav;
-  }, [navigation]);
+  useFocusEffect(()=>{
+    if (!socket.connected) return;
+    socket.disConnect();
+  })
 
   return (
     <CommonLayout headerType={0} footer={true}>
