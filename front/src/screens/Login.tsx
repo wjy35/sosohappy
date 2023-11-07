@@ -6,7 +6,7 @@ import PlainInput from "@/components/PlainInput";
 import memberApi from "@/apis/memberApi";
 import pushAlarmApi from "@/apis/pushAlarmApi";
 import RNSecureStorage, {ACCESSIBLE} from "rn-secure-storage";
-import {useNavigation} from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging'
 import {observer} from "mobx-react";
 import useStore from "@/hooks/useStore";
@@ -98,13 +98,10 @@ const Login = observer(({socket}: propsType) => {
     }
   };
 
-  useEffect(() => {
-    const focusNav = navigation.addListener('focus', () => {
-      // do something
-      socket.connected&&socket.disConnect()
-    });
-    return focusNav;
-  }, [navigation]);
+  useFocusEffect(()=>{
+    if (!socket.connected) return;
+    socket.disConnect();
+  })
 
   return (
     <CommonLayout headerType={0} footer={true}>

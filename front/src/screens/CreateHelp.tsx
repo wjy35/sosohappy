@@ -12,7 +12,7 @@ import {useEffect, useState} from "react";
 import useStore from "@/hooks/useStore";
 import useInput from "@/hooks/useInput";
 import {observer} from "mobx-react";
-import {useNavigation} from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 
 interface propsType{
     location: {
@@ -89,13 +89,10 @@ const CreateHelp = observer(({location, socket}: propsType) => {
         socket.send(payload);
     }
 
-    useEffect(() => {
-        const focusNav = navigation.addListener('focus', () => {
-            // do something
-            !socket.connected&&socket.connect()
-        });
-        return focusNav;
-    }, [navigation]);
+    useFocusEffect(()=>{
+        if (socket.connected) return;
+        socket.connect();
+    })
 
     return (
         <CommonLayout footer={true} headerType={0} nowPage={'Help'}>

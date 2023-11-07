@@ -2,7 +2,7 @@ import {useEffect, useState, useRef} from "react"
 import {View, Text, Image, TouchableOpacity, Animated} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import History from "@/components/History";
-import { useNavigation } from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import FortuneModal from "@/components/FortuneModal";
 
 import FishThumbnail from "@/assets/img/fish-thumbnail.png"
@@ -21,7 +21,32 @@ import monsterApi from "@/apis/monsterApi";
 import memberApi from "@/apis/memberApi";
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
 
-const MyPage = observer(() => {
+interface propsType{
+  socket: {
+    connect: Function,
+    send: Function,
+    status: String,
+    helpList: helpDetail[],
+    connected: boolean,
+    disConnect: Function,
+  };
+}
+
+interface helpDetail {
+  memberId: number;
+  nickname: string;
+  category: {
+    categoryId: number,
+    categoryName: string,
+    categoryImage: string,
+  };
+  longitude: number;
+  latitude: number;
+  content: string;
+  place: string;
+}
+
+const MyPage = observer(({socket}: propsType) => {
   const navigation = useNavigation();
   const [modalState, setModalState] = useState<Boolean>(false);
   const {userStore} = useStore();
@@ -68,6 +93,7 @@ const MyPage = observer(() => {
 
   const changeProfileMonster = async (profileType: number, profileLevel: number) => {
     const profileMonsterId = (profileType-1)*10 + profileLevel;
+    console.log(profileMonsterId);
     try {
       const res = await memberApi.updateMember({
         profileMonsterId: profileMonsterId,
@@ -94,14 +120,8 @@ const MyPage = observer(() => {
 
   const whatIsMyThumbnail = () => {
     if(userStore.user.profileMonsterId){
-      let temp;
-      if(Number(userStore.user.profileMonsterId) < 10){
-        temp = "0" + temp;
-      }else{
-        temp = userStore.user.profileMonsterId;
-      }
-      setProfileMonsterType(Number(String(temp).slice(0,1)));
-      setProfileMonsterLevel(Number(String(temp).slice(1,2))-1);
+      setProfileMonsterType(Math.floor((userStore.user.profileMonsterId-1)/10));
+      setProfileMonsterLevel((userStore.user.profileMonsterId % 10 === 0)?9:(userStore.user.profileMonsterId%10)-1);
     }
   }
 
@@ -114,12 +134,17 @@ const MyPage = observer(() => {
   useEffect(()=>{
     getProfileMonster();
     getMyCloverApi();
-    
+
   }, [])
 
   useEffect(() => {
     whatIsMyThumbnail();
   }, [])
+
+  useFocusEffect(()=>{
+    if (!socket.connected) return;
+    socket.disConnect();
+  })
 
   return (
     <>
@@ -153,7 +178,7 @@ const MyPage = observer(() => {
             style={MyPageStyle.myProfileImg}
           />
         }
-        
+
         <View style={MyPageStyle.myProfileInfo}>
           {
             userStore.user &&

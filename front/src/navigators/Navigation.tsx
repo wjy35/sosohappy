@@ -33,8 +33,8 @@ const Navigation = observer(({}: propsType) => {
 
   useEffect(() => {
     const appState = AppState.addEventListener('change', ()=>{
-      if (AppState.currentState === 'active' && userStore.user){
-        location.setForeground();
+      if (AppState.currentState === 'active'){
+        userStore.user&&location.setForeground()
       } else if (AppState.currentState === 'background' && userStore.user){
         location.setBackground();
       }

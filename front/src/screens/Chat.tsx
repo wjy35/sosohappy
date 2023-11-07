@@ -13,7 +13,7 @@ import {exit, people, send2, hamburgerMenu, backIcon} from "@/assets/icons/icons
 
 import ChatStyle from "@/styles/ChatStyle";
 import YourChat from "@/components/YourCaht";
-import {useNavigation} from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 
 interface propsType{
   helpSocket: {
@@ -60,13 +60,10 @@ const Chat = ({helpSocket}: propsType) => {
     socket.emit('chat join', roomNo);
   }, [])
 
-  useEffect(() => {
-    const focusNav = navigation.addListener('focus', () => {
-      // do something
-      helpSocket.connected&&helpSocket.disConnect()
-    });
-    return focusNav;
-  }, [navigation]);
+  useFocusEffect(()=>{
+    if (!helpSocket.connected) return;
+    helpSocket.disConnect();
+  })
 
   return (
     <CommonLayout footer={false} headerType={1}>

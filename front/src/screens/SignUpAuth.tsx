@@ -8,7 +8,7 @@ import {addPlus} from "@/assets/icons/icons";
 
 import SignUpAuthStyle from "@/styles/SignUpAuthStyle";
 import {useEffect, useState} from "react";
-import {useNavigation, useRoute} from "@react-navigation/native";
+import {useFocusEffect, useNavigation, useRoute} from "@react-navigation/native";
 import {launchCamera, launchImageLibrary} from "react-native-image-picker";
 
 interface propsType{
@@ -89,13 +89,10 @@ const SignUpAuth = ({socket}: propsType) => {
         checkAuth();
     }, [image]);
 
-    useEffect(() => {
-        const focusNav = navigation.addListener('focus', () => {
-            // do something
-            socket.connected&&socket.disConnect()
-        });
-        return focusNav;
-    }, [navigation]);
+    useFocusEffect(()=>{
+        if (!socket.connected) return;
+        socket.disConnect();
+    })
 
     return (
         <CommonLayout headerType={0} footer={true}>

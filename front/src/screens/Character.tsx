@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Image, Alert
 import CommonLayout from "@/components/CommonLayout";
 import monsterApi from "@/apis/monsterApi";
 import useStore from "@/hooks/useStore";
-import { useNavigation } from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 
 import CloverIcon from "@/assets/img/clover-icon.png"
 import BearAnimationIcon from "@/assets/img/bear-animation-icon.png"
@@ -137,13 +137,10 @@ const Character = ({socket}: propsType) => {
         getMyDict();
     }, [])
 
-    useEffect(() => {
-        const focusNav = navigation.addListener('focus', () => {
-            // do something
-            socket.connected&&socket.disConnect()
-        });
-        return focusNav;
-    }, [navigation]);
+    useFocusEffect(()=>{
+        if (!socket.connected) return;
+        socket.disConnect();
+    })
 
     return(
         <CommonLayout headerType={0} footer={false}>

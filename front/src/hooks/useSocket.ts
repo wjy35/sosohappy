@@ -18,11 +18,11 @@ function useSocket(){
                 memberId:memberId,
             },
             (frame) => {
-                setConnected(true)
                 clientInit.subscribe(
                     `/topic/match/status/${memberId}`,
                     (frame) => {
-                        // console.log("status", frame);
+                        console.log("status", frame);
+                        setConnected(true);
                         const body = JSON.parse(frame.body);
                         setStatus(body.helpMatchStatus);
                     },
@@ -39,6 +39,8 @@ function useSocket(){
 
     function disConnect() {
         setConnected(false);
+        setStatus('');
+        setSubscribe('');
         client.disconnect(()=>{console.log('socket disconnect')});
     }
 
