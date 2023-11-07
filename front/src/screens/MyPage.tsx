@@ -3,7 +3,6 @@ import {View, Text, Image, TouchableOpacity, Animated} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import History from "@/components/History";
 import { useNavigation } from "@react-navigation/native";
-import FortuneModal from "@/components/FortuneModal";
 
 import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 import GearIcon from "@/assets/img/gear-icon.png"
