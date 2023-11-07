@@ -10,4 +10,8 @@ public interface SendMatchEntityRepository {
     SendMatchEntity findByMemberId(Long memberId);
 
     SendMatchEntity getAndDeleteByMemberId(Long memberId);
+
+    void saveReceiveMemberIdSet(Long memberId, Set<Long> receiveMemberSet);
+
+    Set<Long> getAndDeleteReceiveMemberIdSet(Long memberId);
 }
