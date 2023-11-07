@@ -6,8 +6,9 @@ const MapLoadingStyle = StyleSheet.create({
         width:"100%",
         height:"100%",
         backgroundColor:"#000",
-        opacity:0.5,
+        opacity:0.8,
         position:"absolute",
+        zIndex: 10,
     },
     modalMain:{
         width:responsiveWidth(80),
@@ -17,6 +18,7 @@ const MapLoadingStyle = StyleSheet.create({
         display:"flex",
         justifyContent:"center",
         alignItems:"center",
+        zIndex: 11,
     },
     turtleLoading:{
         width:280,
