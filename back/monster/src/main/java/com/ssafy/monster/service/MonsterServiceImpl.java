@@ -208,8 +208,12 @@ public class MonsterServiceImpl implements MonsterService{
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         MonsterInfo info = infoRepository.findByMonsterId(profileMonsterId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MONSTER_NOT_FOUND));
-        MemberMonsterGrowth growth = growthRepository.findByMemberMonsterProfile_MemberIdAndMonsterType_TypeId(memberId, info.getMonsterType().getTypeId())
-                .orElseThrow(() -> new CustomException(ErrorCode.GROWTH_NOT_FOUND));
+        MemberMonsterGrowth growth = growthRepository.findByMemberMonsterProfile_MemberIdAndMonsterType_TypeId(memberId, info.getMonsterType().getTypeId()).get();
+
+        int currentLevel = getCurrentPoint(growth.getMonsterClover()).first();
+        if(currentLevel < info.getMonsterLevel()) {
+            throw new CustomException(ErrorCode.GROWTH_NOT_FOUND);
+        }
 
         profile.setMonsterInfo(info);
         profileRepository.save(profile);
