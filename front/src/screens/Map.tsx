@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import BottomSheet from "@/components/BottomSheet";
+import MapLoading from "@/components/MapLoading";
 import MapView, {PROVIDER_GOOGLE, Marker, Polyline} from "react-native-maps";
 import {MAP_LINE_API_KEY} from "@env"
 
@@ -76,91 +77,94 @@ const Map = ({location}: propsType) => {
   }, [])
 
   return (
-    <CommonLayout footer={true} headerType={0}>
-      <View style={MapStyle.mapContainer}>
-        {
-          location && (
-              <>
-                <MapView
-                    style={{width: mapWidth, height: mapHeight}}
-                    provider={PROVIDER_GOOGLE}
-                    zoomEnabled={true}
-                    rotateEnabled={true}
-                    showsUserLocation={true}
-                    showsMyLocationButton={true}
-                    initialRegion={{
-                      latitude: location.latitude,
-                      longitude: location.longitude,
-                      latitudeDelta: 0.009,
-                      longitudeDelta: 0.009,
-                    }}
-                >
-                  <Marker
-                      description="my position"
-                      coordinate={{latitude: location.latitude, longitude: location.longitude}}
-                      pinColor="#37DDEB"
-                  />
+    <>
+      <CommonLayout footer={true} headerType={0}>
+        <View style={MapStyle.mapContainer}>
+          {
+            location && (
+                <>
+                  <MapView
+                      style={{width: mapWidth, height: mapHeight}}
+                      provider={PROVIDER_GOOGLE}
+                      zoomEnabled={true}
+                      rotateEnabled={true}
+                      showsUserLocation={true}
+                      showsMyLocationButton={true}
+                      initialRegion={{
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                        latitudeDelta: 0.009,
+                        longitudeDelta: 0.009,
+                      }}
+                  >
+                    <Marker
+                        description="my position"
+                        coordinate={{latitude: location.latitude, longitude: location.longitude}}
+                        pinColor="#37DDEB"
+                    />
 
-                  {
-                    aroundPositions.map((aroundMarker, index) => {
-                      return(
-                          <React.Fragment key={`aroundMarker${index}`}>
-                            <Marker
-                                description="around"
-                                coordinate={{latitude: aroundMarker.latitude, longitude: aroundMarker.longitude}}
-                                pinColor="#E9747A"
-                                onPress={() => pressAroundMarker()}
-                            />
-                          </React.Fragment>
-                      );
-                    })
-                  }
-                  {
-                    points?.features?.map((point, index) => {
-                      console.log(point);
-                      if(point.geometry.type === "LineString"){
-                        const pathCoordinates = [];
-
-                        for(let i=0; i<point.geometry.coordinates.length; i++){
-                          pathCoordinates.push({latitude: point.geometry.coordinates[i][1], longitude: point.geometry.coordinates[i][0]});
-                        }
+                    {
+                      aroundPositions.map((aroundMarker, index) => {
                         return(
-                            <React.Fragment key={`points${index}`}>
-                              <Polyline
-                                  coordinates={pathCoordinates}
-                                  strokeColor="red"
-                                  strokeWidth={2}
+                            <React.Fragment key={`aroundMarker${index}`}>
+                              <Marker
+                                  description="around"
+                                  coordinate={{latitude: aroundMarker.latitude, longitude: aroundMarker.longitude}}
+                                  pinColor="#E9747A"
+                                  onPress={() => pressAroundMarker()}
                               />
                             </React.Fragment>
                         );
-                      }
-                    })
-                  }
-                </MapView>
-              </>
-            )
-        }
-      </View>
-      <TouchableOpacity activeOpacity={0.7}>
-        <View style={MapStyle.createHelpWrap}>
-          <Image
-            source={ColorMegaphoneIcon}
-            style={MapStyle.megaphoneIcon}
-          />
-          <View style={MapStyle.createHelpInfo}>
-            <Text style={MapStyle.helpSubTitle}>도움이 필요하신가요?</Text>
-            <Text style={MapStyle.helpMainTitle}>주변에 요청해보세요!</Text>
-          </View>
-          <Text style={MapStyle.helpButton}>도움요청</Text>
+                      })
+                    }
+                    {
+                      points?.features?.map((point, index) => {
+                        console.log(point);
+                        if(point.geometry.type === "LineString"){
+                          const pathCoordinates = [];
+
+                          for(let i=0; i<point.geometry.coordinates.length; i++){
+                            pathCoordinates.push({latitude: point.geometry.coordinates[i][1], longitude: point.geometry.coordinates[i][0]});
+                          }
+                          return(
+                              <React.Fragment key={`points${index}`}>
+                                <Polyline
+                                    coordinates={pathCoordinates}
+                                    strokeColor="red"
+                                    strokeWidth={2}
+                                />
+                              </React.Fragment>
+                          );
+                        }
+                      })
+                    }
+                  </MapView>
+                </>
+              )
+          }
         </View>
-      </TouchableOpacity>
-      {
-        bottomSheetStatus ?
-        <BottomSheet updateBottomSheetStatus={(updateStatus:Boolean) => updateBottomSheetStatus(updateStatus)}/>
-        :
-        <></>
-      }
-    </CommonLayout>
+        <TouchableOpacity activeOpacity={0.7}>
+          <View style={MapStyle.createHelpWrap}>
+            <Image
+              source={ColorMegaphoneIcon}
+              style={MapStyle.megaphoneIcon}
+            />
+            <View style={MapStyle.createHelpInfo}>
+              <Text style={MapStyle.helpSubTitle}>도움이 필요하신가요?</Text>
+              <Text style={MapStyle.helpMainTitle}>주변에 요청해보세요!</Text>
+            </View>
+            <Text style={MapStyle.helpButton}>도움요청</Text>
+          </View>
+        </TouchableOpacity>
+        {
+          bottomSheetStatus ?
+          <BottomSheet updateBottomSheetStatus={(updateStatus:Boolean) => updateBottomSheetStatus(updateStatus)}/>
+          :
+          <></>
+        }
+      </CommonLayout>
+      <MapLoading/>
+    </>
   );
 };
 

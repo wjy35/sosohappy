@@ -1,5 +1,7 @@
+import {useEffect} from "react"
 import { View, Text, TouchableOpacity } from "react-native"
 import { SvgXml } from "react-native-svg";
+import { FortuneCookies } from "@/constants/FortuneCookies";
 
 import FortuneModalStyle from "@/styles/FortuneModalStyle";
 
@@ -10,6 +12,10 @@ interface propsType{
 }
 
 const FortuneModal = ({updateFortuneModalState}: propsType) => {
+    useEffect(() => {
+        
+    }, [])
+
     return(
         <>
             <View style={FortuneModalStyle.modalBg}></View>
