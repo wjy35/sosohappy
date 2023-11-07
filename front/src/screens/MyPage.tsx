@@ -114,7 +114,7 @@ const MyPage = observer(() => {
   useEffect(()=>{
     getProfileMonster();
     getMyCloverApi();
-    
+
   }, [])
 
   useEffect(() => {
@@ -153,7 +153,7 @@ const MyPage = observer(() => {
             style={MyPageStyle.myProfileImg}
           />
         }
-        
+
         <View style={MyPageStyle.myProfileInfo}>
           {
             userStore.user &&
@@ -204,6 +204,7 @@ const MyPage = observer(() => {
         {
           myProfile && (
                 <WebView
+                    // source={{uri: `http://10.0.2.2:5173/sosomon/${myProfile.type}/${myProfile.level}`}}
                     source={{uri: `http://sosohappy.co.kr:8888/sosomon/${myProfile.type}/${myProfile.level}`}}
                     style={MyPageStyle.MySelectedCharImg}
                 />
