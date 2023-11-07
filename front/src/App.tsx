@@ -6,24 +6,24 @@ import {Provider} from "mobx-react";
 import userStore from "@/store/userStore";
 
 function App(): JSX.Element {
-    const location = useLocation({});
-
-    useEffect(() => {
-        const appState = AppState.addEventListener('change', ()=>{
-            if (AppState.currentState === 'active'){
-                location.setForeground();
-            } else if (AppState.currentState === 'background'){
-                location.setBackground();
-            }
-        });
-        return () => {
-            appState.remove();
-        }
-    }, []);
+    // const location = useLocation({});
+    //
+    // useEffect(() => {
+    //     const appState = AppState.addEventListener('change', ()=>{
+    //         if (AppState.currentState === 'active'){
+    //             location.setForeground();
+    //         } else if (AppState.currentState === 'background'){
+    //             location.setBackground();
+    //         }
+    //     });
+    //     return () => {
+    //         appState.remove();
+    //     }
+    // }, []);
 
     return (
     <Provider userStore={userStore}>
-      <Navigation location={location.coordinate}/>
+      <Navigation/>
     </Provider>
     );
 }

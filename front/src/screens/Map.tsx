@@ -9,6 +9,7 @@ import {clover} from "@/assets/icons/icons";
 import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 
 import MapStyle from "@/styles/MapStyle";
+import {useNavigation} from "@react-navigation/native";
 
 interface propsType{
   location: any;
@@ -16,22 +17,24 @@ interface propsType{
     connect: Function,
     send: Function,
     status: String,
-    helpList: helpDetail[]
-  },
+    helpList: helpDetail[],
+    connected: boolean,
+    disConnect: Function,
+  };
 }
 
 interface helpDetail {
-  memberId: number,
-  nickname: string,
-  categoryList: {
+  memberId: number;
+  nickname: string;
+  category: {
     categoryId: number,
     categoryName: string,
     categoryImage: string,
-  }[],
-  longitude: number,
-  latitude: number,
-  content: string,
-  place: string,
+  };
+  longitude: number;
+  latitude: number;
+  content: string;
+  place: string;
 }
 
 const Map = ({location, socket}: propsType) => {
@@ -39,6 +42,7 @@ const Map = ({location, socket}: propsType) => {
   const mapHeight = Dimensions.get("window").height;
   const [bottomSheetStatus, setBottomSheetStatus] = useState<Boolean>(false);
   const [selectedHelp, setSelectedHelp] = useState<helpDetail>();
+  const navigation = useNavigation();
   // 이곳에 GPS에서 가져온 내 위치 정보를 넣으면 됩니다, 지금 default 정적으로 넣은 거는 멀티캠퍼스 역삼 위도 경도입니다.
   const [aroundPositions, setAroundPositions] = useState<helpDetail[]>([
     {
@@ -126,9 +130,12 @@ const Map = ({location, socket}: propsType) => {
   }
 
   useEffect(() => {
-    socket.connect();
-
-  }, [])
+    const focusNav = navigation.addListener('focus', () => {
+      // do something
+      !socket.connected&&socket.connect()
+    });
+    return focusNav;
+  }, [navigation]);
 
   return (
     <CommonLayout footer={true} headerType={0}>
@@ -157,7 +164,7 @@ const Map = ({location, socket}: propsType) => {
                   />
 
                   {
-                    aroundPositions.map((aroundMarker, index) => {
+                    socket.helpList.map((aroundMarker, index) => {
                       return(
                           <React.Fragment key={`aroundMarker${index}`}>
                             <Marker

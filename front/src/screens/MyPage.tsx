@@ -21,7 +21,32 @@ import monsterApi from "@/apis/monsterApi";
 import memberApi from "@/apis/memberApi";
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
 
-const MyPage = observer(() => {
+interface propsType{
+  socket: {
+    connect: Function,
+    send: Function,
+    status: String,
+    helpList: helpDetail[],
+    connected: boolean,
+    disConnect: Function,
+  };
+}
+
+interface helpDetail {
+  memberId: number;
+  nickname: string;
+  category: {
+    categoryId: number,
+    categoryName: string,
+    categoryImage: string,
+  };
+  longitude: number;
+  latitude: number;
+  content: string;
+  place: string;
+}
+
+const MyPage = observer(({socket}: propsType) => {
   const navigation = useNavigation();
   const [modalState, setModalState] = useState<Boolean>(false);
   const {userStore} = useStore();
@@ -120,6 +145,14 @@ const MyPage = observer(() => {
   useEffect(() => {
     whatIsMyThumbnail();
   }, [])
+
+  useEffect(() => {
+    const focusNav = navigation.addListener('focus', () => {
+      // do something
+      socket.connected&&socket.disConnect()
+    });
+    return focusNav;
+  }, [navigation]);
 
   return (
     <>
