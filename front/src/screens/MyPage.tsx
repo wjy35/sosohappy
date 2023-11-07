@@ -3,6 +3,7 @@ import {View, Text, Image, TouchableOpacity, Animated} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import History from "@/components/History";
 import { useNavigation } from "@react-navigation/native";
+import FortuneModal from "@/components/FortuneModal";
 
 import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 import GearIcon from "@/assets/img/gear-icon.png"
@@ -20,32 +21,7 @@ import monsterApi from "@/apis/monsterApi";
 import memberApi from "@/apis/memberApi";
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
 
-interface propsType{
-  socket: {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-  };
-}
-
-interface helpDetail {
-  memberId: number;
-  nickname: string;
-  category: {
-    categoryId: number,
-    categoryName: string,
-    categoryImage: string,
-  };
-  longitude: number;
-  latitude: number;
-  content: string;
-  place: string;
-}
-
-const MyPage = observer(({socket}: propsType) => {
+const MyPage = observer(() => {
   const navigation = useNavigation();
   const [modalState, setModalState] = useState<Boolean>(false);
   const {userStore} = useStore();
@@ -138,20 +114,12 @@ const MyPage = observer(({socket}: propsType) => {
   useEffect(()=>{
     getProfileMonster();
     getMyCloverApi();
-
+    
   }, [])
 
   useEffect(() => {
     whatIsMyThumbnail();
   }, [])
-
-  useEffect(() => {
-    const focusNav = navigation.addListener('focus', () => {
-      // do something
-      socket.connected&&socket.disConnect()
-    });
-    return focusNav;
-  }, [navigation]);
 
   return (
     <>
@@ -185,7 +153,7 @@ const MyPage = observer(({socket}: propsType) => {
             style={MyPageStyle.myProfileImg}
           />
         }
-
+        
         <View style={MyPageStyle.myProfileInfo}>
           {
             userStore.user &&
@@ -236,7 +204,6 @@ const MyPage = observer(({socket}: propsType) => {
         {
           myProfile && (
                 <WebView
-                    // source={{uri: `http://10.0.2.2:5173/sosomon/${myProfile.type}/${myProfile.level}`}}
                     source={{uri: `http://sosohappy.co.kr:8888/sosomon/${myProfile.type}/${myProfile.level}`}}
                     style={MyPageStyle.MySelectedCharImg}
                 />
