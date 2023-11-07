@@ -137,8 +137,6 @@ const Map = ({location, socket}: propsType) => {
     return focusNav;
   }, [navigation]);
 
-  }, [])
-
   return (
     <CommonLayout footer={true} headerType={0}>
       <View style={MapStyle.mapContainer}>
