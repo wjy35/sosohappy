@@ -166,7 +166,7 @@ const Map = ({location, socket}: propsType) => {
                   />
 
                   {
-                    aroundPositions.map((aroundMarker, index) => {
+                    socket.helpList.map((aroundMarker, index) => {
                       return(
                           <React.Fragment key={`aroundMarker${index}`}>
                             <Marker
