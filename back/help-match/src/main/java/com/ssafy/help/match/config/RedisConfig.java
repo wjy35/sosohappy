@@ -48,10 +48,11 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisMessageListenerContainer redisMessageListenerContainer(MatchEventListener matchEventListener,RedisUUID redisUUID) {
+    public RedisMessageListenerContainer redisMessageListenerContainer(StatusChangeEventListener statusChangeEventListener,MatchEventListener matchEventListener,RedisUUID redisUUID) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(redisConnectionFactory());
         container.addMessageListener(matchEventListener, new ChannelTopic("matchEvent:"+redisUUID.get()));
+        container.addMessageListener(statusChangeEventListener, new ChannelTopic("statusChangeEvent:"+redisUUID.get()));
         return container;
     }
 
