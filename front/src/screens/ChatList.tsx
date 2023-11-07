@@ -1,4 +1,4 @@
-import { useState } from "react"
+import {useEffect, useState} from "react"
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 
 import CommonLayout from "@/components/CommonLayout";
@@ -11,10 +11,38 @@ import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 
 import ChatListStyle from "@/styles/ChatListStyle"
 import ChatListItem from "@/components/ChatListItem";
+import {useNavigation} from "@react-navigation/native";
 
-const ChatList = () => {
+interface propsType{
+  socket: {
+    connect: Function,
+    send: Function,
+    status: String,
+    helpList: helpDetail[],
+    connected: boolean,
+    disConnect: Function,
+  };
+}
+
+interface helpDetail {
+  memberId: number;
+  nickname: string;
+  category: {
+    categoryId: number,
+    categoryName: string,
+    categoryImage: string,
+  };
+  longitude: number;
+  latitude: number;
+  content: string;
+  place: string;
+}
+
+
+const ChatList = ({socket}: propsType) => {
   const [noneCheckedState, setNoneCheckedState] = useState<Boolean>(true);
   const [allMsgState, setAllMsgState] = useState<Boolean>(false);
+  const navigation = useNavigation();
 
   const updateNoneCheckedState = () => {
     setNoneCheckedState(true);
@@ -24,6 +52,15 @@ const ChatList = () => {
     setAllMsgState(true);
     setNoneCheckedState(false);
   }
+
+  useEffect(() => {
+    const focusNav = navigation.addListener('focus', () => {
+      // do something
+      socket.connected&&socket.disConnect()
+    });
+    return focusNav;
+  }, [navigation]);
+
   return (
     <CommonLayout>
       <View style={ChatListStyle.chatListBg}>

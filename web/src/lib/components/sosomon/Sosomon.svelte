@@ -3,7 +3,7 @@
     import { T, forwardEventHandlers } from '@threlte/core'
     import { useGltf, useGltfAnimations } from '@threlte/extras'
     import {onMount} from "svelte";
-    import {LoopOnce} from "three/src/constants";
+    import {LoopOnce, LoopRepeat, LoopPingPong} from "three/src/constants";
 
     type ActionName =
         | 'Attack'
@@ -28,9 +28,8 @@
     export let sosomon: any;
     export let type;
     export let level;
-    export let animationStatus:boolean;
-    export let updateAnimationStatus:Function;
-    $: animationStatus;
+    export let actionStatus: string;
+    $: actionStatus;
 
     export const ref = new Group()
 
@@ -51,14 +50,44 @@
         startAction();
     })
 
-    $: updateAnimationStatus = () => {
-        animationStatus = true;
-    };
-
-    $: if(animationStatus === true){
+    $: if(actionStatus === "attack"){
+        $actions['Attack']?.stop()
+        $actions['Death']?.stop()
+        $actions['Jump']?.stop()
+        $actions['Roll']?.stop()
         mixer.timeScale = 0.5
-        $actions['Death']?.setLoop(LoopOnce, 1)
+        $actions['Attack']?.setLoop(LoopPingPong, 1)
+        $actions['Attack']?.play()
+    }
+
+    $: if(actionStatus === "death"){
+        $actions['Attack']?.stop()
+        $actions['Death']?.stop()
+        $actions['Jump']?.stop()
+        $actions['Roll']?.stop()
+        mixer.timeScale = 0.5
+        $actions['Death']?.setLoop(LoopPingPong, 1)
         $actions['Death']?.play()
+    }
+
+    $: if(actionStatus === "jump"){
+        $actions['Attack']?.stop()
+        $actions['Death']?.stop()
+        $actions['Jump']?.stop()
+        $actions['Roll']?.stop()
+        mixer.timeScale = 0.5
+        $actions['Jump']?.setLoop(LoopPingPong, 1)
+        $actions['Jump']?.play()
+    }
+
+    $: if(actionStatus === "roll"){
+        $actions['Attack']?.stop()
+        $actions['Death']?.stop()
+        $actions['Jump']?.stop()
+        $actions['Roll']?.stop()
+        mixer.timeScale = 0.5
+        $actions['Roll']?.setLoop(LoopRepeat, Infinity)
+        $actions['Roll']?.play()
     }
 
 </script>
