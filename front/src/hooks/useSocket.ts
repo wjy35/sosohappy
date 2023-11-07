@@ -47,11 +47,15 @@ function useSocket(){
             `/topic/match/list/${memberId}`,
             (frame) => {
                 const body = JSON.parse(frame.body);
+                if (body.receiveMatchType === 'PUSH'){
+                    setHelpList([...helpList, ...body.receiveMatchList])
+                }
                 console.log(body);
             },
             {
                 id:"list"
             });
+        setSubscribe('list');
     }
 
     function getProgress() {
@@ -65,19 +69,18 @@ function useSocket(){
             {
                 id:"progress"
             });
+        setSubscribe('progress');
     }
 
     function send(payload: any){
         const data= {
             memberId:payload.memberId,
             nickname:payload.nickname,
-            categoryList:[
-                {
-                    categoryId:payload.category.categoryId,
-                    categoryName:payload.category.categoryName,
-                    categoryImage:payload.category.categoryImage,
-                },
-            ],
+            category:{
+                categoryId:payload.category.categoryId,
+                categoryName:payload.category.categoryName,
+                categoryImage:payload.category.categoryImage,
+            },
             longitude:payload.longitude,
             latitude:payload.latitude,
             content:payload.content,
@@ -86,7 +89,17 @@ function useSocket(){
         client.send( '/match', JSON.stringify(data));
     }
 
-    return {connect, send, status, helpList};
+    useEffect(() => {
+        if (subscribe){
+            client.unsubscribe(subscribe);
+            // console.log(subscribe);
+        }
+        if (status === 'DEFAULT'){
+            getList();
+        }
+    }, [status]);
+
+    return {connect, send, status, helpList, connected, disConnect};
 }
 
 export default useSocket;
