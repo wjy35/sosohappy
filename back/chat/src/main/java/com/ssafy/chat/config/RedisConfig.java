@@ -1,28 +1,28 @@
 package com.ssafy.chat.config;
 
+import com.ssafy.chat.api.response.ChatParam;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @EnableRedisRepositories
 public class RedisConfig {
 
-    @Value("${spring.redis.host}")
-    private String host;
+    @Value("${REDIS_HOST}")
+    public String host;
 
-    @Value("${spring.redis.port}")
-    private int port;
+    @Value("${REDIS_PORT}")
+    public int port;
 
-    @Value("${spring.redis.password}")
-    private String password;
+    @Value("${REDIS_PASS}")
+    public String password;
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
@@ -34,21 +34,12 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
+    public RedisTemplate<?, ?> redisTemplate() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
-        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashValueSerializer(new StringRedisSerializer());
         redisTemplate.setConnectionFactory(redisConnectionFactory());
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatParam.class));
         return redisTemplate;
     }
 
-    @Bean
-    public ListOperations<String, Object> listOperations(){
-        return this.redisTemplate().opsForList();
-    }
-
-    @Bean
-    public HashOperations<String, String, Object> setOperations() { return this.redisTemplate().opsForHash(); }
 }
