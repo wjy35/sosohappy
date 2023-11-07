@@ -1,6 +1,6 @@
 import Geolocation from "@react-native-community/geolocation";
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import helpMatchApi from "@/apis/helpMatchApi";
 
 interface propsType {
@@ -9,13 +9,30 @@ interface propsType {
 
 function useLocation({}: propsType) {
     const [coordinate, setCoordinate] = useState<any>();
-    let watchId:number;
+    // let watchId:number;
+    const [watchId, setWatchId] = useState<number|undefined>();
     const [status, setStatus] = useState(0);
 
     Geolocation.setRNConfiguration({
         authorizationLevel: 'auto',
         skipPermissionRequests: false,
     });
+
+    const init = () => {
+        ReactNativeForegroundService.remove_all_tasks(); // 앱 실행 시 백그라운드 태스크 전부 제거
+        ReactNativeForegroundService.stopAll();
+        Geolocation.getCurrentPosition(
+            position => {
+                const latitude = Number(JSON.stringify(position.coords.latitude));
+                const longitude = Number(JSON.stringify(position.coords.longitude));
+                setCoordinate({
+                    latitude: latitude,
+                    longitude: longitude,
+                })
+            },
+            error => {console.log(error)},
+        )
+    }
 
     const sendPosition = async (latitude: number, longitude: number) => {
         try {
@@ -43,7 +60,7 @@ function useLocation({}: propsType) {
 
     const foregroundPositionFunc = (lati: number, longi: number) => {
         // TODO: foreground에서 사용될 작업
-        sendPosition(lati, longi)
+        sendPosition(lati, longi);
         setCoordinate({
             latitude: lati,
             longitude: longi,
@@ -98,7 +115,7 @@ function useLocation({}: propsType) {
 
         console.log('foreground start');
 
-        watchId = Geolocation.watchPosition(
+        const newWatchId = Geolocation.watchPosition(
             position => {
                 const latitude = Number(JSON.stringify(position.coords.latitude));
                 const longitude = Number(JSON.stringify(position.coords.longitude));
@@ -127,7 +144,12 @@ function useLocation({}: propsType) {
                 },
             }
         );
+        setWatchId(newWatchId);
     }
+
+    useEffect(() => {
+        init();
+    }, []);
 
     return {coordinate, setBackground, setForeground, status};
 }
