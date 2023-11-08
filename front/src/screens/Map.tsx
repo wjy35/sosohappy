@@ -11,82 +11,25 @@ import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 
 import MapStyle from "@/styles/MapStyle";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {helpDetail, helpSocket} from "@/types";
+import {observer} from "mobx-react";
+import useStore from "@/hooks/useStore";
 
 interface propsType{
   location: any;
-  socket: {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-  }
+  socket: helpSocket
 }
 
-interface helpDetail {
-  memberId: number;
-  nickname: string;
-  category: {
-    categoryId: number,
-    categoryName: string,
-    categoryImage: string,
-  };
-  longitude: number;
-  latitude: number;
-  content: string;
-  place: string;
-}
-
-const Map = ({location, socket}: propsType) => {
+const Map = observer(({location, socket}: propsType) => {
   const mapWidth = Dimensions.get("window").width;
   const mapHeight = Dimensions.get("window").height;
   const [bottomSheetStatus, setBottomSheetStatus] = useState<Boolean>(false);
   const [selectedHelp, setSelectedHelp] = useState<helpDetail>();
   const navigation = useNavigation();
   // 이곳에 GPS에서 가져온 내 위치 정보를 넣으면 됩니다, 지금 default 정적으로 넣은 거는 멀티캠퍼스 역삼 위도 경도입니다.
-  const [aroundPositions, setAroundPositions] = useState<helpDetail[]>([
-    {
-      memberId: 1,
-      nickname: 'test1',
-      categoryList: [{
-        categoryId: 1,
-        categoryName: '몰라',
-        categoryImage: clover,
-      }],
-      longitude: 127.036841,
-      latitude: 37.500069,
-      content: 'test1',
-      place: 'test1',
-    },
-    {
-      memberId: 2,
-      nickname: 'test2',
-      categoryList: [{
-        categoryId: 2,
-        categoryName: '몰라요',
-        categoryImage: clover,
-      }],
-      longitude: 127.046841,
-      latitude: 37.504069,
-      content: 'test2',
-      place: 'test2',
-    },
-    {
-      memberId: 3,
-      nickname: 'test3',
-      categoryList: [{
-        categoryId: 3,
-        categoryName: '몰라유',
-        categoryImage: clover,
-      }],
-      longitude: 127.032841,
-      latitude: 37.499069,
-      content: 'test3',
-      place: 'test3',
-    }
-  ]);
   const [points, setPoints] = useState<any>();
+  const [loading, setLoading] = useState(false);
+  const {userStore} = useStore();
 
   const updateBottomSheetStatus = (updateStatus: Boolean) => {
     setBottomSheetStatus(updateStatus);
@@ -98,7 +41,7 @@ const Map = ({location, socket}: propsType) => {
   }
 
   //Todo : 현재는 파이낸셜센터 - 멀티캠퍼스 정적 위경도 넣어줌 (추후 GPS에 따른 위경도 변경)
-  const getArrivalToDesinationPointLine = async () => {
+  const getArrivalToDesinationPointLine = async (longitude: number, latitude: number) => {
     const options = {
       method: 'POST',
       headers: {
@@ -112,9 +55,9 @@ const Map = ({location, socket}: propsType) => {
         angle: 20,
         speed: 30,
         endPoiId: '10001',
-        endX: 127.036841,
-        endY: 37.500069,
-        passList: `${location.longitude},${location.latitude}_127.036841,37.500069`,
+        endX: longitude,
+        endY: latitude,
+        passList: `${location.longitude},${location.latitude}_${longitude},${latitude}`,
         reqCoordType: 'WGS84GEO',
         startName: '%EC%B6%9C%EB%B0%9C',
         endName: '%EB%8F%84%EC%B0%A9',
@@ -126,14 +69,31 @@ const Map = ({location, socket}: propsType) => {
 
     fetch('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&callback=function', options)
       .then(response => response.json())
-      .then(response => setPoints(response))
+      .then(response => {
+          setPoints(response);
+          setLoading(false);
+      })
       .catch(err => console.error(err));
   }
 
-  useFocusEffect(()=>{
-    if (socket.connected) return;
-    socket.connect();
-  })
+  useFocusEffect(
+      React.useCallback(() => {
+        const connect = () => {
+          if (socket.connected) return;
+          socket.connect();
+        }
+        connect();
+        return () => {};
+      }, [socket.connected])
+  )
+
+    useEffect(() => {
+        console.log(socket.status);
+        if (socket.status === 'ON_MOVE'){
+            // setLoading(true);
+            // getArrivalToDesinationPointLine(socket.data.helpEntity.longitude, socket.data.helpEntity.latitude);
+        }
+    }, [socket.status]);
 
   return (
       <>
@@ -157,11 +117,16 @@ const Map = ({location, socket}: propsType) => {
                       <Marker
                           description="my position"
                           coordinate={{latitude: location.latitude, longitude: location.longitude}}
-                          pinColor="#37DDEB"
-                      />
+                      >
+                          <Image
+                              source={require("@/assets/sosomon/type4/Whale.png")}
+                              // source={require("@/assets/sosomon/type1/FennecFox.png")}
+                              style={{width: 100, height: 100, bottom: -20}}
+                          />
+                      </Marker>
 
                       {
-                          socket.helpList.map((aroundMarker, index) => {
+                          (socket.status==='DEFAULT')&&socket.helpList.map((aroundMarker, index) => {
                               return(
                                   <React.Fragment key={`aroundMarker${index}`}>
                                       <Marker
@@ -175,8 +140,7 @@ const Map = ({location, socket}: propsType) => {
                           })
                       }
                       {
-                          points?.features?.map((point, index) => {
-                              console.log(point);
+                          (!loading&&socket.status==='ON_MOVE')&&points?.features?.map((point, index) => {
                               if(point.geometry.type === "LineString"){
                                   const pathCoordinates = [];
 
@@ -197,19 +161,24 @@ const Map = ({location, socket}: propsType) => {
                       }
                   </MapView>
               </View>
-              <TouchableOpacity activeOpacity={0.7}>
-                  <View style={MapStyle.createHelpWrap}>
-                      <Image
-                          source={ColorMegaphoneIcon}
-                          style={MapStyle.megaphoneIcon}
-                      />
-                      <View style={MapStyle.createHelpInfo}>
-                          <Text style={MapStyle.helpSubTitle}>도움이 필요하신가요?</Text>
-                          <Text style={MapStyle.helpMainTitle}>주변에 요청해보세요!</Text>
-                      </View>
-                      <Text style={MapStyle.helpButton}>도움요청</Text>
-                  </View>
-              </TouchableOpacity>
+              {
+                  (socket.status==='DEFAULT' && userStore.user.disabled) && (
+                      <TouchableOpacity activeOpacity={0.7}>
+                          <View style={MapStyle.createHelpWrap}>
+                              <Image
+                                  source={ColorMegaphoneIcon}
+                                  style={MapStyle.megaphoneIcon}
+                              />
+                              <View style={MapStyle.createHelpInfo}>
+                                  <Text style={MapStyle.helpSubTitle}>도움이 필요하신가요?</Text>
+                                  <Text style={MapStyle.helpMainTitle}>주변에 요청해보세요!</Text>
+                              </View>
+                              <Text style={MapStyle.helpButton}>도움요청</Text>
+                          </View>
+                      </TouchableOpacity>
+                  )
+              }
+
               {
                   bottomSheetStatus ?
                       <BottomSheet selectedHelp={selectedHelp} updateBottomSheetStatus={(updateStatus:Boolean) => updateBottomSheetStatus(updateStatus)}/>
@@ -219,6 +188,6 @@ const Map = ({location, socket}: propsType) => {
           </CommonLayout>
       </>
   );
-};
+});
 
 export default Map;
