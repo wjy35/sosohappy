@@ -196,23 +196,36 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         memberSessionEntityRepository.setMatchType(memberId,HelpMatchType.NONE);
         emitStatusChangeEvent(memberId);
 
-        HelpEntity helpEntity = helpEntityRepository.getAndDeleteByMemberId(memberId);
-        if(memberSessionEntityRepository.isOnMove(helpEntity.getOtherMemberId())) arrival(helpEntity.getOtherMemberId());
+        Optional.ofNullable(helpEntityRepository.getAndDeleteByMemberId(memberId))
+                .ifPresent((helpEntity)->{
+                    Long otherMemberId = helpEntity.getOtherMemberId();
+                    if(memberSessionEntityRepository.isOnMove(otherMemberId)) {
+                        memberSessionEntityRepository.setMatchStatus(otherMemberId,HelpMatchStatus.DEFAULT);
+                        memberSessionEntityRepository.setMatchType(otherMemberId,HelpMatchType.NONE);
+                        helpEntityRepository.getAndDeleteByMemberId(otherMemberId);
+                        emitStatusChangeEvent(otherMemberId);
+                    }
+                });
+
+        System.out.println("commit");
     }
 
     @Override
     public void cancel(Long memberId) {
         if(memberSessionEntityRepository.isDefault(memberId)) return;
         memberSessionEntityRepository.setMatchStatus(memberId,HelpMatchStatus.DEFAULT);
-        memberSessionEntityRepository.setMatchType(memberId,HelpMatchType.SINGLE);
-
-        HelpEntity helpEntity = helpEntityRepository.getAndDeleteByMemberId(memberId);
+        memberSessionEntityRepository.setMatchType(memberId,HelpMatchType.NONE);
         emitStatusChangeEvent(memberId);
 
-        if(memberSessionEntityRepository.isDefault(helpEntity.getOtherMemberId())) return;
-
-        helpEntityRepository.getAndDeleteByMemberId(helpEntity.getOtherMemberId());
-        emitStatusChangeEvent(helpEntity.getOtherMemberId());
+        Optional.ofNullable(helpEntityRepository.getAndDeleteByMemberId(memberId))
+                .ifPresent((helpEntity -> {
+                    Long otherMemberId = helpEntity.getOtherMemberId();
+                    if(memberSessionEntityRepository.isDefault(otherMemberId)) return;
+                    memberSessionEntityRepository.setMatchStatus(otherMemberId,HelpMatchStatus.DEFAULT);
+                    memberSessionEntityRepository.setMatchType(otherMemberId,HelpMatchType.NONE);
+                    helpEntityRepository.getAndDeleteByMemberId(otherMemberId);
+                    emitStatusChangeEvent(otherMemberId);
+                }));
     }
 
     @Async
