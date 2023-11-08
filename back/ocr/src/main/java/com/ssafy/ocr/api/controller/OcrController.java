@@ -17,9 +17,9 @@ public class OcrController {
 
     private final OcrService ocrService;
     @PostMapping("/send")
-    public ResponseEntity<FormattedResponse> checkImage(@RequestParam(value = "file")MultipartFile multipartFile) {
+    public ResponseEntity<FormattedResponse> checkImage(@RequestParam(value = "file")MultipartFile multipartFile, String name) {
 
-        ocrService.checkImage(multipartFile);
+        ocrService.checkImage(multipartFile, name);
 
         FormattedResponse formattedResponse = FormattedResponse.builder()
                 .status("success")
