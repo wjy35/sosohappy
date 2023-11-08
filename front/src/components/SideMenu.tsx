@@ -1,7 +1,7 @@
 import {View, Text, TouchableOpacity, Alert} from "react-native"
 import SideMenuStyle from "@/styles/SideMenuStyle";
 import {useNavigation} from "@react-navigation/native";
-import { sosohappyWhiteLogo, user, gear, chat, peace, home, close } from "@/assets/icons/icons";
+import { sosohappyWhiteLogo, user, gear, chat, peace, home, close, menuDocs } from "@/assets/icons/icons";
 import { SvgXml } from "react-native-svg";
 import {observer} from "mobx-react";
 import useStore from "@/hooks/useStore";
@@ -115,7 +115,7 @@ const SideMenu = observer(({closeSide, nowPage}: props) => {
                     <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Certificate')}>
                         <View style={[SideMenuStyle.menuList]}>
                             <SvgXml
-                                xml={gear}
+                                xml={menuDocs}
                                 width={24}
                                 height={24}
                             />
