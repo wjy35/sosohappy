@@ -14,6 +14,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,6 +30,10 @@ import static com.ssafy.ocr.api.exception.ErrorCode.INVALID_IMAGE_ERROR;
 public class OcrService {
 
     private final ObjectMapper objectMapper;
+    private final String regex = "\\d.*";
+    private final Pattern pattern = Pattern.compile(regex);
+    private final String[] keywords = {"문","서","확","인","번","호"};
+    private Matcher matcher;
 
     @Value("${ocr.api.url}")
     private String apiURL;
@@ -37,15 +43,17 @@ public class OcrService {
 
     public void checkImage(MultipartFile multipartFile) {
 
-        Map<String,String> result;
+        List<String> result = new ArrayList<>();
         String originalFileName = multipartFile.getOriginalFilename();
         String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
         String base64EncodeFile = null;
+        String documentNumber = null;
 
         try {
             base64EncodeFile = base64Encoding(multipartFile);
             String text = naverOcrApi(base64EncodeFile,ext);
             result = jsonParse(text);
+
         }
         catch (Exception e) {
             throw new CustomException(INVALID_IMAGE_ERROR);
@@ -53,27 +61,24 @@ public class OcrService {
 
     }
 
-    private Map<String,String> jsonParse(String text) throws JsonProcessingException {
 
-        Map<String,String> result = new HashMap<>();
+    private List<String> jsonParse(String text) throws JsonProcessingException {
+
+        List<String> result = new ArrayList<>();
         JsonNode root = null;
 
         root = objectMapper.readTree(text);
-        String documentRegistrationNumber = root.path("images").
-                get(0).path("fields").
-                get(0).path("subFields").
-                get(0).path("inferText").asText();
 
-        String name = root.path("images").
-                get(0).path("fields").
-                get(1).path("subFields").
-                get(0).path("inferText").asText();
+        JsonNode fields = root.get("images").get(0).get("fields");
 
-        result.put("documentRegistrationNumber",documentRegistrationNumber);
-        result.put("name",name);
+        for (JsonNode field : fields) {
+            String inferText = field.get("inferText").asText();
+            result.add(inferText);
+        }
 
         return result;
     }
+
     private String naverOcrApi(String base64EncodeFile, String ext) {
 
         String apiURL = this.apiURL;
