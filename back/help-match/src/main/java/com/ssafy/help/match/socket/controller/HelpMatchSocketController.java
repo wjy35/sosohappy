@@ -1,7 +1,9 @@
 package com.ssafy.help.match.socket.controller;
 
+import com.ssafy.help.match.api.response.FormattedResponse;
 import com.ssafy.help.match.socket.exception.UnAcceptableException;
 import com.ssafy.help.match.socket.request.HelpAcceptRequest;
+import com.ssafy.help.match.socket.request.HelpArrivalRequest;
 import com.ssafy.help.match.socket.request.HelpMatchRequest;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
 import com.ssafy.help.match.socket.response.PushMatchListResponse;
@@ -58,6 +60,28 @@ public class HelpMatchSocketController{
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/arrival")
+    ResponseEntity<?> arrival(@RequestBody HelpArrivalRequest helpArrivalRequest){
+        FormattedResponse response = null;
 
+        try{
+            helpMatchService.arrival(helpArrivalRequest.getMemberId());
+            response = FormattedResponse
+                    .builder()
+                    .status("success")
+                    .message("SUCCESS ARRIVAL")
+                    .build();
+
+        }catch (Exception e){
+            response = FormattedResponse
+                    .builder()
+                    .status("fail")
+                    .message("FAIL ARRIVAL")
+                    .build();
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
 }
