@@ -2,10 +2,7 @@ package com.ssafy.help.match.socket.controller;
 
 import com.ssafy.help.match.api.response.FormattedResponse;
 import com.ssafy.help.match.socket.exception.UnAcceptableException;
-import com.ssafy.help.match.socket.request.HelpAcceptRequest;
-import com.ssafy.help.match.socket.request.HelpArrivalRequest;
-import com.ssafy.help.match.socket.request.HelpCompleteRequest;
-import com.ssafy.help.match.socket.request.HelpMatchRequest;
+import com.ssafy.help.match.socket.request.*;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
 import com.ssafy.help.match.socket.response.PushMatchListResponse;
 import com.ssafy.help.match.util.ObjectSerializer;
@@ -101,6 +98,29 @@ public class HelpMatchSocketController{
                     .builder()
                     .status("fail")
                     .message("FAIL COMPLETE")
+                    .build();
+            return new ResponseEntity<>(response,HttpStatus.BAD_GATEWAY);
+        }
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @PostMapping("/complete")
+    ResponseEntity<?> cancel(@RequestBody HelpCancelRequest helpCancelRequest){
+        FormattedResponse response;
+
+        try{
+            helpMatchService.cancel(helpCancelRequest.getMemberId());
+            response = FormattedResponse
+                    .builder()
+                    .status("success")
+                    .message("SUCCESS CANCEL")
+                    .build();
+        }catch (Exception e){
+            response = FormattedResponse
+                    .builder()
+                    .status("fail")
+                    .message("FAIL CANCEL")
                     .build();
             return new ResponseEntity<>(response,HttpStatus.BAD_GATEWAY);
         }
