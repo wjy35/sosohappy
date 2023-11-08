@@ -4,6 +4,7 @@ import com.ssafy.help.match.db.entity.HelpEntity;
 import com.ssafy.help.match.db.entity.HelpMatchStatus;
 import com.ssafy.help.match.db.entity.HelpMatchType;
 import com.ssafy.help.match.db.repository.*;
+import com.ssafy.help.match.socket.dto.MatchPopEventDTO;
 import com.ssafy.help.match.socket.dto.MatchPushEventDTO;
 import com.ssafy.help.match.socket.dto.StatusChangeEventDTO;
 import com.ssafy.help.match.socket.mapper.MatchEntityMapper;
@@ -19,14 +20,19 @@ import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.Point;
 import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class HelpMatchServiceImpl implements HelpMatchService {
+
     @Value("${redis.topic.match-push-event.prefix}")
     public String MATCH_PUSH_EVENT_TOPIC_PREFIX;
+
+    @Value("${redis.topic.match-pop-event.prefix}")
+    public String MATCH_POP_EVENT_TOPIC_PREFIX;
 
     @Value("${redis.topic.status-change-event.prefix}")
     public String STATUS_CHANGE_EVENT_TOPIC_PREFIX;
@@ -39,6 +45,19 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     private final ObjectSerializer objectSerializer;
     private final double[] maxDistanceList = {500d,1000d,1500d};
     private final HelpEntityRepository helpEntityRepository;
+
+    @Override
+    public void cancel(Long memberId) {
+        if(!memberSessionEntityRepository.isOnMatchProgress(memberId)) return;
+
+        memberSessionEntityRepository.setMatchStatus(memberId,HelpMatchStatus.DEFAULT);
+        memberSessionEntityRepository.setMatchType(memberId,HelpMatchType.NONE);
+
+        emitStatusChangeEvent(memberId);
+
+        sendMatchEntityRepository.getAndDeleteReceiveMemberIdSet(memberId)
+                .forEach((receiveMemberId)-> emitMatchPopEvent(memberId,receiveMemberId));
+    }
 
     @Override
     public MatchStatusResponse getStatus(Long memberId) {
@@ -129,6 +148,36 @@ public class HelpMatchServiceImpl implements HelpMatchService {
             if(isMemberSelf(searchedMemberId,memberId)) continue;
 
             emitMatchPushEvent(memberId, searchedMemberId, receiveMemberIdSet);
+        }
+    }
+
+    @Async
+    void emitMatchPopEvent(Long memberId, Long receiveMemberId){
+        sendMemberIdSetRepository.delete(receiveMemberId,memberId);
+
+        if(memberSessionEntityRepository.isConnected(receiveMemberId)){
+            String uuid = memberSessionEntityRepository.getServerUUID(receiveMemberId);
+
+            MatchPopEventDTO eventDTO = MatchPopEventDTO
+                    .builder()
+                    .memberId(memberId)
+                    .matchedMemberId(receiveMemberId)
+                    .build();
+            redisTemplate.convertAndSend(MATCH_POP_EVENT_TOPIC_PREFIX +uuid, objectSerializer.serialize(eventDTO));
+        }
+    }
+
+    @Async
+    void emitStatusChangeEvent(Long memberId){
+        if(memberSessionEntityRepository.isConnected(memberId)){
+            String uuid = memberSessionEntityRepository.getServerUUID(memberId);
+
+            StatusChangeEventDTO eventDTO = StatusChangeEventDTO
+                    .builder()
+                    .memberId(memberId)
+                    .build();
+
+            redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_TOPIC_PREFIX +uuid, objectSerializer.serialize(eventDTO));
         }
     }
 
