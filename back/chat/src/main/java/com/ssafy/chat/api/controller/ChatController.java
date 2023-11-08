@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@CrossOrigin("*")
 @RestController
 public class ChatController {
 
