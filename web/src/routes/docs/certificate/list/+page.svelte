@@ -34,7 +34,7 @@
             <td class="cert-td">2023.11.07</td>
         </tr>
         <tr class="cert-tr">
-            <td colspan="3" class="cert-td">
+            <td colspan="3" class="cert-td cert-confirm">
                 <p>위 사람의 소중한 도움제공 내역을 소소행에서 발행해드립니다.</p>
                 <p>2023.11.07.</p>
                 <div class="stamp-wrap">
@@ -116,10 +116,17 @@ a{
 .cert-container .cert-table .cert-title{
     height:40px;
     line-height:40px;
+    font-size:24px;
+    font-weight: 900;
 }
 
 .cert-container .cert-table .cert-info-title{
     line-height:100px;
+}
+
+.cert-container .cert-table .cert-confirm{
+    padding:20px;
+    box-sizing: border-box;
 }
 
 
