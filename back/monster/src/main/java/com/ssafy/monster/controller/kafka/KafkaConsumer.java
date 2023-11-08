@@ -3,9 +3,11 @@ package com.ssafy.monster.controller.kafka;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.monster.common.exception.CustomException;
 import com.ssafy.monster.common.exception.ErrorCode;
+import com.ssafy.monster.controller.kafka.event.help.HelpDTO;
+import com.ssafy.monster.controller.kafka.event.help.HelpEvent;
 import com.ssafy.monster.controller.kafka.event.member.MemberDTO;
 import com.ssafy.monster.controller.kafka.event.member.MemberEvent;
-import com.ssafy.monster.service.MonsterServiceImpl;
+import com.ssafy.monster.service.MonsterService;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -18,9 +20,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class KafkaConsumer {
 
-    private final MonsterServiceImpl monsterService;
+    private final MonsterService monsterService;
+
     @KafkaListener(topics = "member-command-mysql.member.member")
-    public void consume(ConsumerRecord<String,String> consumerRecord) {
+    public void memberConsume(ConsumerRecord<String,String> consumerRecord) {
         if(isEmptyEvent(consumerRecord)) return;
         String message = consumerRecord.value();
 
@@ -38,6 +41,22 @@ public class KafkaConsumer {
                 monsterService.deleteMemberMonsterProfile(before.getMemberId());
             }
         } catch (IOException e) {
+            throw new CustomException(ErrorCode.JSON_PARSE_ERROR);
+        }
+    }
+
+    @KafkaListener(topics = "help-history-command-mysql.help_history.help_history")
+    public void helpConsume(ConsumerRecord<String,String> consumerRecord) {
+        if(isEmptyEvent(consumerRecord)) return;
+        String message = consumerRecord.value();
+
+        ObjectMapper objMapper = new ObjectMapper();
+
+        try{
+            HelpEvent helpEvent = objMapper.readValue(message, HelpEvent.class);
+            HelpDTO after = helpEvent.getAfter();
+            monsterService.updateClover(after.getFromMemberId(), after.getToMemberId(), 1);
+        } catch (IOException e){
             throw new CustomException(ErrorCode.JSON_PARSE_ERROR);
         }
     }
