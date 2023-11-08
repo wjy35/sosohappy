@@ -178,12 +178,26 @@ public class HelpMatchServiceImpl implements HelpMatchService {
 
     @Override
     public void arrival(Long memberId) {
-        if(!memberSessionEntityRepository.getMatchStatus(memberId).equals(HelpMatchStatus.ON_MOVE)) throw new RuntimeException();
+        if(!memberSessionEntityRepository.isOnMove(memberId)) throw new RuntimeException();
 
         memberSessionEntityRepository.setMatchStatus(memberId,HelpMatchStatus.DEFAULT);
         memberSessionEntityRepository.setMatchType(memberId,HelpMatchType.NONE);
+        helpEntityRepository.getAndDeleteByMemberId(memberId);
 
         emitStatusChangeEvent(memberId);
+    }
+
+
+    @Override
+    public void complete(Long memberId) {
+        if(!memberSessionEntityRepository.isWaitComplete(memberId)) throw new RuntimeException();
+
+        memberSessionEntityRepository.setMatchStatus(memberId,HelpMatchStatus.DEFAULT);
+        memberSessionEntityRepository.setMatchType(memberId,HelpMatchType.NONE);
+        emitStatusChangeEvent(memberId);
+
+        HelpEntity helpEntity = helpEntityRepository.getAndDeleteByMemberId(memberId);
+        if(memberSessionEntityRepository.isOnMove(helpEntity.getOtherMemberId())) arrival(helpEntity.getOtherMemberId());
     }
 
     @Async
