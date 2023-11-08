@@ -1,20 +1,17 @@
 package com.ssafy.chat.db.entity;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 
-@Data
+@Getter
 @Builder
-@ToString
-public class ChatEntity implements Serializable {
+@NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class ChatEntity {
     private Long memberId;
     private int type;
     private String content;
     @Builder.Default
     private Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
 }
