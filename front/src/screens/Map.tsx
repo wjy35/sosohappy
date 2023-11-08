@@ -130,10 +130,24 @@ const Map = ({location, socket}: propsType) => {
       .catch(err => console.error(err));
   }
 
-  useFocusEffect(()=>{
-    if (socket.connected) return;
-    socket.connect();
-  })
+  useFocusEffect(
+      React.useCallback(() => {
+        const connect = () => {
+          if (socket.connected) return;
+          socket.connect();
+        }
+        connect();
+        return () => {};
+      }, [socket.connected])
+  )
+
+    useEffect(() => {
+        console.log(socket.status);
+        if (socket.status === 'ON_MOVE'){
+            // setLoading(true);
+            // getArrivalToDesinationPointLine(socket.data.helpEntity.longitude, socket.data.helpEntity.latitude);
+        }
+    }, [socket.status]);
 
   return (
       <>

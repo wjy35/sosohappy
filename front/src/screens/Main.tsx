@@ -46,10 +46,17 @@ const Main = observer(({socket}: propsType) => {
     userStore.user?(navigation.navigate(next)):(navigation.navigate('Login'));
   }
 
-  useFocusEffect(()=>{
-    if (!socket.connected) return;
-    socket.disConnect();
-  })
+  useFocusEffect(
+      React.useCallback(() => {
+        const disConnect = () => {
+          console.log('callback disconnect', socket.connected);
+          if (!socket.connected) return;
+          socket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [socket.connected])
+  )
 
   return (
     <CommonLayout footer={true} headerType={0} nowPage={'Main'}>
