@@ -1,17 +1,19 @@
 package com.ssafy.help.match.socket.service.impl;
 
+import com.ssafy.help.match.db.entity.HelpEntity;
 import com.ssafy.help.match.db.entity.HelpMatchStatus;
 import com.ssafy.help.match.db.entity.HelpMatchType;
-import com.ssafy.help.match.db.repository.SendMatchEntityRepository;
-import com.ssafy.help.match.db.repository.MemberMatchSetRepository;
-import com.ssafy.help.match.db.repository.MemberPointRepository;
-import com.ssafy.help.match.db.repository.MemberSessionEntityRepository;
-import com.ssafy.help.match.socket.dto.MatchEventDTO;
+import com.ssafy.help.match.db.entity.SendMatchEntity;
+import com.ssafy.help.match.db.repository.*;
+import com.ssafy.help.match.socket.dto.MatchPopEventDTO;
+import com.ssafy.help.match.socket.dto.MatchPushEventDTO;
 import com.ssafy.help.match.socket.dto.StatusChangeEventDTO;
+import com.ssafy.help.match.socket.mapper.HelpEntityMapper;
 import com.ssafy.help.match.socket.mapper.MatchEntityMapper;
+import com.ssafy.help.match.socket.request.HelpAcceptRequest;
 import com.ssafy.help.match.socket.request.HelpMatchRequest;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
-import com.ssafy.help.match.socket.response.ReceiveMatchItem;
+import com.ssafy.help.match.socket.response.PushMatchItem;
 import com.ssafy.help.match.socket.service.HelpMatchService;
 import com.ssafy.help.match.util.ObjectSerializer;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +21,8 @@ import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.Point;
 import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Service
@@ -28,57 +30,103 @@ import java.util.*;
 public class HelpMatchServiceImpl implements HelpMatchService {
     private final MemberSessionEntityRepository memberSessionEntityRepository;
     private final MemberPointRepository memberPointRepository;
-    private final MemberMatchSetRepository memberMatchSetRepository;
+    private final SendMemberIdSetRepository sendMemberIdSetRepository;
     private final SendMatchEntityRepository sendMatchEntityRepository;
     private final RedisTemplate<String,String> redisTemplate;
-    private final String MATCH_EVENT_PREFIX ="matchEvent:";
+    private final String MATCH_PUSH_EVENT_PREFIX ="matchPushEvent:";
+    private final String MATCH_POP_EVENT_PREFIX = "matchPopEvent:";
     private final String STATUS_CHANGE_EVENT_PREFIX="statusChangeEvent:";
     private final ObjectSerializer objectSerializer;
     private final double[] maxDistanceList = {500d,1000d,1500d};
-
+    private final HelpEntityRepository helpEntityRepository;
 
     @Override
-    public MatchStatusResponse viewStatusByMemberId(Long memberId) {
+    public void accept(HelpAcceptRequest helpAcceptRequest) {
+        Long helperMemberId = helpAcceptRequest.getHelperMemberId();
+        Long disabledMemberId = helpAcceptRequest.getDisabledMemberId();
+
+        SendMatchEntity sendMatchEntity = sendMatchEntityRepository.getAndDeleteByMemberId(disabledMemberId);
+        isAcceptableDisabled(disabledMemberId);
+        isAcceptableHelper(helperMemberId);
+
+        try {
+            memberSessionEntityRepository.setMatchStatus(helperMemberId, HelpMatchStatus.ON_MOVE);
+            memberSessionEntityRepository.setMatchType(helperMemberId,HelpMatchType.SINGLE);
+            memberSessionEntityRepository.setMatchStatus(disabledMemberId, HelpMatchStatus.WAIT_COMPLETE);
+
+            HelpEntity disabledHelpEntity = HelpEntityMapper.INSTANCE.matchToHelp(helperMemberId, sendMatchEntity);
+            HelpEntity helperHelpEntity = HelpEntityMapper.INSTANCE.matchToHelp(disabledMemberId, sendMatchEntity);
+
+            helpEntityRepository.save(disabledMemberId, disabledHelpEntity);
+            helpEntityRepository.save(helperMemberId, helperHelpEntity);
+        }catch (Exception e){
+            memberSessionEntityRepository.setMatchStatus(helperMemberId, HelpMatchStatus.ON_MATCH_PROGRESS);
+            memberSessionEntityRepository.setMatchStatus(disabledMemberId, HelpMatchStatus.DEFAULT);
+
+            helpEntityRepository.getAndDeleteByMemberId(disabledMemberId);
+            helpEntityRepository.getAndDeleteByMemberId(helperMemberId);
+        }
+
+        sendHelpEntity(helperMemberId, HelpMatchStatus.ON_MOVE);
+        sendHelpEntity(disabledMemberId, HelpMatchStatus.WAIT_COMPLETE);
+
+        sendMatchEntityRepository.getAndDeleteReceiveMemberIdSet(disabledMemberId)
+                .forEach((receiveMemberId)-> emitMatchPopEvent(disabledMemberId,receiveMemberId));
+    }
+
+    @Override
+    public MatchStatusResponse getStatus(Long memberId) {
         HelpMatchType helpMatchType = memberSessionEntityRepository.getMatchType(memberId);
         HelpMatchStatus helpMatchStatus = memberSessionEntityRepository.getMatchStatus(memberId);
+        HelpEntity helpEntity = null;
+        Point otherMemberPoint = null;
 
-        return MatchStatusResponse
+        if (helpMatchStatus.equals(HelpMatchStatus.WAIT_COMPLETE)||helpMatchStatus.equals(HelpMatchStatus.ON_MOVE)){
+            helpEntity = helpEntityRepository.findByMemberId(memberId);
+            otherMemberPoint = memberPointRepository.find(memberId);
+        }
+
+        MatchStatusResponse response = MatchStatusResponse
                 .builder()
                 .helpMatchStatus(helpMatchStatus)
                 .helpMatchType(helpMatchType)
+                .data("helpEntity",helpEntity)
+                .data("otherMemberPoint",otherMemberPoint)
                 .build();
+
+        return response;
     }
 
-
     @Override
-    public List<ReceiveMatchItem> list(Long memberId) {
-        List<String> matchMemberIdList = new ArrayList<>(memberMatchSetRepository.getSet(memberId));
-        List<ReceiveMatchItem> receiveMatchItemList = new ArrayList<>();
+    public List<PushMatchItem> list(Long memberId) {
+        List<Long> matchMemberIdList = new ArrayList<>(sendMemberIdSetRepository.getSet(memberId));
+        List<PushMatchItem> pushMatchItemList = new ArrayList<>();
 
         MatchEntityMapper mapper = MatchEntityMapper.INSTANCE;
 
-        for (String matchMemberId:matchMemberIdList){
-            Optional.ofNullable(sendMatchEntityRepository.findByMemberId(Long.parseLong(matchMemberId)))
+        for (Long matchMemberId:matchMemberIdList){
+            Optional.ofNullable(sendMatchEntityRepository.findByMemberId(matchMemberId))
                     .ifPresent((sendMatchEntity) -> {
-                        Double distance = memberPointRepository.getDistance(memberId,Long.parseLong(matchMemberId));
-                        receiveMatchItemList.add(mapper.toItem(sendMatchEntity,distance));
+                        Double distance = memberPointRepository.getDistance(memberId,matchMemberId);
+                        pushMatchItemList.add(mapper.toItem(sendMatchEntity,distance));
                     });
         }
 
-        return receiveMatchItemList;
+        return pushMatchItemList;
     }
-
 
     @Override
     public void match(HelpMatchRequest helpMatchRequest) {
         saveAndChangeStatus(helpMatchRequest);
 
-        Set<Long> matchedMemberIdSet = new HashSet<>();
+        Set<Long> receiveMemberIdSet = new HashSet<>();
         Point centerPoint = new Point(helpMatchRequest.getLongitude(),helpMatchRequest.getLatitude());
 
         for(double maxDistance:maxDistanceList){
-            matchInRange(helpMatchRequest.getMemberId(), centerPoint, maxDistance, matchedMemberIdSet);
+            matchInRange(helpMatchRequest.getMemberId(), centerPoint, maxDistance, receiveMemberIdSet);
         }
+
+        sendMatchEntityRepository.saveReceiveMemberIdSet(helpMatchRequest.getMemberId(), receiveMemberIdSet);
     }
 
     private void saveAndChangeStatus(HelpMatchRequest helpMatchRequest) {
@@ -99,35 +147,77 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     }
 
 
-    private void matchInRange(Long memberId, Point point, double maxDistance,Set<Long> matchedMemberIdSet) {
+    private void matchInRange(Long memberId, Point point, double maxDistance,Set<Long> receiveMemberIdSet) {
         Long searchedMemberId;
 
         for(GeoResult<RedisGeoCommands.GeoLocation<String>> geoResult:memberPointRepository.search(point,maxDistance).getContent()){
             searchedMemberId = Long.parseLong(geoResult.getContent().getName());
 
-            if(isMatchedAlready(searchedMemberId,matchedMemberIdSet)) continue;
+            if(isMatchedAlready(searchedMemberId,receiveMemberIdSet)) continue;
             if(isMemberBusy(searchedMemberId)) continue;
             if(isMemberSelf(searchedMemberId,memberId)) continue;
 
-            emitMatchEvent(memberId, searchedMemberId, matchedMemberIdSet);
+            emitMatchPushEvent(memberId, searchedMemberId, receiveMemberIdSet);
         }
     }
 
-    private void emitMatchEvent(Long memberId, Long searchedMemberId, Set<Long> matchedMemberIdSet){
+    @Async
+    void sendHelpEntity(Long memberId, HelpMatchStatus helpMatchStatus){
+        String uuid = memberSessionEntityRepository.getServerUUID(memberId);
+        StatusChangeEventDTO eventDTO = StatusChangeEventDTO
+                .builder()
+                .memberId(memberId)
+                .helpMatchStatus(helpMatchStatus)
+                .helpMatchType(HelpMatchType.SINGLE)
+                .build();
+
+        redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_PREFIX+uuid,objectSerializer.serialize(eventDTO));
+    }
+
+    @Async
+    void emitMatchPopEvent(Long memberId, Long receiveMemberId){
+        sendMemberIdSetRepository.delete(receiveMemberId,memberId);
+
+        if(memberSessionEntityRepository.isConnected(receiveMemberId)){
+            String uuid = memberSessionEntityRepository.getServerUUID(receiveMemberId);
+
+            MatchPopEventDTO eventDTO = MatchPopEventDTO
+                    .builder()
+                    .memberId(memberId)
+                    .matchedMemberId(receiveMemberId)
+                    .build();
+            redisTemplate.convertAndSend(MATCH_POP_EVENT_PREFIX +uuid, objectSerializer.serialize(eventDTO));
+        }
+    }
+
+    private void emitMatchPushEvent(Long memberId, Long searchedMemberId, Set<Long> matchedMemberIdSet){
         matchedMemberIdSet.add(searchedMemberId);
-        memberMatchSetRepository.save(searchedMemberId,memberId);
+        sendMemberIdSetRepository.save(searchedMemberId,memberId);
 
         if(memberSessionEntityRepository.isConnected(searchedMemberId)){
             String uuid = memberSessionEntityRepository.getServerUUID(searchedMemberId);
 
-            MatchEventDTO matchEventDTO = MatchEventDTO
+            MatchPushEventDTO matchPushEventDTO = MatchPushEventDTO
                     .builder()
                     .memberId(memberId)
                     .matchedMemberId(searchedMemberId)
                     .build();
-            redisTemplate.convertAndSend(MATCH_EVENT_PREFIX +uuid, objectSerializer.serialize(matchEventDTO));
+
+            redisTemplate.convertAndSend(MATCH_PUSH_EVENT_PREFIX +uuid, objectSerializer.serialize(matchPushEventDTO));
         }else{
             // ToDo Notification Event
+        }
+    }
+
+    private void isAcceptableHelper(Long memberId){
+        if(!memberSessionEntityRepository.getMatchStatus(memberId).equals(HelpMatchStatus.DEFAULT)){
+            throw new RuntimeException();
+        }
+    }
+
+    private void isAcceptableDisabled(Long memberId){
+        if(!memberSessionEntityRepository.getMatchStatus(memberId).equals(HelpMatchStatus.ON_MATCH_PROGRESS)){
+            throw new RuntimeException();
         }
     }
 
