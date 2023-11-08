@@ -53,6 +53,7 @@ public class OcrService {
             base64EncodeFile = base64Encoding(multipartFile);
             String text = naverOcrApi(base64EncodeFile,ext);
             result = jsonParse(text);
+            documentNumber = getDocumentNumber(result);
 
         }
         catch (Exception e) {
@@ -77,6 +78,40 @@ public class OcrService {
         }
 
         return result;
+    }
+
+    private String getDocumentNumber(List<String> result) {
+
+        /**
+         * 클라이언트 : 사진을 정방향으로 보내도록 유도한다.
+         *
+         * 사진이 정방향으로 업로드가 되었을 때 "장애인 증명서"에서 가장 먼저 확인하는 지표가 문서확인번호이다.
+         *
+         *  1. 숫자로 시작하고 "-"를 포함하며 19자리 숫자인 경우 == 문서확인번호가 명확하다.
+         *      장애인 증명서에는 문서확인 번호 외에 "-"를 포함한 정보가 없다.
+         *
+         *  2. 문서확인번호 중 한 글자라도 포함하며, 길이가 19자리 "이상"인 경우
+         *      1. 숫자가 처음 나타나는 위치를 찾고 그 위치에서 숫자의 끝까지 결과를 출력한다.
+         */
+
+        for (String s : result) {
+
+            if (s.charAt(0) >= '0' && s.charAt(0) <= '9' && s.contains("-") && s.length() == 19) {
+                return s;
+            }
+
+            for (String keyword : keywords) {
+                if (s.contains(keyword) && s.length() >= 19) {
+                    s = s.replace(" ","");
+                    matcher = pattern.matcher(s);
+                    if (matcher.find() && matcher.group().length() == 19) {
+                        return matcher.group();
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     private String naverOcrApi(String base64EncodeFile, String ext) {
