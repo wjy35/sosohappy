@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class HelpEntityRepositoryImpl implements HelpEntityRepository {
@@ -21,7 +23,9 @@ public class HelpEntityRepositoryImpl implements HelpEntityRepository {
 
     @Override
     public HelpEntity getAndDeleteByMemberId(Long memberId) {
-        return objectSerializer.deserialize(redisTemplate.opsForValue().getAndDelete(PREFIX+memberId), HelpEntity.class);
+        return Optional.ofNullable(redisTemplate.opsForValue().getAndDelete(PREFIX+memberId))
+                .map((helpEntityStr)->objectSerializer.deserialize(helpEntityStr,HelpEntity.class))
+                .orElse(null);
     }
 
     @Override
