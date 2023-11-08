@@ -41,7 +41,7 @@ public class OcrService {
     @Value("${ocr.secret.key}")
     private String secretKey;
 
-    public void checkImage(MultipartFile multipartFile) {
+    public void checkImage(MultipartFile multipartFile,String name) {
 
         List<String> result = new ArrayList<>();
         String originalFileName = multipartFile.getOriginalFilename();
