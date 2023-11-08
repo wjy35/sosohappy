@@ -4,6 +4,7 @@ import com.ssafy.monster.common.response.FormattedResponse;
 import com.ssafy.monster.domain.req.LevelUpReq;
 import com.ssafy.monster.domain.res.CloverRes;
 import com.ssafy.monster.domain.res.MonsterRes;
+import com.ssafy.monster.service.MonsterService;
 import com.ssafy.monster.service.MonsterServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MonsterController {
 
-    private final MonsterServiceImpl monsterService;
+    private final MonsterService monsterService;
 
     @GetMapping("/my")
     public ResponseEntity<FormattedResponse> searchRepresentativeMonster(@RequestHeader Long memberId){

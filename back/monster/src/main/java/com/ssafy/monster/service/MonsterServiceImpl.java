@@ -178,6 +178,10 @@ public class MonsterServiceImpl implements MonsterService{
 
     }
 
+    /**
+     * 도움 이벤트 발생시
+     * - from, to 모두 클로버 지급
+     */
     @Override
     @Transactional
     public void updateClover(Long fromMemberId, Long toMemberId, int clover) {
@@ -219,6 +223,10 @@ public class MonsterServiceImpl implements MonsterService{
         profileRepository.save(profile);
     }
 
+    /**
+     * 탈퇴시 가진 몬스터 정보 삭제
+     * - 연결은 안되어있음.
+     */
     @Override
     @Transactional
     public void deleteMemberMonsterProfile(Long memberId) {
@@ -230,6 +238,9 @@ public class MonsterServiceImpl implements MonsterService{
         }
     }
 
+    /**
+     * 만렙체크
+     */
     @Override
     @Transactional
     public boolean checkMaxLevel(Long memberId) {
