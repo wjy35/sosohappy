@@ -13,6 +13,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,7 +21,6 @@ public class HelpMatchSocketController{
     private final ObjectSerializer objectSerializer;
     private final SimpMessageSendingOperations simpMessageSendingOperations;
     private final HelpMatchService helpMatchService;
-    private final HelpService helpService;
 
     @SubscribeMapping("/topic/match/status/{memberId}")
     void status(@DestinationVariable Long memberId){
@@ -41,5 +41,10 @@ public class HelpMatchSocketController{
     @MessageMapping("/match")
     void match(@Payload HelpMatchRequest helpMatchRequest){
         helpMatchService.match(helpMatchRequest);
+    }
+
+    @PostMapping("/cancel/match")
+    void cancel(Long memberId){
+        helpMatchService.cancel(memberId);
     }
 }

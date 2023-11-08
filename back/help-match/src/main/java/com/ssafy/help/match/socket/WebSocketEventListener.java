@@ -1,5 +1,6 @@
 package com.ssafy.help.match.socket;
 
+import com.ssafy.help.match.socket.service.HelpMatchService;
 import com.ssafy.help.match.socket.service.SocketConnectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -13,6 +14,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 @RequiredArgsConstructor
 public class WebSocketEventListener {
     private final SocketConnectionService socketConnectionService;
+    private final HelpMatchService helpMatchService;
 
     @EventListener
     void handleSessionConnected(SessionConnectedEvent event){
@@ -28,6 +30,7 @@ public class WebSocketEventListener {
     void handleSessionDisconnect(SessionDisconnectEvent event){
         String sessionId = event.getSessionId();
 
-        socketConnectionService.disconnect(sessionId);
+        Long memberId = socketConnectionService.disconnectAndGetMemberId(sessionId);
+        helpMatchService.cancel(memberId);
     }
 }

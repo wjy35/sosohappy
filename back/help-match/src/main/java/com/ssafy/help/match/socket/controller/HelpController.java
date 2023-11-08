@@ -77,7 +77,7 @@ public class HelpController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @PostMapping("/cancel")
+    @PostMapping("/cancel/help")
     ResponseEntity<?> cancel(@RequestBody HelpCancelRequest helpCancelRequest){
         FormattedResponse response;
 
