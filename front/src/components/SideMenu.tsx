@@ -112,6 +112,16 @@ const SideMenu = observer(({closeSide, nowPage}: props) => {
                             <Text style={[SideMenuStyle.menuItemText]}>정보수정</Text>
                         </View>
                     </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Certificate')}>
+                        <View style={[SideMenuStyle.menuList]}>
+                            <SvgXml
+                                xml={gear}
+                                width={24}
+                                height={24}
+                            />
+                            <Text style={[SideMenuStyle.menuItemText]}>증명서 발급</Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
 
                 <View style={SideMenuStyle.authButtonWrap}>

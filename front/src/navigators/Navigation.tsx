@@ -12,6 +12,7 @@ import SignUpInput from '@/screens/SignUpInput';
 import SignUpSeparate from '@/screens/SignUpSeparate';
 import NavigatorDummy from '@/screens/NavigatorDummy';
 import Character from '@/screens/Character';
+import Certificate from '@/screens/Certificate';
 import {observer} from "mobx-react";
 import useStore from "@/hooks/useStore";
 import useSocket from "@/hooks/useSocket";
@@ -128,6 +129,13 @@ const Navigation = observer(({}: propsType) => {
           {
             props => (
                 <Character socket={socket}/>
+            )
+          }
+        </Stack.Screen>
+        <Stack.Screen name="Certificate">
+          {
+            props => (
+                <Certificate socket={socket}/>
             )
           }
         </Stack.Screen>
