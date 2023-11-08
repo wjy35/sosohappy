@@ -105,7 +105,7 @@ public class HelpMatchSocketController{
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @PostMapping("/complete")
+    @PostMapping("/cancel")
     ResponseEntity<?> cancel(@RequestBody HelpCancelRequest helpCancelRequest){
         FormattedResponse response;
 
