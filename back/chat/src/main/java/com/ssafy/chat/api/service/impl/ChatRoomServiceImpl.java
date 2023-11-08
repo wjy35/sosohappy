@@ -2,10 +2,12 @@ package com.ssafy.chat.api.service.impl;
 
 import com.ssafy.chat.api.mapper.ChatRoomMapper;
 import com.ssafy.chat.api.request.ChatRoomCreateRequest;
-import com.ssafy.chat.api.response.ChatParam;
-import com.ssafy.chat.api.response.ChatRoomListParam;
+import com.ssafy.chat.api.response.ChatRoomList;
+import com.ssafy.chat.api.response.CurrentChat;
 import com.ssafy.chat.api.service.ChatRoomService;
+import com.ssafy.chat.db.entity.ChatEntity;
 import com.ssafy.chat.db.entity.ChatRoomEntity;
+import com.ssafy.chat.db.repository.ChatRepository;
 import com.ssafy.chat.db.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
 
+    private final ChatRepository chatRepository;
+
     private final ChatRoomMapper chatRoomMapper;
     @Override
     public Integer creatChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) {
@@ -33,23 +37,35 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
     @Override
-    public List<ChatRoomListParam> getChatRoomListParams(long memberId) {
-        List<ChatRoomListParam> chatRoomListParams = new ArrayList<>();
+    public List<ChatRoomList> getChatRoomListParams(long memberId){
+
+        List<ChatRoomList> chatRoomLists = new ArrayList<>();
 
         List<ChatRoomEntity> chatRoomList = getChatRoomList(memberId);
 
-        for(int i=0; i<chatRoomList.size(); i++){
+        for (ChatRoomEntity chatRoomEntity : chatRoomList) {
+            ChatEntity chatEntity = chatRepository.getLastChat(chatRoomEntity.getChatRoomId());
 
-            ChatRoomEntity chatRoomEntity = chatRoomList.get(i);
+            int chatRoomId = chatRoomEntity.getChatRoomId();
 
-            long chatPartnerMemberId = memberId == chatRoomEntity.getReceiverMemberId()?chatRoomEntity.getSenderMemberId():chatRoomEntity.getReceiverMemberId();
+            List<Long> memberList = getMemberList(chatRoomEntity);
 
-            // ChatParam redis에서 memberId로 마지막 채팅 가져와
-//            ChatParam chatParam =
+            CurrentChat currentChat = chatRoomMapper.entityToParam(chatEntity);
 
+            chatRoomLists.add(chatRoomMapper.entityToParam(chatRoomId, memberList, currentChat));
         }
 
-        return null;
+        return chatRoomLists;
+    }
+
+    public List<Long> getMemberList(ChatRoomEntity chatRoomEntity){
+
+        List<Long> memberList = new ArrayList<>();
+
+        memberList.add(chatRoomEntity.getSenderMemberId());
+        memberList.add(chatRoomEntity.getReceiverMemberId());
+
+        return memberList;
     }
 
     @Override
