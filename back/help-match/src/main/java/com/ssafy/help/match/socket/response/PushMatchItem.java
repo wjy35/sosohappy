@@ -4,7 +4,7 @@ import com.ssafy.help.match.socket.dto.CategoryDTO;
 import lombok.Data;
 
 @Data
-public class ReceiveMatchItem {
+public class PushMatchItem {
     Long memberId;
     String nickname;
     CategoryDTO category;

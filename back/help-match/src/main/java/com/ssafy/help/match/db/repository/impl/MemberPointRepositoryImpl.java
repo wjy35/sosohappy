@@ -9,6 +9,9 @@ import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class MemberPointRepositoryImpl implements MemberPointRepository {
@@ -33,5 +36,13 @@ public class MemberPointRepositoryImpl implements MemberPointRepository {
     @Override
     public Double getDistance(Long memberId1,Long memberId2) {
         return redisTemplate.opsForGeo().distance(KEY,memberId1.toString(),memberId2.toString()).getValue();
+    }
+
+    @Override
+    public Point find(Long memberId) {
+        List<Point> pointList = Optional.ofNullable(redisTemplate.opsForGeo().position(KEY,memberId.toString()))
+                .orElseThrow();
+        if(pointList.size()==1) return pointList.get(0);
+        throw new RuntimeException();
     }
 }

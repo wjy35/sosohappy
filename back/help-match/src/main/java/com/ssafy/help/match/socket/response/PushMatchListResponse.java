@@ -9,7 +9,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class ReceiveMatchListResponse {
-    ReceiveMatchType receiveMatchType;
-    List<ReceiveMatchItem> receiveMatchList;
+public class PushMatchListResponse {
+    @Builder.Default
+    MatchListCommand matchListCommand = MatchListCommand.PUSH;
+    List<PushMatchItem> receiveMatchList;
 }
