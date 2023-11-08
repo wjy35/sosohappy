@@ -52,7 +52,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
 
         memberSessionEntityRepository.setMatchStatus(memberId,HelpMatchStatus.DEFAULT);
         memberSessionEntityRepository.setMatchType(memberId,HelpMatchType.NONE);
-
+        sendMatchEntityRepository.getAndDeleteByMemberId(memberId);
         emitStatusChangeEvent(memberId);
 
         sendMatchEntityRepository.getAndDeleteReceiveMemberIdSet(memberId)
