@@ -34,10 +34,6 @@ public class KafkaConsumer {
 
             if("c".equals(memberUpdateEvent.getOp())){
                 monsterService.setInitialMonster(after.getMemberId());
-            } else if("u".equals(memberUpdateEvent.getOp())) {
-                if(before.getProfileMonsterId() != after.getProfileMonsterId()){
-                    monsterService.updateMemberMonsterProfile(after.getMemberId(), after.getProfileMonsterId());
-                }
             } else if ("d".equals(memberUpdateEvent.getOp())) {
                 monsterService.deleteMemberMonsterProfile(before.getMemberId());
             }

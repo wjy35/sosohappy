@@ -1,6 +1,8 @@
 package com.ssafy.monster.common.exception;
 
 import com.ssafy.monster.common.response.FormattedResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -8,11 +10,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionManager {
 
     @ExceptionHandler(CustomException.class)
-    public FormattedResponse onCustomException(CustomException e) {
+    public ResponseEntity<FormattedResponse> onCustomException(CustomException e) {
 
-        return FormattedResponse.builder()
+        FormattedResponse formattedResponse = FormattedResponse.builder()
                 .status("fail")
                 .message(e.getErrorCode().getMessage())
                 .build();
+
+        return new ResponseEntity<>(formattedResponse, e.getErrorCode().getStatus());
     }
 }
