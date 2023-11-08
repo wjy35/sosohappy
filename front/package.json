@@ -17,6 +17,7 @@
     "@react-native-maps/polyline-direction": "^1.0.0",
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/stack": "^6.3.18",
+    "@sentry/react-native": "^5.12.0",
     "@supersami/rn-foreground-service": "^2.1.0",
     "axios": "^1.5.1",
     "mobx": "^6.10.2",
