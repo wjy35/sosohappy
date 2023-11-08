@@ -3,6 +3,11 @@ package com.ssafy.ocr.api.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.ocr.api.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,8 +27,7 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.*;
 
-import static com.ssafy.ocr.api.exception.ErrorCode.INTERNAL_SERVER_ERROR;
-import static com.ssafy.ocr.api.exception.ErrorCode.INVALID_IMAGE_ERROR;
+import static com.ssafy.ocr.api.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +45,9 @@ public class OcrService {
     @Value("${ocr.secret.key}")
     private String secretKey;
 
+    @Value("${DISABLED_CONFIRM_URL}")
+    private String baseURL;
+
     public void checkImage(MultipartFile multipartFile,String name) {
 
         List<String> result = new ArrayList<>();
@@ -48,6 +55,7 @@ public class OcrService {
         String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
         String base64EncodeFile = null;
         String documentNumber = null;
+        boolean isValidDocument;
 
         try {
             base64EncodeFile = base64Encoding(multipartFile);
@@ -60,7 +68,63 @@ public class OcrService {
             throw new CustomException(INVALID_IMAGE_ERROR);
         }
 
+        try {
+            isValidDocument = govConfirmInfo(documentNumber, name);
+        } catch (InterruptedException e) {
+            throw new CustomException(CRAWLING_SERVER_ERROR);
+        }
+
+
     }
+
+    private boolean govConfirmInfo(String documentNumber, String name) throws InterruptedException {
+        if(documentNumber == null) throw new CustomException(INVALID_DOCUMENT_NUMBER);
+        String[] parts = documentNumber.split("-");
+
+        System.setProperty("webdriver.chrome.driver", "./chromedriver.exe");
+
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("headless");
+
+        WebDriver driver = new ChromeDriver(options);
+
+        driver.get(baseURL);
+        Thread.sleep(1000);
+
+        try{
+
+            WebElement refNo1 = driver.findElement(By.cssSelector("#doc_ref_no1"));
+            refNo1.sendKeys(parts[0]);
+            WebElement refNo2 = driver.findElement(By.cssSelector("#doc_ref_no2"));
+            refNo2.sendKeys(parts[1]);
+            WebElement refNo3 = driver.findElement(By.cssSelector("#doc_ref_no3"));
+            refNo3.sendKeys(parts[2]);
+            WebElement refNo4 = driver.findElement(By.cssSelector("#doc_ref_no4"));
+            refNo4.sendKeys(parts[3]);
+
+            WebElement confirmButton = driver.findElement(By.cssSelector("#form2 > p > span.ibtn.large.navy > a"));
+            confirmButton.click();
+
+            WebElement nameInput = driver.findElement(By.cssSelector("#doc_ref_key"));
+            nameInput.sendKeys(name);
+
+            WebElement confirmBtn2 = driver.findElement(By.cssSelector("#form1 > p > span.ibtn.large.navy > a"));
+            confirmBtn2.click();
+
+            WebElement docTitle = driver.findElement(By.cssSelector("#form1 > table > tbody > tr > td:nth-child(1)"));
+
+            if(docTitle.getText().equals("장애인증명서 발급")) {
+                return true;
+            } else {
+                throw new CustomException(INVALID_DOCUMENT_ERROR);
+            }
+        } catch (Exception e) {
+            throw new CustomException(INVALID_DOCUMENT_ERROR);
+        }
+
+    }
+
 
 
     private List<String> jsonParse(String text) throws JsonProcessingException {
