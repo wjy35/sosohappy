@@ -11,31 +11,11 @@ import MainStyle from "@/styles/MainStyle";
 import {observer} from 'mobx-react';
 import useStore from "@/hooks/useStore";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import {useEffect} from "react";
+import React, {useEffect} from "react";
+import {helpSocket} from "@/types";
 
 interface propsType{
-  socket: {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-  };
-}
-
-interface helpDetail {
-  memberId: number;
-  nickname: string;
-  category: {
-    categoryId: number,
-    categoryName: string,
-    categoryImage: string,
-  };
-  longitude: number;
-  latitude: number;
-  content: string;
-  place: string;
+  socket: helpSocket,
 }
 
 const Main = observer(({socket}: propsType) => {
@@ -46,10 +26,17 @@ const Main = observer(({socket}: propsType) => {
     userStore.user?(navigation.navigate(next)):(navigation.navigate('Login'));
   }
 
-  useFocusEffect(()=>{
-    if (!socket.connected) return;
-    socket.disConnect();
-  })
+  useFocusEffect(
+      React.useCallback(() => {
+        const disConnect = () => {
+          console.log('callback disconnect', socket.connected);
+          if (!socket.connected) return;
+          socket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [socket.connected])
+  )
 
   return (
     <CommonLayout footer={true} headerType={0} nowPage={'Main'}>

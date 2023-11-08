@@ -1,13 +1,18 @@
 import * as Stomp from "webstomp-client";
 import {useEffect, useState} from "react";
+import {helpData} from "@/types";
 
 function useSocket(){
     const [client, setClient] = useState(null);
-    const [memberId, setMemberId] = useState(1);
+    const [memberId, setMemberId] = useState(2);
     const [status, setStatus] = useState<string>('');
     const [helpList, setHelpList] = useState([]);
     const [subscribe, setSubscribe] = useState('');
     const [connected, setConnected] = useState(false);
+    const [data, setData] = useState<helpData>({
+        helpEntity: null,
+        otherMemberPoint: null,
+    });
 
     function connect() {
         // wss://sosohappy.co.kr/help-match-socket/endpoint
@@ -21,9 +26,9 @@ function useSocket(){
                 clientInit.subscribe(
                     `/topic/match/status/${memberId}`,
                     (frame) => {
-                        console.log("status", frame);
                         setConnected(true);
                         const body = JSON.parse(frame.body);
+                        setData(body.data);
                         setStatus(body.helpMatchStatus);
                     },
                     {
@@ -98,10 +103,12 @@ function useSocket(){
         }
         if (status === 'DEFAULT'){
             getList();
+        } else if (status === 'helpMatchStatus'){
+
         }
     }, [status]);
 
-    return {connect, send, status, helpList, connected, disConnect};
+    return {connect, send, status, helpList, connected, disConnect, data};
 }
 
 export default useSocket;
