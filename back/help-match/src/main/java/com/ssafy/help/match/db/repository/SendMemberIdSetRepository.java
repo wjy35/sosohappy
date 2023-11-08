@@ -2,9 +2,8 @@ package com.ssafy.help.match.db.repository;
 
 import java.util.Set;
 
-public interface MemberMatchSetRepository {
+public interface SendMemberIdSetRepository {
     void save(Long memberId,Long matchedMember);
     void delete(Long memberId,Long matchedMember);
-
-    Set<String> getSet(Long memberId);
+    Set<Long> getSet(Long memberId);
 }
