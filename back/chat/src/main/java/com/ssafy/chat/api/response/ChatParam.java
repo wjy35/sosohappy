@@ -1,16 +1,13 @@
 package com.ssafy.chat.api.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.sql.Timestamp;
-
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
+@AllArgsConstructor
 public class ChatParam {
-    private Long memberId;
-    private String content;
-    private Timestamp timestamp;
+    private int memberId;
+    private String roomId;
+    private String message;
 }
