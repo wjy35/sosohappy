@@ -117,8 +117,13 @@ const Map = observer(({location, socket}: propsType) => {
                       <Marker
                           description="my position"
                           coordinate={{latitude: location.latitude, longitude: location.longitude}}
-                          pinColor="#37DDEB"
-                      />
+                      >
+                          <Image
+                              source={require("@/assets/sosomon/type4/Whale.png")}
+                              // source={require("@/assets/sosomon/type1/FennecFox.png")}
+                              style={{width: 100, height: 100, bottom: -20}}
+                          />
+                      </Marker>
 
                       {
                           socket.helpList.map((aroundMarker, index) => {
