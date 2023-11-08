@@ -134,7 +134,6 @@ const MyPage = observer(({socket}: propsType) => {
   useEffect(()=>{
     getProfileMonster();
     getMyCloverApi();
-
   }, [])
 
   useEffect(() => {
