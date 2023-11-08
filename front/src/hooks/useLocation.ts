@@ -10,6 +10,7 @@ interface propsType {
 function useLocation({}: propsType) {
     const [coordinate, setCoordinate] = useState<any>();
     let watchId:number;
+    const [status, setStatus] = useState(0);
 
     Geolocation.setRNConfiguration({
         authorizationLevel: 'auto',
@@ -23,9 +24,11 @@ function useLocation({}: propsType) {
                 longitude: longitude,
             })
             if (res.status === 200){
+                console.log('uselocation success');
             }
         } catch (err) {
-            console.log(err)
+            console.log('uselocation error');
+            console.log(err);
         }
     }
 
@@ -40,6 +43,7 @@ function useLocation({}: propsType) {
 
     const foregroundPositionFunc = (lati: number, longi: number) => {
         // TODO: foreground에서 사용될 작업
+        sendPosition(lati, longi)
         setCoordinate({
             latitude: lati,
             longitude: longi,
@@ -63,6 +67,7 @@ function useLocation({}: propsType) {
 
     const setBackground = () => {
         console.log('background start');
+        setStatus(2);
         stopWatchPosition();
         ReactNativeForegroundService.add_task(
             () => {
@@ -78,24 +83,16 @@ function useLocation({}: propsType) {
 
         ReactNativeForegroundService.start({
             id: 1244,
-            title: "Foreground Service",
-            message: "We are live World",
+            title: "소소하지만 소중한 행복",
+            message: "주변의 행운을 찾는 중입니다",
             icon: "ic_launcher",
-            button: true,
-            button2: true,
-            buttonText: "Button",
-            button2Text: "Anther Button",
-            buttonOnPress: "cray",
             setOnlyAlertOnce: true,
             color: "#000000",
-            progress: {
-                max: 100,
-                curr: 50,
-            },
         });
     };
 
     const setForeground = () => {
+        setStatus(1);
         ReactNativeForegroundService.remove_all_tasks(); // 앱 실행 시 백그라운드 태스크 전부 제거
         ReactNativeForegroundService.stopAll();
 
@@ -132,7 +129,7 @@ function useLocation({}: propsType) {
         );
     }
 
-    return {coordinate, setBackground, setForeground};
+    return {coordinate, setBackground, setForeground, status};
 }
 
 export default useLocation;

@@ -12,40 +12,129 @@ import SignUpInput from '@/screens/SignUpInput';
 import SignUpSeparate from '@/screens/SignUpSeparate';
 import NavigatorDummy from '@/screens/NavigatorDummy';
 import Character from '@/screens/Character';
+import {observer} from "mobx-react";
+import useStore from "@/hooks/useStore";
+import useSocket from "@/hooks/useSocket";
+import {useEffect} from "react";
+import useLocation from "@/hooks/useLocation";
+import {AppState} from "react-native";
 
 
 const Stack = createStackNavigator();
 
 interface propsType{
-  location: any;
+  // location: any;
 }
 
-const Navigation = ({location}: propsType) => {
+const Navigation = observer(({}: propsType) => {
+  const {userStore} = useStore();
+  const socket = useSocket();
+  const location = useLocation({});
+
+  useEffect(() => {
+    const appState = AppState.addEventListener('change', ()=>{
+      if (AppState.currentState === 'active' && userStore.user){
+        location.setForeground();
+      } else if (AppState.currentState === 'background' && userStore.user){
+        location.setBackground();
+      }
+    });
+    return () => {
+      appState.remove();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (location.status===0 && userStore.user){
+      location.status===0&&location.setForeground();
+    }
+  }, [userStore.user])
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false, animationEnabled: false }} initialRouteName='Main'>
         <Stack.Screen name="Dummy" component={NavigatorDummy}/>
-        <Stack.Screen name="Chat" component={Chat}/>
-        <Stack.Screen name="ChatList" component={ChatList}/>
-        <Stack.Screen name="CreateHelp" component={CreateHelp}/>
-        <Stack.Screen name="Login" component={Login}/>
-        <Stack.Screen name="Main" component={Main}/>
-        <Stack.Screen name="Map">
+        <Stack.Screen name="Chat">
           {
             props => (
-                <Map location={location} />
+                <Chat helpSocket={socket}/>
             )
           }
         </Stack.Screen>
-        <Stack.Screen name="MyPage" component={MyPage}/>
-        <Stack.Screen name="SignUpAuth" component={SignUpAuth}/>
-        <Stack.Screen name="SignUpInput" component={SignUpInput}/>
-        <Stack.Screen name="SignUpSeparate" component={SignUpSeparate}/>
-        <Stack.Screen name="Character" component={Character}/>
+        <Stack.Screen name="ChatList">
+          {
+            props => (
+                <ChatList socket={socket}/>
+            )
+          }
+        </Stack.Screen>
+        <Stack.Screen name="CreateHelp">
+          {
+            props => (
+                <CreateHelp location={location.coordinate} socket={socket}/>
+            )
+          }
+        </Stack.Screen>
+        <Stack.Screen name="Login">
+          {
+            props => (
+                <Login socket={socket}/>
+            )
+          }
+        </Stack.Screen>
+        <Stack.Screen name="Main">
+          {
+            props => (
+                <Main socket={socket}/>
+            )
+          }
+        </Stack.Screen>
+        <Stack.Screen name="Map">
+          {
+            props => (
+                <Map location={location.coordinate} socket={socket}/>
+            )
+          }
+        </Stack.Screen>
+        <Stack.Screen name="MyPage">
+          {
+            props => (
+                <MyPage socket={socket}/>
+            )
+          }
+        </Stack.Screen>
+        <Stack.Screen name="SignUpAuth">
+          {
+            props => (
+                <SignUpAuth socket={socket}/>
+            )
+          }
+        </Stack.Screen>
+        <Stack.Screen name="SignUpInput">
+          {
+            props => (
+                <SignUpInput socket={socket}/>
+            )
+          }
+        </Stack.Screen>
+        <Stack.Screen name="SignUpSeparate">
+          {
+            props => (
+                <SignUpSeparate socket={socket}/>
+            )
+          }
+        </Stack.Screen>
+        <Stack.Screen name="Character">
+          {
+            props => (
+                <Character socket={socket}/>
+            )
+          }
+        </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );
-};
+});
 
 export default Navigation;
 

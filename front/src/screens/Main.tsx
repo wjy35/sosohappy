@@ -11,14 +11,48 @@ import MainStyle from "@/styles/MainStyle";
 import {observer} from 'mobx-react';
 import useStore from "@/hooks/useStore";
 import {useNavigation} from "@react-navigation/native";
+import {useEffect} from "react";
 
-const Main = observer(() => {
+interface propsType{
+  socket: {
+    connect: Function,
+    send: Function,
+    status: String,
+    helpList: helpDetail[],
+    connected: boolean,
+    disConnect: Function,
+  };
+}
+
+interface helpDetail {
+  memberId: number;
+  nickname: string;
+  category: {
+    categoryId: number,
+    categoryName: string,
+    categoryImage: string,
+  };
+  longitude: number;
+  latitude: number;
+  content: string;
+  place: string;
+}
+
+const Main = observer(({socket}: propsType) => {
   const {userStore} = useStore();
   const navigation =  useNavigation();
 
   const goto = (next: string) => {
     userStore.user?(navigation.navigate(next)):(navigation.navigate('Login'));
   }
+
+  useEffect(() => {
+    const focusNav = navigation.addListener('focus', () => {
+      // do something
+      socket.connected&&socket.disConnect()
+    });
+    return focusNav;
+  }, [navigation]);
 
   return (
     <CommonLayout footer={true} headerType={0} nowPage={'Main'}>
@@ -88,7 +122,7 @@ const Main = observer(() => {
       </View>
 
       <View style={MainStyle.happyWrap}>
-        
+
           {
             userStore.user ?
             <View>
@@ -107,7 +141,7 @@ const Main = observer(() => {
               </Text>
             </View>
           }
-        
+
 
         <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('MyPage')}>
           <View style={MainStyle.moveMypageButton}>
