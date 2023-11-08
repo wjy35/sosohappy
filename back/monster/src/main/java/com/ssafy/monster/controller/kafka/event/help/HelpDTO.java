@@ -19,6 +19,4 @@ public class HelpDTO {
     public Timestamp createdAt;
     public Long fromMemberId;
     public Long toMemberId;
-    public double x;
-    public double y;
 }

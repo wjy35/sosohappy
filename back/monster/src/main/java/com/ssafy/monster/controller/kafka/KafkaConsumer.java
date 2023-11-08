@@ -23,9 +23,9 @@ public class KafkaConsumer {
     private final MonsterService monsterService;
 
     @KafkaListener(topics = "member-command-mysql.member.member")
-    public void memberConsume(ConsumerRecord<String,String> consumerRecord) {
+    public void memberConsume(ConsumerRecord<?,?> consumerRecord) {
         if(isEmptyEvent(consumerRecord)) return;
-        String message = consumerRecord.value();
+        String message = consumerRecord.value().toString();
 
         ObjectMapper objMapper = new ObjectMapper();
 
@@ -46,9 +46,9 @@ public class KafkaConsumer {
     }
 
     @KafkaListener(topics = "help-history-command-mysql.help_history.help_history")
-    public void helpConsume(ConsumerRecord<String,String> consumerRecord) {
+    public void helpConsume(ConsumerRecord<?,?> consumerRecord) {
         if(isEmptyEvent(consumerRecord)) return;
-        String message = consumerRecord.value();
+        String message = consumerRecord.value().toString();
 
         ObjectMapper objMapper = new ObjectMapper();
 
