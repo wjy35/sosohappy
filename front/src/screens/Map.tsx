@@ -11,81 +11,22 @@ import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 
 import MapStyle from "@/styles/MapStyle";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {helpDetail, helpSocket} from "@/types";
+import {observer} from "mobx-react";
+import useStore from "@/hooks/useStore";
 
 interface propsType{
   location: any;
-  socket: {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-  }
+  socket: helpSocket
 }
 
-interface helpDetail {
-  memberId: number;
-  nickname: string;
-  category: {
-    categoryId: number,
-    categoryName: string,
-    categoryImage: string,
-  };
-  longitude: number;
-  latitude: number;
-  content: string;
-  place: string;
-}
-
-const Map = ({location, socket}: propsType) => {
+const Map = observer(({location, socket}: propsType) => {
   const mapWidth = Dimensions.get("window").width;
   const mapHeight = Dimensions.get("window").height;
   const [bottomSheetStatus, setBottomSheetStatus] = useState<Boolean>(false);
   const [selectedHelp, setSelectedHelp] = useState<helpDetail>();
   const navigation = useNavigation();
   // 이곳에 GPS에서 가져온 내 위치 정보를 넣으면 됩니다, 지금 default 정적으로 넣은 거는 멀티캠퍼스 역삼 위도 경도입니다.
-  const [aroundPositions, setAroundPositions] = useState<helpDetail[]>([
-    {
-      memberId: 1,
-      nickname: 'test1',
-      categoryList: [{
-        categoryId: 1,
-        categoryName: '몰라',
-        categoryImage: clover,
-      }],
-      longitude: 127.036841,
-      latitude: 37.500069,
-      content: 'test1',
-      place: 'test1',
-    },
-    {
-      memberId: 2,
-      nickname: 'test2',
-      categoryList: [{
-        categoryId: 2,
-        categoryName: '몰라요',
-        categoryImage: clover,
-      }],
-      longitude: 127.046841,
-      latitude: 37.504069,
-      content: 'test2',
-      place: 'test2',
-    },
-    {
-      memberId: 3,
-      nickname: 'test3',
-      categoryList: [{
-        categoryId: 3,
-        categoryName: '몰라유',
-        categoryImage: clover,
-      }],
-      longitude: 127.032841,
-      latitude: 37.499069,
-      content: 'test3',
-      place: 'test3',
-    }
-  ]);
   const [points, setPoints] = useState<any>();
 
   const updateBottomSheetStatus = (updateStatus: Boolean) => {
