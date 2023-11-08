@@ -13,6 +13,7 @@ import com.ssafy.help.match.socket.mapper.MatchEntityMapper;
 import com.ssafy.help.match.socket.request.HelpAcceptRequest;
 import com.ssafy.help.match.socket.request.HelpMatchRequest;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
+import com.ssafy.help.match.socket.response.OtherMemberPoint;
 import com.ssafy.help.match.socket.response.PushMatchItem;
 import com.ssafy.help.match.socket.service.HelpMatchService;
 import com.ssafy.help.match.util.ObjectSerializer;
@@ -80,11 +81,16 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         HelpMatchType helpMatchType = memberSessionEntityRepository.getMatchType(memberId);
         HelpMatchStatus helpMatchStatus = memberSessionEntityRepository.getMatchStatus(memberId);
         HelpEntity helpEntity = null;
-        Point otherMemberPoint = null;
+        OtherMemberPoint otherMemberPoint = null;
 
         if (helpMatchStatus.equals(HelpMatchStatus.WAIT_COMPLETE)||helpMatchStatus.equals(HelpMatchStatus.ON_MOVE)){
             helpEntity = helpEntityRepository.findByMemberId(memberId);
-            otherMemberPoint = memberPointRepository.find(memberId);
+            Point point = memberPointRepository.find(memberId);
+            otherMemberPoint = OtherMemberPoint
+                    .builder()
+                    .longitude(point.getX())
+                    .latitude(point.getY())
+                    .build();
         }
 
         MatchStatusResponse response = MatchStatusResponse
