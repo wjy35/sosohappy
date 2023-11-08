@@ -28,6 +28,8 @@ const Map = observer(({location, socket}: propsType) => {
   const navigation = useNavigation();
   // 이곳에 GPS에서 가져온 내 위치 정보를 넣으면 됩니다, 지금 default 정적으로 넣은 거는 멀티캠퍼스 역삼 위도 경도입니다.
   const [points, setPoints] = useState<any>();
+  const [loading, setLoading] = useState(false);
+  const {userStore} = useStore();
 
   const updateBottomSheetStatus = (updateStatus: Boolean) => {
     setBottomSheetStatus(updateStatus);
@@ -39,7 +41,7 @@ const Map = observer(({location, socket}: propsType) => {
   }
 
   //Todo : 현재는 파이낸셜센터 - 멀티캠퍼스 정적 위경도 넣어줌 (추후 GPS에 따른 위경도 변경)
-  const getArrivalToDesinationPointLine = async () => {
+  const getArrivalToDesinationPointLine = async (longitude: number, latitude: number) => {
     const options = {
       method: 'POST',
       headers: {
@@ -53,9 +55,9 @@ const Map = observer(({location, socket}: propsType) => {
         angle: 20,
         speed: 30,
         endPoiId: '10001',
-        endX: 127.036841,
-        endY: 37.500069,
-        passList: `${location.longitude},${location.latitude}_127.036841,37.500069`,
+        endX: longitude,
+        endY: latitude,
+        passList: `${location.longitude},${location.latitude}_${longitude},${latitude}`,
         reqCoordType: 'WGS84GEO',
         startName: '%EC%B6%9C%EB%B0%9C',
         endName: '%EB%8F%84%EC%B0%A9',
@@ -67,7 +69,10 @@ const Map = observer(({location, socket}: propsType) => {
 
     fetch('https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1&callback=function', options)
       .then(response => response.json())
-      .then(response => setPoints(response))
+      .then(response => {
+          setPoints(response);
+          setLoading(false);
+      })
       .catch(err => console.error(err));
   }
 
@@ -130,8 +135,7 @@ const Map = observer(({location, socket}: propsType) => {
                           })
                       }
                       {
-                          points?.features?.map((point, index) => {
-                              console.log(point);
+                          (!loading&&socket.status==='ON_MOVE')&&points?.features?.map((point, index) => {
                               if(point.geometry.type === "LineString"){
                                   const pathCoordinates = [];
 
@@ -174,6 +178,6 @@ const Map = observer(({location, socket}: propsType) => {
           </CommonLayout>
       </>
   );
-};
+});
 
 export default Map;
