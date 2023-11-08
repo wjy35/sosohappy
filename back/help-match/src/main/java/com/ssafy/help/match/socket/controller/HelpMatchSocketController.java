@@ -1,8 +1,8 @@
 package com.ssafy.help.match.socket.controller;
 
+import com.ssafy.help.match.api.response.FormattedResponse;
 import com.ssafy.help.match.socket.exception.UnAcceptableException;
-import com.ssafy.help.match.socket.request.HelpAcceptRequest;
-import com.ssafy.help.match.socket.request.HelpMatchRequest;
+import com.ssafy.help.match.socket.request.*;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
 import com.ssafy.help.match.socket.response.PushMatchListResponse;
 import com.ssafy.help.match.util.ObjectSerializer;
@@ -58,6 +58,74 @@ public class HelpMatchSocketController{
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/arrival")
+    ResponseEntity<?> arrival(@RequestBody HelpArrivalRequest helpArrivalRequest){
+        FormattedResponse response = null;
 
+        try{
+            helpMatchService.arrival(helpArrivalRequest.getMemberId());
+            response = FormattedResponse
+                    .builder()
+                    .status("success")
+                    .message("SUCCESS ARRIVAL")
+                    .build();
+
+        }catch (Exception e){
+            response = FormattedResponse
+                    .builder()
+                    .status("fail")
+                    .message("FAIL ARRIVAL")
+                    .build();
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @PostMapping("/complete")
+    ResponseEntity<?> complete(@RequestBody HelpCompleteRequest helpCompleteRequest){
+        FormattedResponse response = null;
+
+        try{
+            helpMatchService.complete(helpCompleteRequest.getMemberId());
+            response = FormattedResponse
+                    .builder()
+                    .status("success")
+                    .message("SUCCESS COMPLETE")
+                    .build();
+        }catch (Exception e){
+            response = FormattedResponse
+                    .builder()
+                    .status("fail")
+                    .message("FAIL COMPLETE")
+                    .build();
+            return new ResponseEntity<>(response,HttpStatus.BAD_GATEWAY);
+        }
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @PostMapping("/cancel")
+    ResponseEntity<?> cancel(@RequestBody HelpCancelRequest helpCancelRequest){
+        FormattedResponse response;
+
+        try{
+            helpMatchService.cancel(helpCancelRequest.getMemberId());
+            response = FormattedResponse
+                    .builder()
+                    .status("success")
+                    .message("SUCCESS CANCEL")
+                    .build();
+        }catch (Exception e){
+            response = FormattedResponse
+                    .builder()
+                    .status("fail")
+                    .message("FAIL CANCEL")
+                    .build();
+            return new ResponseEntity<>(response,HttpStatus.BAD_GATEWAY);
+        }
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
 }

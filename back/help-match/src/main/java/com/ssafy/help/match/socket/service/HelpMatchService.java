@@ -10,6 +10,8 @@ public interface HelpMatchService {
     MatchStatusResponse getStatus(Long memberId);
     void match(HelpMatchRequest helpMatchRequest);
     List<PushMatchItem> list(Long memberId);
-
     void accept(HelpAcceptRequest helpAcceptRequest);
+    void arrival(Long memberId);
+    void complete(Long memberId);
+    void cancel(Long memberId);
 }

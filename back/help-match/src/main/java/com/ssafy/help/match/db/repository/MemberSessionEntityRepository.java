@@ -69,4 +69,20 @@ public class MemberSessionEntityRepository {
     public boolean isConnected(Long memberId){
         return (boolean)redisTemplate.opsForHash().get(PREFIX+memberId,"isConnected");
     }
+
+    public boolean isOnMove(Long memberId){
+        return isHelpMatchStatusEqual(memberId,HelpMatchStatus.ON_MOVE);
+    }
+
+    public boolean isDefault(Long memberId){
+        return isHelpMatchStatusEqual(memberId,HelpMatchStatus.DEFAULT);
+    }
+
+    public boolean isWaitComplete(Long memberId){
+        return isHelpMatchStatusEqual(memberId,HelpMatchStatus.WAIT_COMPLETE);
+    }
+
+    private boolean isHelpMatchStatusEqual(Long memberId,HelpMatchStatus helpMatchStatus){
+        return HelpMatchStatus.valueOf((String)redisTemplate.opsForHash().get(PREFIX+memberId,"matchStatus")).equals(helpMatchStatus);
+    }
 }
