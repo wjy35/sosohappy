@@ -4,6 +4,7 @@ import com.ssafy.help.match.api.response.FormattedResponse;
 import com.ssafy.help.match.socket.exception.UnAcceptableException;
 import com.ssafy.help.match.socket.request.HelpAcceptRequest;
 import com.ssafy.help.match.socket.request.HelpArrivalRequest;
+import com.ssafy.help.match.socket.request.HelpCompleteRequest;
 import com.ssafy.help.match.socket.request.HelpMatchRequest;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
 import com.ssafy.help.match.socket.response.PushMatchListResponse;
@@ -78,7 +79,30 @@ public class HelpMatchSocketController{
                     .status("fail")
                     .message("FAIL ARRIVAL")
                     .build();
-            return new ResponseEntity<>(response,HttpStatus.OK);
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @PostMapping("/complete")
+    ResponseEntity<?> complete(@RequestBody HelpCompleteRequest helpCompleteRequest){
+        FormattedResponse response = null;
+
+        try{
+            helpMatchService.complete(helpCompleteRequest.getMemberId());
+            response = FormattedResponse
+                    .builder()
+                    .status("success")
+                    .message("SUCCESS COMPLETE")
+                    .build();
+        }catch (Exception e){
+            response = FormattedResponse
+                    .builder()
+                    .status("fail")
+                    .message("FAIL COMPLETE")
+                    .build();
+            return new ResponseEntity<>(response,HttpStatus.BAD_GATEWAY);
         }
 
         return new ResponseEntity<>(response,HttpStatus.OK);
