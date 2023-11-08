@@ -1,7 +1,7 @@
 import {View, Text, TouchableOpacity, Alert} from "react-native"
 import SideMenuStyle from "@/styles/SideMenuStyle";
 import {useNavigation} from "@react-navigation/native";
-import { sosohappyWhiteLogo, user, gear, chat, peace, home, close } from "@/assets/icons/icons";
+import { sosohappyWhiteLogo, user, gear, chat, peace, home, close, menuDocs } from "@/assets/icons/icons";
 import { SvgXml } from "react-native-svg";
 import {observer} from "mobx-react";
 import useStore from "@/hooks/useStore";
@@ -110,6 +110,16 @@ const SideMenu = observer(({closeSide, nowPage}: props) => {
                                 height={24}
                             />
                             <Text style={[SideMenuStyle.menuItemText]}>정보수정</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Certificate')}>
+                        <View style={[SideMenuStyle.menuList]}>
+                            <SvgXml
+                                xml={menuDocs}
+                                width={24}
+                                height={24}
+                            />
+                            <Text style={[SideMenuStyle.menuItemText]}>증명서 발급</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
