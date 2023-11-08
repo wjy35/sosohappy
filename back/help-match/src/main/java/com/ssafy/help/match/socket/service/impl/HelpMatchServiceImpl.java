@@ -45,6 +45,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         Long helperMemberId = helpAcceptRequest.getHelperMemberId();
         Long disabledMemberId = helpAcceptRequest.getDisabledMemberId();
 
+        // ToDo 둘이 매칭 된 상태인지 체크
         SendMatchEntity sendMatchEntity = sendMatchEntityRepository.getAndDeleteByMemberId(disabledMemberId);
         isAcceptableDisabled(disabledMemberId);
         isAcceptableHelper(helperMemberId);
@@ -117,6 +118,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
 
     @Override
     public void match(HelpMatchRequest helpMatchRequest) {
+        // ToDo 장애 여부 체크
         saveAndChangeStatus(helpMatchRequest);
 
         Set<Long> receiveMemberIdSet = new HashSet<>();
@@ -172,6 +174,30 @@ public class HelpMatchServiceImpl implements HelpMatchService {
                 .build();
 
         redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_PREFIX+uuid,objectSerializer.serialize(eventDTO));
+    }
+
+    @Override
+    public void arrival(Long memberId) {
+        if(!memberSessionEntityRepository.getMatchStatus(memberId).equals(HelpMatchStatus.ON_MOVE)) throw new RuntimeException();
+
+        memberSessionEntityRepository.setMatchStatus(memberId,HelpMatchStatus.DEFAULT);
+        memberSessionEntityRepository.setMatchType(memberId,HelpMatchType.NONE);
+
+        emitStatusChangeEvent(memberId);
+    }
+
+    @Async
+    void emitStatusChangeEvent(Long memberId){
+        if(memberSessionEntityRepository.isConnected(memberId)){
+            String uuid = memberSessionEntityRepository.getServerUUID(memberId);
+
+            StatusChangeEventDTO eventDTO = StatusChangeEventDTO
+                    .builder()
+                    .memberId(memberId)
+                    .build();
+
+            redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_PREFIX +uuid, objectSerializer.serialize(eventDTO));
+        }
     }
 
     @Async
