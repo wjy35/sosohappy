@@ -14,7 +14,6 @@ import MyPageStyle from "@/styles/MyPageStyle";
 
 import { WebView } from "react-native-webview";
 import SosomonDictionary from "@/components/SosomonDictionary";
-import {observer} from "mobx-react";
 import useStore from "@/store/store";
 import monsterApi from "@/apis/monsterApi";
 import memberApi from "@/apis/memberApi";
@@ -45,7 +44,7 @@ interface helpDetail {
   place: string;
 }
 
-const MyPage = observer(({socket}: propsType) => {
+const MyPage = (({socket}: propsType) => {
   const navigation = useNavigation();
   const [modalState, setModalState] = useState<Boolean>(false);
   const {userInfo} = useStore();

@@ -2,8 +2,7 @@ import React, {useEffect} from 'react';
 import Navigation from '@/navigators/Navigation';
 import useLocation from "@/hooks/useLocation";
 import {AppState} from "react-native";
-import {Provider} from "mobx-react";
-import userStore from "@/store/userStore";
+import useStore from "@/store/store";
 
 function App(): JSX.Element {
     // const location = useLocation({});
@@ -22,9 +21,9 @@ function App(): JSX.Element {
     // }, []);
 
     return (
-    <Provider userStore={userStore}>
-      <Navigation/>
-    </Provider>
+      <>
+        <Navigation/>
+      </>
     );
 }
 export default App;
