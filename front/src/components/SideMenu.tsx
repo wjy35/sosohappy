@@ -13,7 +13,7 @@ interface props {
     isVisible: boolean;
 }
 
-const SideMenu = (({closeSide, nowPage, isVisible}: props) => {
+const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
     const navigation = useNavigation();
     const {userInfo, logout} = useStore();
 
@@ -160,6 +160,6 @@ const SideMenu = (({closeSide, nowPage, isVisible}: props) => {
             </Modal>
         </>
     );
-});
+};
 
 export default SideMenu;
