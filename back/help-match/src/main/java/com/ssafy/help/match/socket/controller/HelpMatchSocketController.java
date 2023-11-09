@@ -1,5 +1,8 @@
 package com.ssafy.help.match.socket.controller;
 
+import com.ssafy.help.match.api.request.PointSaveRequest;
+import com.ssafy.help.match.api.response.FormattedResponse;
+import com.ssafy.help.match.api.service.MemberPointManageService;
 import com.ssafy.help.match.socket.request.*;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
 import com.ssafy.help.match.socket.response.PushMatchListResponse;
@@ -7,6 +10,9 @@ import com.ssafy.help.match.socket.service.HelpService;
 import com.ssafy.help.match.util.ObjectSerializer;
 import com.ssafy.help.match.socket.service.HelpMatchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.geo.Point;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -21,6 +27,7 @@ public class HelpMatchSocketController{
     private final ObjectSerializer objectSerializer;
     private final SimpMessageSendingOperations simpMessageSendingOperations;
     private final HelpMatchService helpMatchService;
+    private final MemberPointManageService memberPointManageService;
 
     @SubscribeMapping("/topic/match/status/{memberId}")
     void status(@DestinationVariable Long memberId){
@@ -46,5 +53,14 @@ public class HelpMatchSocketController{
     @PostMapping("/cancel/match")
     void cancel(Long memberId){
         helpMatchService.cancel(memberId);
+    }
+
+    @MessageMapping("/point")
+    void save(@Payload PointSaveRequest pointSaveRequest){
+        memberPointManageService.save(
+                new Point(pointSaveRequest.getLongitude(), pointSaveRequest.getLatitude()),
+                pointSaveRequest.getMemberId(),
+                pointSaveRequest.getOtherMemberId()
+        );
     }
 }
