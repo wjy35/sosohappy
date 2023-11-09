@@ -146,29 +146,13 @@ const Character = ({socket}: propsType) => {
         <CommonLayout headerType={0} footer={true}>
 
             <View style={CharacterStyle.characterTitleWrap}>
-                    {
-                        userInfo.name &&
-                        <Text style={CharacterStyle.characterTitle}>
-                            <Text style={CharacterStyle.characterTitleMyName}>{userInfo.name}</Text> 님 어떤 캐릭터를{"\n"}
-                            성장시킬까요?
-                        </Text>
-                    }
-                <TouchableOpacity activeOpacity={0.7} onPress={() => feedSosomon()}>
-                    <View style={CharacterStyle.feedButton}>
-                        {
-                            categoryType === CategoryType.army && myMonsters &&
-                            <Text style={CharacterStyle.feedButtonText}>육지동물에게 먹이주기</Text>
-                        }
-                        {
-                            categoryType === CategoryType.navy && myMonsters &&
-                            <Text style={CharacterStyle.feedButtonText}>해양동물에게 먹이주기</Text>
-                        }
-                        {
-                            categoryType === CategoryType.airForce && myMonsters &&
-                            <Text style={CharacterStyle.feedButtonText}>비행동물에게 먹이주기</Text>
-                        }
-                    </View>
-                </TouchableOpacity>
+                {
+                    userInfo.name &&
+                    <Text style={CharacterStyle.characterTitle}>
+                        <Text style={CharacterStyle.characterTitleMyName}>{userInfo.name}</Text> 님 어떤 캐릭터를{"\n"}
+                        성장시킬까요?
+                    </Text>
+                }
             </View>
 
             <View style={CharacterStyle.feedAnimalWrap}>
