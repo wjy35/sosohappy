@@ -1,5 +1,7 @@
 package com.ssafy.help.match.config;
 
+import com.ssafy.help.match.event.emitter.EventTopicPrefix;
+import com.ssafy.help.match.event.listener.PointChangeEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -73,6 +75,7 @@ public class RedisConfig {
             StatusChangeEventListener statusChangeEventListener,
             MatchPushEventListener matchPushEventListener,
             MatchPopEventListener matchPopEventListener,
+            PointChangeEventListener pointChangeEventListener,
             RedisUUID redisUUID
     ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
@@ -80,6 +83,7 @@ public class RedisConfig {
         container.addMessageListener(matchPushEventListener, new ChannelTopic(MATCH_PUSH_EVENT_TOPIC_PREFIX+redisUUID.get()));
         container.addMessageListener(matchPopEventListener, new ChannelTopic(MATCH_POP_EVENT_TOPIC_PREFIX+redisUUID.get()));
         container.addMessageListener(statusChangeEventListener, new ChannelTopic(STATUS_CHANGE_EVENT_TOPIC_PREFIX+redisUUID.get()));
+        container.addMessageListener(pointChangeEventListener, new ChannelTopic(EventTopicPrefix.POINT_CHANGE+redisUUID.get()));
         return container;
     }
 
