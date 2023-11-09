@@ -43,7 +43,7 @@ const CommonLayout = ({footer, headerType, nowPage, children} : props) => {
       const unsubscribe = messaging().onMessage(async remoteMessage => {
         console.log('[Remote Message] ', JSON.stringify(remoteMessage));
       });
-  
+
       return unsubscribe;
     }, []);
 
@@ -54,16 +54,14 @@ const CommonLayout = ({footer, headerType, nowPage, children} : props) => {
               edges={["top", "right", "bottom", "left"]}
               style={{flex: 1}}
             >
-              <Header headerType={headerType} openSide={openSide}/>
-              {
-                isVisible && (<SideMenu closeSide={closeSide} nowPage={nowPage}/>)
-              }
-              <ScrollView>
-                {children}
-                {
-                  footer && (<Footer />)
-                }
-              </ScrollView>
+                <Header headerType={headerType} openSide={openSide}/>
+                <SideMenu closeSide={closeSide} nowPage={nowPage} isVisible={isVisible}/>
+                <ScrollView>
+                    {children}
+                    {
+                      footer && (<Footer />)
+                    }
+                </ScrollView>
             </SafeAreaView>
           </SafeAreaProvider>
         </>

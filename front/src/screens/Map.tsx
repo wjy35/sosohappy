@@ -12,15 +12,14 @@ import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 import MapStyle from "@/styles/MapStyle";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {helpDetail, helpSocket} from "@/types";
-import {observer} from "mobx-react";
-import useStore from "@/hooks/useStore";
+import useStore from "@/store/store";
 
 interface propsType{
   location: any;
   socket: helpSocket
 }
 
-const Map = observer(({location, socket}: propsType) => {
+const Map = ({location, socket}: propsType) => {
   const mapWidth = Dimensions.get("window").width;
   const mapHeight = Dimensions.get("window").height;
   const [bottomSheetStatus, setBottomSheetStatus] = useState<Boolean>(false);
@@ -29,7 +28,7 @@ const Map = observer(({location, socket}: propsType) => {
   // 이곳에 GPS에서 가져온 내 위치 정보를 넣으면 됩니다, 지금 default 정적으로 넣은 거는 멀티캠퍼스 역삼 위도 경도입니다.
   const [points, setPoints] = useState<any>();
   const [loading, setLoading] = useState(false);
-  const {userStore} = useStore();
+  const {userInfo} = useStore();
 
   const updateBottomSheetStatus = (updateStatus: Boolean) => {
     setBottomSheetStatus(updateStatus);
@@ -162,7 +161,7 @@ const Map = observer(({location, socket}: propsType) => {
                   </MapView>
               </View>
               {
-                  (socket.status==='DEFAULT' && userStore.user.disabled) && (
+                  (socket.status==='DEFAULT' && userInfo.disabled) && (
                       <TouchableOpacity activeOpacity={0.7}>
                           <View style={MapStyle.createHelpWrap}>
                               <Image
@@ -188,6 +187,6 @@ const Map = observer(({location, socket}: propsType) => {
           </CommonLayout>
       </>
   );
-});
+};
 
 export default Map;
