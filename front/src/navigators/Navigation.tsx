@@ -12,7 +12,9 @@ import SignUpInput from '@/screens/SignUpInput';
 import SignUpSeparate from '@/screens/SignUpSeparate';
 import NavigatorDummy from '@/screens/NavigatorDummy';
 import Character from '@/screens/Character';
+
 import useStore from "@/store/store";
+import Certificate from '@/screens/Certificate';
 import useSocket from "@/hooks/useSocket";
 import {useEffect} from "react";
 import useLocation from "@/hooks/useLocation";
@@ -127,6 +129,13 @@ const Navigation = (({}: propsType) => {
           {
             props => (
                 <Character socket={socket}/>
+            )
+          }
+        </Stack.Screen>
+        <Stack.Screen name="Certificate">
+          {
+            props => (
+                <Certificate socket={socket}/>
             )
           }
         </Stack.Screen>
