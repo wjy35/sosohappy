@@ -18,8 +18,12 @@ public class HelpMatchController {
     private final MemberPointManageService memberPointManageService;
 
     @PostMapping("/point")
-    ResponseEntity<FormattedResponse> save(@RequestHeader Long memberId, @RequestBody PointSaveRequest pointSaveRequest){
-        memberPointManageService.save(new Point(pointSaveRequest.getLongitude(), pointSaveRequest.getLatitude()),memberId);
+    ResponseEntity<FormattedResponse> save(@RequestBody PointSaveRequest pointSaveRequest){
+        memberPointManageService.save(
+                new Point(pointSaveRequest.getLongitude(), pointSaveRequest.getLatitude()),
+                pointSaveRequest.getMemberId(),
+                pointSaveRequest.getOtherMemberId()
+        );
 
         FormattedResponse response = FormattedResponse
                 .builder()
