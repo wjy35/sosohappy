@@ -1,2 +1,4 @@
-package com.ssafy.help.match.event.dto;public interface EventDTO {
+package com.ssafy.help.match.event.dto;
+
+public interface EventDTO {
 }
