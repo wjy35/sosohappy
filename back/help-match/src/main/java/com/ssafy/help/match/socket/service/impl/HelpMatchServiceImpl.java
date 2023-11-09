@@ -3,14 +3,11 @@ package com.ssafy.help.match.socket.service.impl;
 import com.ssafy.help.match.db.entity.HelpEntity;
 import com.ssafy.help.match.db.entity.HelpMatchStatus;
 import com.ssafy.help.match.db.entity.HelpMatchType;
-import com.ssafy.help.match.db.entity.SendMatchEntity;
 import com.ssafy.help.match.db.repository.*;
 import com.ssafy.help.match.socket.dto.MatchPopEventDTO;
 import com.ssafy.help.match.socket.dto.MatchPushEventDTO;
 import com.ssafy.help.match.socket.dto.StatusChangeEventDTO;
-import com.ssafy.help.match.socket.mapper.HelpEntityMapper;
 import com.ssafy.help.match.socket.mapper.MatchEntityMapper;
-import com.ssafy.help.match.socket.request.HelpAcceptRequest;
 import com.ssafy.help.match.socket.request.HelpMatchRequest;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
 import com.ssafy.help.match.socket.response.OtherMemberPoint;
@@ -18,6 +15,7 @@ import com.ssafy.help.match.socket.response.PushMatchItem;
 import com.ssafy.help.match.socket.service.HelpMatchService;
 import com.ssafy.help.match.util.ObjectSerializer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.Point;
 import org.springframework.data.redis.connection.RedisGeoCommands;
@@ -29,51 +27,36 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class HelpMatchServiceImpl implements HelpMatchService {
+
+    @Value("${redis.topic.match-push-event.prefix}")
+    public String MATCH_PUSH_EVENT_TOPIC_PREFIX;
+
+    @Value("${redis.topic.match-pop-event.prefix}")
+    public String MATCH_POP_EVENT_TOPIC_PREFIX;
+
+    @Value("${redis.topic.status-change-event.prefix}")
+    public String STATUS_CHANGE_EVENT_TOPIC_PREFIX;
+
     private final MemberSessionEntityRepository memberSessionEntityRepository;
     private final MemberPointRepository memberPointRepository;
     private final SendMemberIdSetRepository sendMemberIdSetRepository;
     private final SendMatchEntityRepository sendMatchEntityRepository;
     private final RedisTemplate<String,String> redisTemplate;
-    private final String MATCH_PUSH_EVENT_PREFIX ="matchPushEvent:";
-    private final String MATCH_POP_EVENT_PREFIX = "matchPopEvent:";
-    private final String STATUS_CHANGE_EVENT_PREFIX="statusChangeEvent:";
     private final ObjectSerializer objectSerializer;
     private final double[] maxDistanceList = {500d,1000d,1500d};
     private final HelpEntityRepository helpEntityRepository;
 
     @Override
-    public void accept(HelpAcceptRequest helpAcceptRequest) {
-        Long helperMemberId = helpAcceptRequest.getHelperMemberId();
-        Long disabledMemberId = helpAcceptRequest.getDisabledMemberId();
+    public void cancel(Long memberId) {
+        if(!memberSessionEntityRepository.isOnMatchProgress(memberId)) return;
 
-        // ToDo 둘이 매칭 된 상태인지 체크
-        SendMatchEntity sendMatchEntity = sendMatchEntityRepository.getAndDeleteByMemberId(disabledMemberId);
-        isAcceptableDisabled(disabledMemberId);
-        isAcceptableHelper(helperMemberId);
+        memberSessionEntityRepository.setMatchStatus(memberId,HelpMatchStatus.DEFAULT);
+        memberSessionEntityRepository.setMatchType(memberId,HelpMatchType.NONE);
+        sendMatchEntityRepository.getAndDeleteByMemberId(memberId);
+        emitStatusChangeEvent(memberId);
 
-        try {
-            memberSessionEntityRepository.setMatchStatus(helperMemberId, HelpMatchStatus.ON_MOVE);
-            memberSessionEntityRepository.setMatchType(helperMemberId,HelpMatchType.SINGLE);
-            memberSessionEntityRepository.setMatchStatus(disabledMemberId, HelpMatchStatus.WAIT_COMPLETE);
-
-            HelpEntity disabledHelpEntity = HelpEntityMapper.INSTANCE.matchToHelp(helperMemberId, sendMatchEntity);
-            HelpEntity helperHelpEntity = HelpEntityMapper.INSTANCE.matchToHelp(disabledMemberId, sendMatchEntity);
-
-            helpEntityRepository.save(disabledMemberId, disabledHelpEntity);
-            helpEntityRepository.save(helperMemberId, helperHelpEntity);
-        }catch (Exception e){
-            memberSessionEntityRepository.setMatchStatus(helperMemberId, HelpMatchStatus.ON_MATCH_PROGRESS);
-            memberSessionEntityRepository.setMatchStatus(disabledMemberId, HelpMatchStatus.DEFAULT);
-
-            helpEntityRepository.getAndDeleteByMemberId(disabledMemberId);
-            helpEntityRepository.getAndDeleteByMemberId(helperMemberId);
-        }
-
-        sendHelpEntity(helperMemberId, HelpMatchStatus.ON_MOVE);
-        sendHelpEntity(disabledMemberId, HelpMatchStatus.WAIT_COMPLETE);
-
-        sendMatchEntityRepository.getAndDeleteReceiveMemberIdSet(disabledMemberId)
-                .forEach((receiveMemberId)-> emitMatchPopEvent(disabledMemberId,receiveMemberId));
+        sendMatchEntityRepository.getAndDeleteReceiveMemberIdSet(memberId)
+                .forEach((receiveMemberId)-> emitMatchPopEvent(memberId,receiveMemberId));
     }
 
     @Override
@@ -137,6 +120,11 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         sendMatchEntityRepository.saveReceiveMemberIdSet(helpMatchRequest.getMemberId(), receiveMemberIdSet);
     }
 
+    @Override
+    public HelpMatchStatus getSimpStatus(Long memberId) {
+        return memberSessionEntityRepository.getMatchStatus(memberId);
+    }
+
     private void saveAndChangeStatus(HelpMatchRequest helpMatchRequest) {
         StatusChangeEventDTO statusChangeEventDTO = StatusChangeEventDTO
                 .builder()
@@ -151,9 +139,8 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         sendMatchEntityRepository.save(MatchEntityMapper.INSTANCE.toEntity(helpMatchRequest));
 
         String uuid = memberSessionEntityRepository.getServerUUID(helpMatchRequest.getMemberId());
-        redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_PREFIX+uuid, objectSerializer.serialize(statusChangeEventDTO));
+        redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_TOPIC_PREFIX +uuid, objectSerializer.serialize(statusChangeEventDTO));
     }
-
 
     private void matchInRange(Long memberId, Point point, double maxDistance,Set<Long> receiveMemberIdSet) {
         Long searchedMemberId;
@@ -170,68 +157,19 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     }
 
     @Async
-    void sendHelpEntity(Long memberId, HelpMatchStatus helpMatchStatus){
-        String uuid = memberSessionEntityRepository.getServerUUID(memberId);
-        StatusChangeEventDTO eventDTO = StatusChangeEventDTO
-                .builder()
-                .memberId(memberId)
-                .helpMatchStatus(helpMatchStatus)
-                .helpMatchType(HelpMatchType.SINGLE)
-                .build();
+    void emitMatchPopEvent(Long memberId, Long receiveMemberId){
+        sendMemberIdSetRepository.delete(receiveMemberId,memberId);
 
-        redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_PREFIX+uuid,objectSerializer.serialize(eventDTO));
-    }
+        if(memberSessionEntityRepository.isConnected(receiveMemberId)){
+            String uuid = memberSessionEntityRepository.getServerUUID(receiveMemberId);
 
-    @Override
-    public void arrival(Long memberId) {
-        if(!memberSessionEntityRepository.isOnMove(memberId)) throw new RuntimeException();
-
-        memberSessionEntityRepository.setMatchStatus(memberId,HelpMatchStatus.DEFAULT);
-        memberSessionEntityRepository.setMatchType(memberId,HelpMatchType.NONE);
-        helpEntityRepository.getAndDeleteByMemberId(memberId);
-
-        emitStatusChangeEvent(memberId);
-    }
-
-
-    @Override
-    public void complete(Long memberId) {
-        if(!memberSessionEntityRepository.isWaitComplete(memberId)) throw new RuntimeException();
-
-        memberSessionEntityRepository.setMatchStatus(memberId,HelpMatchStatus.DEFAULT);
-        memberSessionEntityRepository.setMatchType(memberId,HelpMatchType.NONE);
-        emitStatusChangeEvent(memberId);
-
-        Optional.ofNullable(helpEntityRepository.getAndDeleteByMemberId(memberId))
-                .ifPresent((helpEntity)->{
-                    Long otherMemberId = helpEntity.getOtherMemberId();
-                    if(memberSessionEntityRepository.isOnMove(otherMemberId)) {
-                        memberSessionEntityRepository.setMatchStatus(otherMemberId,HelpMatchStatus.DEFAULT);
-                        memberSessionEntityRepository.setMatchType(otherMemberId,HelpMatchType.NONE);
-                        helpEntityRepository.getAndDeleteByMemberId(otherMemberId);
-                        emitStatusChangeEvent(otherMemberId);
-                    }
-                });
-
-        System.out.println("commit");
-    }
-
-    @Override
-    public void cancel(Long memberId) {
-        if(memberSessionEntityRepository.isDefault(memberId)) return;
-        memberSessionEntityRepository.setMatchStatus(memberId,HelpMatchStatus.DEFAULT);
-        memberSessionEntityRepository.setMatchType(memberId,HelpMatchType.NONE);
-        emitStatusChangeEvent(memberId);
-
-        Optional.ofNullable(helpEntityRepository.getAndDeleteByMemberId(memberId))
-                .ifPresent((helpEntity -> {
-                    Long otherMemberId = helpEntity.getOtherMemberId();
-                    if(memberSessionEntityRepository.isDefault(otherMemberId)) return;
-                    memberSessionEntityRepository.setMatchStatus(otherMemberId,HelpMatchStatus.DEFAULT);
-                    memberSessionEntityRepository.setMatchType(otherMemberId,HelpMatchType.NONE);
-                    helpEntityRepository.getAndDeleteByMemberId(otherMemberId);
-                    emitStatusChangeEvent(otherMemberId);
-                }));
+            MatchPopEventDTO eventDTO = MatchPopEventDTO
+                    .builder()
+                    .memberId(memberId)
+                    .matchedMemberId(receiveMemberId)
+                    .build();
+            redisTemplate.convertAndSend(MATCH_POP_EVENT_TOPIC_PREFIX +uuid, objectSerializer.serialize(eventDTO));
+        }
     }
 
     @Async
@@ -244,23 +182,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
                     .memberId(memberId)
                     .build();
 
-            redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_PREFIX +uuid, objectSerializer.serialize(eventDTO));
-        }
-    }
-
-    @Async
-    void emitMatchPopEvent(Long memberId, Long receiveMemberId){
-        sendMemberIdSetRepository.delete(receiveMemberId,memberId);
-
-        if(memberSessionEntityRepository.isConnected(receiveMemberId)){
-            String uuid = memberSessionEntityRepository.getServerUUID(receiveMemberId);
-
-            MatchPopEventDTO eventDTO = MatchPopEventDTO
-                    .builder()
-                    .memberId(memberId)
-                    .matchedMemberId(receiveMemberId)
-                    .build();
-            redisTemplate.convertAndSend(MATCH_POP_EVENT_PREFIX +uuid, objectSerializer.serialize(eventDTO));
+            redisTemplate.convertAndSend(STATUS_CHANGE_EVENT_TOPIC_PREFIX +uuid, objectSerializer.serialize(eventDTO));
         }
     }
 
@@ -277,21 +199,9 @@ public class HelpMatchServiceImpl implements HelpMatchService {
                     .matchedMemberId(searchedMemberId)
                     .build();
 
-            redisTemplate.convertAndSend(MATCH_PUSH_EVENT_PREFIX +uuid, objectSerializer.serialize(matchPushEventDTO));
+            redisTemplate.convertAndSend(MATCH_PUSH_EVENT_TOPIC_PREFIX +uuid, objectSerializer.serialize(matchPushEventDTO));
         }else{
             // ToDo Notification Event
-        }
-    }
-
-    private void isAcceptableHelper(Long memberId){
-        if(!memberSessionEntityRepository.getMatchStatus(memberId).equals(HelpMatchStatus.DEFAULT)){
-            throw new RuntimeException();
-        }
-    }
-
-    private void isAcceptableDisabled(Long memberId){
-        if(!memberSessionEntityRepository.getMatchStatus(memberId).equals(HelpMatchStatus.ON_MATCH_PROGRESS)){
-            throw new RuntimeException();
         }
     }
 
