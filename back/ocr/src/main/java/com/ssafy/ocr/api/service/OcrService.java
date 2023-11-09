@@ -3,6 +3,9 @@ package com.ssafy.ocr.api.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.ocr.api.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,8 +25,7 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.*;
 
-import static com.ssafy.ocr.api.exception.ErrorCode.INTERNAL_SERVER_ERROR;
-import static com.ssafy.ocr.api.exception.ErrorCode.INVALID_IMAGE_ERROR;
+import static com.ssafy.ocr.api.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -35,13 +37,19 @@ public class OcrService {
     private final String[] keywords = {"문","서","확","인","번","호"};
     private Matcher matcher;
 
+    private final WebDriver driver;
+
     @Value("${ocr.api.url}")
     private String apiURL;
 
     @Value("${ocr.secret.key}")
     private String secretKey;
 
-    public void checkImage(MultipartFile multipartFile,String name) {
+    @Value("${DISABLED_CONFIRM_URL}")
+    private String baseURL;
+
+
+    public String checkImage(MultipartFile multipartFile) {
 
         List<String> result = new ArrayList<>();
         String originalFileName = multipartFile.getOriginalFilename();
@@ -60,7 +68,49 @@ public class OcrService {
             throw new CustomException(INVALID_IMAGE_ERROR);
         }
 
+        return documentNumber;
+
     }
+
+    public boolean checkDocument(String documentNumber, String name) throws InterruptedException {
+        if(documentNumber == null || name == null) throw new CustomException(EMPTY_DOCUMENT_INFO);
+        String[] parts = documentNumber.split("-");
+
+        driver.get(baseURL);
+
+        try{
+
+            WebElement target = driver.findElement(By.cssSelector("#doc_ref_no1"));
+            target.sendKeys(parts[0]);
+            target = driver.findElement(By.cssSelector("#doc_ref_no2"));
+            target.sendKeys(parts[1]);
+            target = driver.findElement(By.cssSelector("#doc_ref_no3"));
+            target.sendKeys(parts[2]);
+            target = driver.findElement(By.cssSelector("#doc_ref_no4"));
+            target.sendKeys(parts[3]);
+
+            target = driver.findElement(By.cssSelector("#form2 > p > span.ibtn.large.navy > a"));
+            target.click();
+
+            target = driver.findElement(By.cssSelector("#doc_ref_key"));
+            target.sendKeys(name);
+
+            target = driver.findElement(By.cssSelector("#form1 > p > span.ibtn.large.navy > a"));
+            target.click();
+
+            target = driver.findElement(By.cssSelector("#form1 > table > tbody > tr > td:nth-child(1)"));
+
+            if(target.getText().equals("장애인증명서 발급")) {
+                return true;
+            } else {
+                throw new CustomException(INVALID_DOCUMENT_ERROR);
+            }
+        } catch (Exception e) {
+            throw new CustomException(INVALID_DOCUMENT_ERROR);
+        }
+
+    }
+
 
 
     private List<String> jsonParse(String text) throws JsonProcessingException {
