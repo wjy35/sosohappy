@@ -1,4 +1,4 @@
-import {View, Text, Image, TouchableOpacity, ScrollView} from "react-native";
+import {View, Text, Image, TouchableOpacity} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import MainImg from "@/assets/img/main-img.png"
 import HandShakeIcon from "@/assets/img/handshake-icon.png"
@@ -8,7 +8,6 @@ import RightArrowIcon from "@/assets/img/right-arrow-icon.png"
 
 import MainStyle from "@/styles/MainStyle";
 
-import {observer} from 'mobx-react';
 import useStore from "@/store/store"
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import React, {useEffect} from "react";
@@ -18,7 +17,7 @@ interface propsType{
   socket: helpSocket,
 }
 
-const Main = observer(({socket}: propsType) => {
+const Main = (({socket}: propsType) => {
   const {userInfo, login, logout} = useStore();
   const navigation =  useNavigation();
 

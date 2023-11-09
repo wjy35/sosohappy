@@ -1,7 +1,4 @@
 import CommonLayout from "@/components/CommonLayout";
-import WebView from "react-native-webview";
-
-import CertificateStyle from "@/styles/CertificateStyle";
 
 const Certificate = () => {
     return(

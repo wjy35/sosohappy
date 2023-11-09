@@ -3,7 +3,6 @@ import SideMenuStyle from "@/styles/SideMenuStyle";
 import {useNavigation} from "@react-navigation/native";
 import { sosohappyWhiteLogo, user, gear, chat, peace, home, close, menuDocs } from "@/assets/icons/icons";
 import { SvgXml } from "react-native-svg";
-import {observer} from "mobx-react";
 import useStore from "@/store/store";
 
 interface props {
@@ -11,7 +10,7 @@ interface props {
     nowPage?: string;
 }
 
-const SideMenu = observer(({closeSide, nowPage}: props) => {
+const SideMenu = (({closeSide, nowPage}: props) => {
     const navigation = useNavigation();
     const {userInfo, logout} = useStore();
 

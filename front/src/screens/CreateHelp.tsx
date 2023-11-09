@@ -9,9 +9,8 @@ import {SvgXml} from "react-native-svg";
 import RecommendCategoryWrap from "@/components/RecommendCategoryWrap";
 import SimilarRecommendCategoryWrap from "@/components/SimilarRecommendCategoryWrap";
 import {useEffect, useState} from "react";
-import useStore from "@/hooks/useStore";
+import useStore from "@/store/store";
 import useInput from "@/hooks/useInput";
-import {observer} from "mobx-react";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 
 interface propsType{
@@ -43,9 +42,9 @@ interface helpDetail {
     place: string,
 }
 
-const CreateHelp = observer(({location, socket}: propsType) => {
+const CreateHelp = (({location, socket}: propsType) => {
     const [category, setCategory] = useState<any>(null);
-    const {userStore} = useStore();
+    const {userInfo} = useStore();
     const navigation = useNavigation();
 
     const selectCategory = (categoryInfo: any) => {
@@ -74,8 +73,8 @@ const CreateHelp = observer(({location, socket}: propsType) => {
 
     const sendHelp = () => {
         const payload = {
-            memberId: userStore.user.memberId,
-            nickname: userStore.user.nickname,
+            memberId: userInfo.memberId,
+            nickname: userInfo.nickname,
             category: {
                 categoryId: category.categoryId,
                 categoryName: category.categoryName,
