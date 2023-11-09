@@ -39,7 +39,8 @@
     "react-native-webview": "^13.6.2",
     "rn-secure-storage": "^2.0.8",
     "socket.io-client": "^4.7.2",
-    "webstomp-client": "^1.2.6"
+    "webstomp-client": "^1.2.6",
+    "zustand": "^4.4.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
