@@ -12,9 +12,9 @@ import SignUpInput from '@/screens/SignUpInput';
 import SignUpSeparate from '@/screens/SignUpSeparate';
 import NavigatorDummy from '@/screens/NavigatorDummy';
 import Character from '@/screens/Character';
+
+import useStore from "@/store/store";
 import Certificate from '@/screens/Certificate';
-import {observer} from "mobx-react";
-import useStore from "@/hooks/useStore";
 import useSocket from "@/hooks/useSocket";
 import {useEffect} from "react";
 import useLocation from "@/hooks/useLocation";
@@ -27,16 +27,16 @@ interface propsType{
   // location: any;
 }
 
-const Navigation = observer(({}: propsType) => {
-  const {userStore} = useStore();
+const Navigation = (({}: propsType) => {
+  const {userInfo} = useStore();
   const socket = useSocket();
   const location = useLocation({});
 
   useEffect(() => {
     const appState = AppState.addEventListener('change', ()=>{
       if (AppState.currentState === 'active'){
-        userStore.user&&location.setForeground()
-      } else if (AppState.currentState === 'background' && userStore.user){
+        userInfo&&location.setForeground()
+      } else if (AppState.currentState === 'background' && userInfo){
         location.setBackground();
       }
     });
@@ -46,10 +46,10 @@ const Navigation = observer(({}: propsType) => {
   }, []);
 
   useEffect(() => {
-    if (location.status===0 && userStore.user){
+    if (location.status===0 && userInfo){
       location.status===0&&location.setForeground();
     }
-  }, [userStore.user])
+  }, [userInfo])
 
   return (
     <NavigationContainer>

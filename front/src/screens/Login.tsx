@@ -8,7 +8,6 @@ import pushAlarmApi from "@/apis/pushAlarmApi";
 import RNSecureStorage, {ACCESSIBLE} from "rn-secure-storage";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging'
-import {observer} from "mobx-react";
 import useStore from "@/store/store";
 
 interface propsType{
@@ -36,7 +35,7 @@ interface helpDetail {
   place: string;
 }
 
-const Login = observer(({socket}: propsType) => {
+const Login = (({socket}: propsType) => {
   const navigation = useNavigation();
   const {userInfo, login} = useStore();
 
