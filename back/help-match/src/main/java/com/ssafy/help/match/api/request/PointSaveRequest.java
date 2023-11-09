@@ -6,4 +6,6 @@ import lombok.Data;
 public class PointSaveRequest {
     Double latitude;
     Double longitude;
+    Long memberId;
+    Long otherMemberId;
 }
