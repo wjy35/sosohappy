@@ -77,6 +77,16 @@ const LoginStyle = StyleSheet.create({
         textAlign:"center",
         marginTop:20,
     },
+    loginFailText: {
+        fontWeight: 'bold',
+        fontSize: 16,
+        color: 'red'
+    },
+    loginFailWrap: {
+        alignItems: 'center',
+        justifyContent: 'center',
+
+    }
 })
 
 export default LoginStyle;
