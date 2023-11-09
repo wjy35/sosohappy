@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +37,8 @@ public class OcrService {
     private final String[] keywords = {"문","서","확","인","번","호"};
     private Matcher matcher;
 
+    private final WebDriver driver;
+
     @Value("${ocr.api.url}")
     private String apiURL;
 
@@ -48,14 +48,14 @@ public class OcrService {
     @Value("${DISABLED_CONFIRM_URL}")
     private String baseURL;
 
-    public void checkImage(MultipartFile multipartFile,String name) {
+
+    public String checkImage(MultipartFile multipartFile) {
 
         List<String> result = new ArrayList<>();
         String originalFileName = multipartFile.getOriginalFilename();
         String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
         String base64EncodeFile = null;
         String documentNumber = null;
-        boolean isValidDocument;
 
         try {
             base64EncodeFile = base64Encoding(multipartFile);
@@ -68,53 +68,39 @@ public class OcrService {
             throw new CustomException(INVALID_IMAGE_ERROR);
         }
 
-        try {
-            isValidDocument = govConfirmInfo(documentNumber, name);
-        } catch (InterruptedException e) {
-            throw new CustomException(CRAWLING_SERVER_ERROR);
-        }
-
+        return documentNumber;
 
     }
 
-    private boolean govConfirmInfo(String documentNumber, String name) throws InterruptedException {
-        if(documentNumber == null) throw new CustomException(INVALID_DOCUMENT_NUMBER);
+    public boolean checkDocument(String documentNumber, String name) throws InterruptedException {
+        if(documentNumber == null || name == null) throw new CustomException(EMPTY_DOCUMENT_INFO);
         String[] parts = documentNumber.split("-");
 
-        System.setProperty("webdriver.chrome.driver", "./chromedriver.exe");
-
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--remote-allow-origins=*");
-        options.addArguments("headless");
-
-        WebDriver driver = new ChromeDriver(options);
-
         driver.get(baseURL);
-        Thread.sleep(1000);
 
         try{
 
-            WebElement refNo1 = driver.findElement(By.cssSelector("#doc_ref_no1"));
-            refNo1.sendKeys(parts[0]);
-            WebElement refNo2 = driver.findElement(By.cssSelector("#doc_ref_no2"));
-            refNo2.sendKeys(parts[1]);
-            WebElement refNo3 = driver.findElement(By.cssSelector("#doc_ref_no3"));
-            refNo3.sendKeys(parts[2]);
-            WebElement refNo4 = driver.findElement(By.cssSelector("#doc_ref_no4"));
-            refNo4.sendKeys(parts[3]);
+            WebElement target = driver.findElement(By.cssSelector("#doc_ref_no1"));
+            target.sendKeys(parts[0]);
+            target = driver.findElement(By.cssSelector("#doc_ref_no2"));
+            target.sendKeys(parts[1]);
+            target = driver.findElement(By.cssSelector("#doc_ref_no3"));
+            target.sendKeys(parts[2]);
+            target = driver.findElement(By.cssSelector("#doc_ref_no4"));
+            target.sendKeys(parts[3]);
 
-            WebElement confirmButton = driver.findElement(By.cssSelector("#form2 > p > span.ibtn.large.navy > a"));
-            confirmButton.click();
+            target = driver.findElement(By.cssSelector("#form2 > p > span.ibtn.large.navy > a"));
+            target.click();
 
-            WebElement nameInput = driver.findElement(By.cssSelector("#doc_ref_key"));
-            nameInput.sendKeys(name);
+            target = driver.findElement(By.cssSelector("#doc_ref_key"));
+            target.sendKeys(name);
 
-            WebElement confirmBtn2 = driver.findElement(By.cssSelector("#form1 > p > span.ibtn.large.navy > a"));
-            confirmBtn2.click();
+            target = driver.findElement(By.cssSelector("#form1 > p > span.ibtn.large.navy > a"));
+            target.click();
 
-            WebElement docTitle = driver.findElement(By.cssSelector("#form1 > table > tbody > tr > td:nth-child(1)"));
+            target = driver.findElement(By.cssSelector("#form1 > table > tbody > tr > td:nth-child(1)"));
 
-            if(docTitle.getText().equals("장애인증명서 발급")) {
+            if(target.getText().equals("장애인증명서 발급")) {
                 return true;
             } else {
                 throw new CustomException(INVALID_DOCUMENT_ERROR);
