@@ -97,6 +97,23 @@ class MonsterServiceImplTest {
 
     }
 
+    @Test
+    @DisplayName("현재 가지고 있는 클로버보다 요청한 클로버가 더 많은 경우 예외 발생시킨다.")
+    void throwExceptionWhenRequestCloverIsMoreThanMyClover() {
+
+        // given : 78개의 클로버를 가지고 있는 id
+        MemberMonsterGrowth growth = growthRepository.findByMemberMonsterId(447L)
+                .orElseThrow(() -> new CustomException(ErrorCode.GROWTH_NOT_FOUND));
+
+
+        // when / then
+        Assertions.assertThatThrownBy(() -> monsterService.updateMonsterClover
+                        (447L, 25))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.SHORTAGE_OF_CLOVER.getMessage());
+
+    }
+
 
 
 
