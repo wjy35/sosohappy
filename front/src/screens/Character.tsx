@@ -53,6 +53,7 @@ const Character = ({socket}: propsType) => {
     const loaderValue = useRef(new Animated.Value(0)).current;
     const {userInfo} = useStore();
     const navigation = useNavigation();
+    const [myClover, setMyClover] = useState(0);
 
     const feedSosomonCommon = async ({feedType}: feedTypes) => {
         if(myMonsters){
@@ -60,14 +61,13 @@ const Character = ({socket}: propsType) => {
                 memberMonsterId: myMonsters[feedType].memberMonsterId,
                 clover: 1,
             });
-            console.log("levelUpApi", levelUpApi.data.message);
+            // console.log("levelUpApi", levelUpApi.data.message);
             if(levelUpApi.status === 200){
+                // console.log(levelUpApi.data)
                 if(levelUpApi.data.message === "보유중인 클로버가 부족합니다."){
                     Alert.alert("보유중인 클로버가 부족하여 먹이를 줄 수 없습니다.");
                 }else if(levelUpApi.data.message === "클로버를 성공적으로 반영하였습니다."){
-                    Alert.alert("소소몬에게 성공적으로 먹이를 주었습니다.");
-                    navigation.navigate("MyPage");
-                    navigation.navigate("Character");
+                    getMyDict();
                 }
             }else{
                 Alert.alert("시스템 오류, 관리자에게 문의하세요.");
@@ -125,15 +125,15 @@ const Character = ({socket}: propsType) => {
         }
       }, [myMonsters, categoryType]);
 
-    useEffect(() => {
-        const getMyDict = async () => {
-            const collectedMonsterApi = await monsterApi.getMyDict();
+    const getMyDict = async () => {
+        const collectedMonsterApi = await monsterApi.getMyDict();
 
-            if(collectedMonsterApi.status === 200){
-                setMyMonsters(collectedMonsterApi.data.result?.monsterList);
-                console.log("myMonsters", myMonsters);
-            }
+        if(collectedMonsterApi.status === 200){
+            setMyMonsters(collectedMonsterApi.data.result?.monsterList);
+            // console.log("myMonsters", myMonsters);
         }
+    }
+    useEffect(() => {
         getMyDict();
     }, [])
 
@@ -302,6 +302,9 @@ const Character = ({socket}: propsType) => {
                 </View>
             </View>
 
+            {/*<View>*/}
+            {/*    <Text>현재 보유한 클로버: {myClover}</Text>*/}
+            {/*</View>*/}
 
             <View style={CharacterStyle.animationButtonWrap}>
                 <TouchableOpacity activeOpacity={0.7} onPress={() => feedSosomon()}>
