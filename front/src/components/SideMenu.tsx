@@ -11,9 +11,10 @@ import Modal from "react-native-modal";
 interface props {
     closeSide: Function;
     nowPage?: string;
+    isVisible: boolean;
 }
 
-const SideMenu = observer(({closeSide, nowPage}: props) => {
+const SideMenu = observer(({closeSide, nowPage, isVisible}: props) => {
     const navigation = useNavigation();
     const {userStore} = useStore();
 
