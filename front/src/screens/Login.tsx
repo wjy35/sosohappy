@@ -9,8 +9,7 @@ import RNSecureStorage, {ACCESSIBLE} from "rn-secure-storage";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging'
 import {observer} from "mobx-react";
-import useStore from "@/hooks/useStore";
-import {useEffect} from "react";
+import useStore from "@/store/store";
 
 interface propsType{
   socket: {
@@ -39,7 +38,7 @@ interface helpDetail {
 
 const Login = observer(({socket}: propsType) => {
   const navigation = useNavigation();
-  const {userStore} = useStore();
+  const {userInfo, login} = useStore();
 
   const checkId = (newText: string) => {
     inputId.updateIsValid(newText!=="");
@@ -66,7 +65,7 @@ const Login = observer(({socket}: propsType) => {
     return fcmToken;
   };
 
-  const login = async () => {
+  const userLogin = async () => {
     try {
       const res = await memberApi.login({
         memberSignId: inputId.text,
@@ -84,7 +83,7 @@ const Login = observer(({socket}: propsType) => {
       const userInfo = await memberApi.getMember();
 
       if (userInfo.status === 200){
-        userStore.setUser(userInfo.data.result.member);
+        login(userInfo.data.result.member);
         navigation.replace('Main');
         // console.log(userInfo.data.result.member);
       }
@@ -116,7 +115,7 @@ const Login = observer(({socket}: propsType) => {
       <View style={LoginStyle.loginContentWrap}>
         <PlainInput {...inputId} />
         <PlainInput {...inputPassword} secureTextEntry={true} />
-        <TouchableOpacity activeOpacity={0.7} onPress={()=>(inputId.isValid&&inputPassword.isValid)&&login()}>
+        <TouchableOpacity activeOpacity={0.7} onPress={()=>(inputId.isValid&&inputPassword.isValid)&&userLogin()}>
           <View style={[LoginStyle.loginButton, (inputId.isValid&&inputPassword.isValid)&&LoginStyle.loginButtonActive]}>
             <Text style={[LoginStyle.loginButtonText]}>로그인</Text>
           </View>
