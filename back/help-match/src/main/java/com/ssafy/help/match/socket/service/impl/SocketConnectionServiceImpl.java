@@ -19,8 +19,9 @@ public class SocketConnectionServiceImpl implements SocketConnectionService {
     }
 
     @Override
-    public void disconnect(String sessionId) {
+    public Long disconnectAndGetMemberId(String sessionId) {
         Long memberId = memberIdRepository.deleteAndGetMemberId(sessionId);
         memberSessionEntityRepository.disconnect(memberId);
+        return memberId;
     }
 }
