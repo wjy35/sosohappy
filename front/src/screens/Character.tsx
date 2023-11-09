@@ -158,8 +158,8 @@ const Character = ({socket}: propsType) => {
             <View style={CharacterStyle.feedAnimalWrap}>
                 <ScrollView
                     horizontal={true}
-                    onScrollEndDrag={(x: any) => {
-                        console.log(x.nativeEvent.contentOffset.x );
+                    onScroll={(x: any) => {
+                        // console.log(x.nativeEvent.contentOffset.x );
                         if(x.nativeEvent.contentOffset.x > 405){
                             setCategoryType(CategoryType.airForce);
                         }else if(x.nativeEvent.contentOffset.x > 185){
