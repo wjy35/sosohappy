@@ -120,6 +120,11 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         sendMatchEntityRepository.saveReceiveMemberIdSet(helpMatchRequest.getMemberId(), receiveMemberIdSet);
     }
 
+    @Override
+    public HelpMatchStatus getSimpStatus(Long memberId) {
+        return memberSessionEntityRepository.getMatchStatus(memberId);
+    }
+
     private void saveAndChangeStatus(HelpMatchRequest helpMatchRequest) {
         StatusChangeEventDTO statusChangeEventDTO = StatusChangeEventDTO
                 .builder()
