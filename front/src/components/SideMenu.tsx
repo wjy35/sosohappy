@@ -57,14 +57,6 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
                             />
                         </TouchableOpacity>
                     </View>
-                    {/* {
-                    userStore.user && (
-                        <View style={SideMenuStyle.nickNameWrap}>
-                            <Text>{userStore.user.nickname}</Text>
-                        </View>
-                    )
-                } */}
-
                     <View style={SideMenuStyle.navWrap}>
                         <TouchableOpacity activeOpacity={0.7} onPress={()=>navigation.navigate("Main")}>
                             <View style={[SideMenuStyle.menuList, nowPage==="Main" && SideMenuStyle.menuListActive]}>
