@@ -1,18 +1,17 @@
 import { View, Text, Image } from "react-native"
 import TurtleLoading from "@/assets/img/turtle-loading.png"
 import MapLoadingStyle from "@/styles/MapLoadingStyle";
-import {observer} from "mobx-react";
-import useStore from "@/hooks/useStore";
+import useStore from "@/store/store";
 import {useEffect, useState} from "react";
 import {type1, type2, type3, type4} from "@/assets/sosomon";
 
-const MapLoading = observer(() => {
-    const {userStore} = useStore();
+const MapLoading = () => {
+    const {userInfo} = useStore();
     const [src, setSrc] = useState();
 
     useEffect(() => {
-        const type = Math.floor((userStore.user.profileMonsterId-1)/10);
-        const level = (userStore.user.profileMonsterId % 10 === 0)?10:userStore.user.profileMonsterId%10;
+        const type = Math.floor((userInfo.profileMonsterId-1)/10);
+        const level = (userInfo.profileMonsterId % 10 === 0)?10:userInfo.profileMonsterId%10;
         // console.log(type, level)
         if (type === 0){
             setSrc(type1[level-1])
@@ -40,6 +39,6 @@ const MapLoading = observer(() => {
             </View>
         </>
     );
-});
+};
 
 export default MapLoading;
