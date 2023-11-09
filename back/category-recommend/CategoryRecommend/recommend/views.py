@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from .models import Category, CategoryPick
+import json
 import numpy as np
 import pandas as pd
 from django.http import JsonResponse
+from django.core import serializers
 from surprise import Reader, Dataset, SVD
 from surprise.model_selection import cross_validate
 
@@ -55,6 +57,13 @@ def category_recommend(request):
                 'category_name': category.category_name,
                 'category_image': category.category_image
             })
+
+    recent_list = CategoryPick.objects.filter(member_id=1).order_by('-pick_time')[:5]
+    # serialized_data = serializers.serialize('json', recent_list)
+    # parsed_data = json.loads(serialized_data)
+
+    recent_list_category_ids = [entry.category.category_id for entry in recent_list]
+    result_list = [item for item in result_list if int(item['category_id']) not in recent_list_category_ids]
 
     response_data = {
         'status': "success",
