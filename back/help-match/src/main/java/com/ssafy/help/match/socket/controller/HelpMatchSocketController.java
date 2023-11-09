@@ -22,6 +22,7 @@ import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 @Controller
@@ -54,8 +55,26 @@ public class HelpMatchSocketController{
     }
 
     @PostMapping("/cancel/match")
-    void cancel(Long memberId){
-        helpMatchService.cancel(memberId);
+    ResponseEntity<FormattedResponse> cancel(@RequestBody HelpMatchCancelRequest helpMatchCancelRequest ){
+
+        FormattedResponse response;
+        try{
+            helpMatchService.cancel(helpMatchCancelRequest.getMemberId());
+            response = FormattedResponse
+                    .builder()
+                    .status("success")
+                    .message("SUCCESS CANCEL")
+                    .build();
+        }catch (Exception e){
+            response = FormattedResponse
+                    .builder()
+                    .status("fail")
+                    .message("FAIL CANCEL")
+                    .build();
+            return new ResponseEntity<>(response,HttpStatus.BAD_GATEWAY);
+        }
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @MessageMapping("/point")
