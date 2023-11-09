@@ -3,6 +3,7 @@ package com.ssafy.help.match.socket.controller;
 import com.ssafy.help.match.api.request.PointSaveRequest;
 import com.ssafy.help.match.api.response.FormattedResponse;
 import com.ssafy.help.match.api.service.MemberPointManageService;
+import com.ssafy.help.match.db.entity.HelpMatchStatus;
 import com.ssafy.help.match.socket.request.*;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
 import com.ssafy.help.match.socket.response.PushMatchListResponse;
@@ -19,7 +20,9 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @Controller
 @RequiredArgsConstructor
@@ -62,5 +65,19 @@ public class HelpMatchSocketController{
                 pointSaveRequest.getMemberId(),
                 pointSaveRequest.getOtherMemberId()
         );
+    }
+
+    @GetMapping("/match/status")
+    ResponseEntity<FormattedResponse> simpStatus(@RequestHeader Long memberId){
+        HelpMatchStatus helpMatchStatus = helpMatchService.getSimpStatus(memberId);
+
+        FormattedResponse formattedResponse = FormattedResponse
+                .builder()
+                .status("success")
+                .message("SUCCESS GET STATUS")
+                .result("helpMatchStatus",helpMatchStatus)
+                .build();
+
+        return new ResponseEntity<>(formattedResponse,HttpStatus.OK);
     }
 }
