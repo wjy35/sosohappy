@@ -2,8 +2,9 @@ import React, {useEffect} from 'react';
 import Navigation from '@/navigators/Navigation';
 import useLocation from "@/hooks/useLocation";
 import {AppState} from "react-native";
+
+import useStore from "@/store/store";
 import {Provider} from "mobx-react";
-import userStore from "@/store/userStore";
 import * as Sentry from "@sentry/react-native";
 import {SENTRY_DSN} from "@env"
 
@@ -28,9 +29,9 @@ function App(): JSX.Element {
     // }, []);
 
     return (
-    <Provider userStore={userStore}>
-      <Navigation/>
-    </Provider>
+      <>
+        <Navigation/>
+      </>
     );
 }
 export default Sentry.wrap(App);

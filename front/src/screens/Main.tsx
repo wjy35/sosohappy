@@ -1,4 +1,4 @@
-import {View, Text, Image, TouchableOpacity, ScrollView} from "react-native";
+import {View, Text, Image, TouchableOpacity} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import MainImg from "@/assets/img/main-img.png"
 import HandShakeIcon from "@/assets/img/handshake-icon.png"
@@ -8,8 +8,7 @@ import RightArrowIcon from "@/assets/img/right-arrow-icon.png"
 
 import MainStyle from "@/styles/MainStyle";
 
-import {observer} from 'mobx-react';
-import useStore from "@/hooks/useStore";
+import useStore from "@/store/store"
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import React, {useEffect} from "react";
 import {helpSocket} from "@/types";
@@ -18,12 +17,12 @@ interface propsType{
   socket: helpSocket,
 }
 
-const Main = observer(({socket}: propsType) => {
-  const {userStore} = useStore();
+const Main = (({socket}: propsType) => {
+  const {userInfo, login, logout} = useStore();
   const navigation =  useNavigation();
 
   const goto = (next: string) => {
-    userStore.user?(navigation.navigate(next)):(navigation.navigate('Login'));
+    userInfo?(navigation.navigate(next)):(navigation.navigate('Login'));
   }
 
   useFocusEffect(
@@ -58,7 +57,7 @@ const Main = observer(({socket}: propsType) => {
           </View>
         </TouchableOpacity>
         {
-          !userStore.user && (
+          !userInfo && (
                 <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('SignUpSeparate')}>
                   <Text style={MainStyle.signUpText}>회원이 아니신가요?</Text>
                 </TouchableOpacity>
@@ -108,11 +107,11 @@ const Main = observer(({socket}: propsType) => {
       <View style={MainStyle.happyWrap}>
 
           {
-            userStore.user ?
+            userInfo ?
             <View>
-              <Text style={MainStyle.happyMainTitle}>{userStore.user.name}님, 행운을 나누세요.</Text>
+              <Text style={MainStyle.happyMainTitle}>{userInfo.name}님, 행운을 나누세요.</Text>
               <Text style={MainStyle.happySubTitle}>
-                    오늘도 {userStore.user.name}님의 소소한 행운이 더 많이{"\n"}
+                    오늘도 {userInfo.name}님의 소소한 행운이 더 많이{"\n"}
                     전해질 수 있도록
               </Text>
             </View>

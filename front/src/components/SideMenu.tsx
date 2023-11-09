@@ -3,10 +3,9 @@ import SideMenuStyle from "@/styles/SideMenuStyle";
 import {useNavigation} from "@react-navigation/native";
 import { sosohappyWhiteLogo, user, gear, chat, peace, home, close, menuDocs } from "@/assets/icons/icons";
 import { SvgXml } from "react-native-svg";
-import {observer} from "mobx-react";
-import useStore from "@/hooks/useStore";
 import memberApi from "@/apis/memberApi";
 import Modal from "react-native-modal";
+import useStore from "@/store/store";
 
 interface props {
     closeSide: Function;
@@ -14,17 +13,17 @@ interface props {
     isVisible: boolean;
 }
 
-const SideMenu = observer(({closeSide, nowPage, isVisible}: props) => {
+const SideMenu = (({closeSide, nowPage, isVisible}: props) => {
     const navigation = useNavigation();
-    const {userStore} = useStore();
+    const {userInfo, logout} = useStore();
 
-    const logout = async () => {
-        userStore.setUser(null);
+    const userLogout = async () => {
+        logout();
         Alert.alert("로그아웃 되었습니다.");
     };
 
     const goto = (next: string) => {
-        userStore.user?(navigation.navigate(next)):(navigation.navigate('Login'));
+        userInfo?(navigation.navigate(next)):(navigation.navigate('Login'));
     }
 
     const moveSettingPage = () => {
@@ -78,7 +77,7 @@ const SideMenu = observer(({closeSide, nowPage, isVisible}: props) => {
                             </View>
                         </TouchableOpacity>
                         {
-                            userStore.user?.disabled && (
+                            userInfo?.disabled && (
                                 <TouchableOpacity activeOpacity={0.7} onPress={()=>goto("CreateHelp")}>
                                     <View style={[SideMenuStyle.menuList, nowPage==="Help" && SideMenuStyle.menuListActive]}>
                                         <SvgXml
@@ -135,7 +134,7 @@ const SideMenu = observer(({closeSide, nowPage, isVisible}: props) => {
 
                     <View style={SideMenuStyle.authButtonWrap}>
                         {
-                            userStore.user ? (
+                            userInfo ? (
                                 <>
                                     <TouchableOpacity activeOpacity={0.7} onPress={logout}>
                                         <View style={SideMenuStyle.loginButton}>
@@ -159,7 +158,6 @@ const SideMenu = observer(({closeSide, nowPage, isVisible}: props) => {
                     </View>
                 </View>
             </Modal>
-
         </>
     );
 });
