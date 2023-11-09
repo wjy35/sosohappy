@@ -82,6 +82,10 @@ public class MemberSessionEntityRepository {
         return isHelpMatchStatusEqual(memberId,HelpMatchStatus.WAIT_COMPLETE);
     }
 
+    public boolean isOnMatchProgress(Long memberId){
+        return isHelpMatchStatusEqual(memberId,HelpMatchStatus.ON_MATCH_PROGRESS);
+    }
+
     private boolean isHelpMatchStatusEqual(Long memberId,HelpMatchStatus helpMatchStatus){
         return HelpMatchStatus.valueOf((String)redisTemplate.opsForHash().get(PREFIX+memberId,"matchStatus")).equals(helpMatchStatus);
     }
