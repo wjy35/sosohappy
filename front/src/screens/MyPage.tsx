@@ -5,7 +5,6 @@ import History from "@/components/History";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import FortuneModal from "@/components/FortuneModal";
 
-import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 import GearIcon from "@/assets/img/gear-icon.png"
 import BellIcon from "@/assets/img/bell-icon.png"
 import BookIcon from "@/assets/img/book-icon.png"
@@ -16,7 +15,7 @@ import MyPageStyle from "@/styles/MyPageStyle";
 import { WebView } from "react-native-webview";
 import SosomonDictionary from "@/components/SosomonDictionary";
 import {observer} from "mobx-react";
-import useStore from "@/hooks/useStore";
+import useStore from "@/store/store";
 import monsterApi from "@/apis/monsterApi";
 import memberApi from "@/apis/memberApi";
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
@@ -49,7 +48,7 @@ interface helpDetail {
 const MyPage = observer(({socket}: propsType) => {
   const navigation = useNavigation();
   const [modalState, setModalState] = useState<Boolean>(false);
-  const {userStore} = useStore();
+  const {userInfo} = useStore();
   const [myProfile, setMyProfile] = useState<any>(null);
   const [defaultSosomon, setDefaultSosomon] = useState<any>(null);
   const [fortuneModalState, setFortuneModalState] = useState<Boolean>(false);
@@ -119,9 +118,9 @@ const MyPage = observer(({socket}: propsType) => {
   }
 
   const whatIsMyThumbnail = () => {
-    if(userStore.user.profileMonsterId){
-      setProfileMonsterType(Math.floor((userStore.user.profileMonsterId-1)/10));
-      setProfileMonsterLevel((userStore.user.profileMonsterId % 10 === 0)?9:(userStore.user.profileMonsterId%10)-1);
+    if(userInfo.profileMonsterId){
+      setProfileMonsterType(Math.floor((userInfo.profileMonsterId-1)/10));
+      setProfileMonsterLevel((userInfo.profileMonsterId % 10 === 0)?9:(userInfo.profileMonsterId%10)-1);
     }
   }
 
@@ -180,11 +179,11 @@ const MyPage = observer(({socket}: propsType) => {
 
         <View style={MyPageStyle.myProfileInfo}>
           {
-            userStore.user &&
+            userInfo &&
             <>
-              <Text style={[MyPageStyle.myName]}>{userStore.user.name}</Text>
+              <Text style={[MyPageStyle.myName]}>{userInfo.name}</Text>
                 {
-                  userStore.user.disabled ?
+                  userInfo.disabled ?
                   <Text style={[MyPageStyle.myRank]}>나눔이</Text>
                   :
                   <Text style={[MyPageStyle.myRank]}>모음이</Text>

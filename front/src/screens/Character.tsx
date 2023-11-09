@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Image, Alert, Animated } from "react-native"
 import CommonLayout from "@/components/CommonLayout";
 import monsterApi from "@/apis/monsterApi";
-import useStore from "@/hooks/useStore";
+import useStore from "@/store/store";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 
 import CloverIcon from "@/assets/img/clover-icon.png"
@@ -51,7 +51,7 @@ const Character = ({socket}: propsType) => {
     const [categoryType, setCategoryType] = useState<CategoryType>(CategoryType.army);
     const [myMonsters, setMyMonsters] = useState<any[] | null>(null);
     const loaderValue = useRef(new Animated.Value(0)).current;
-    const {userStore} = useStore();
+    const {userInfo} = useStore();
     const navigation = useNavigation();
 
     const feedSosomonCommon = async ({feedType}: feedTypes) => {
@@ -143,13 +143,13 @@ const Character = ({socket}: propsType) => {
     })
 
     return(
-        <CommonLayout headerType={0} footer={false}>
+        <CommonLayout headerType={0} footer={true}>
 
             <View style={CharacterStyle.characterTitleWrap}>
                     {
-                        userStore.user.name &&
+                        userInfo.name &&
                         <Text style={CharacterStyle.characterTitle}>
-                            <Text style={CharacterStyle.characterTitleMyName}>{userStore.user.name}</Text> 님 어떤 캐릭터를{"\n"}
+                            <Text style={CharacterStyle.characterTitleMyName}>{userInfo.name}</Text> 님 어떤 캐릭터를{"\n"}
                             성장시킬까요?
                         </Text>
                     }
