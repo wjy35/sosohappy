@@ -78,7 +78,7 @@ const SideMenu = observer(({closeSide, nowPage, isVisible}: props) => {
                             </View>
                         </TouchableOpacity>
                         {
-                            userStore.user?.disabled === true && (
+                            userStore.user?.disabled && (
                                 <TouchableOpacity activeOpacity={0.7} onPress={()=>goto("CreateHelp")}>
                                     <View style={[SideMenuStyle.menuList, nowPage==="Help" && SideMenuStyle.menuListActive]}>
                                         <SvgXml
