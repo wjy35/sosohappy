@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import LoginStyle from "@/styles/LoginStyle"
 import useInput from "@/hooks/useInput";
@@ -9,6 +9,7 @@ import RNSecureStorage, {ACCESSIBLE} from "rn-secure-storage";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging'
 import useStore from "@/store/store";
+import {useState} from "react";
 
 interface propsType{
   socket: {
@@ -38,6 +39,8 @@ interface helpDetail {
 const Login = (({socket}: propsType) => {
   const navigation = useNavigation();
   const {userInfo, login} = useStore();
+  const [isFail, setIsFail] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const checkId = (newText: string) => {
     inputId.updateIsValid(newText!=="");
@@ -65,32 +68,32 @@ const Login = (({socket}: propsType) => {
   };
 
   const userLogin = async () => {
+    setIsLoading(true);
     try {
       const res = await memberApi.login({
         memberSignId: inputId.text,
         memberSignPassword: inputPassword.text,
       });
 
-      if (res.status === 200){
+      if (res.status === 200 && res.data.status === 'success'){
+        const userInfo = await memberApi.getMember();
+
+        if (userInfo.status === 200){
+          setIsLoading(false);
+          navigation.replace('Main');
+          login(userInfo.data.result.member);
+        }
+
         await RNSecureStorage.set("accessToken", res.data.result.authorization.accessToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
         await RNSecureStorage.set("refreshToken", res.data.result.authorization.refreshToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
+
+        const fcmToken = await getFcmToken();
+        const insertFcmTokenApi = await pushAlarmApi.insertFcmToken({fcmToken});
+
+      } else if (res.status === 200) {
+        setIsFail(true);
+        setIsLoading(false);
       }
-
-      const fcmToken = await getFcmToken();
-      const insertFcmTokenApi = await pushAlarmApi.insertFcmToken({fcmToken});
-
-      const userInfo = await memberApi.getMember();
-
-      if (userInfo.status === 200){
-        login(userInfo.data.result.member);
-        navigation.replace('Main');
-        // console.log(userInfo.data.result.member);
-      }
-
-      // if(insertFcmTokenApi.status === 200){
-      //   navigation.replace('Main');
-      // }
-
     } catch (err) {
       console.error(err);
     }
@@ -114,12 +117,27 @@ const Login = (({socket}: propsType) => {
       <View style={LoginStyle.loginContentWrap}>
         <PlainInput {...inputId} />
         <PlainInput {...inputPassword} secureTextEntry={true} />
+        {
+          isFail && (
+                <View style={LoginStyle.loginFailWrap}>
+                  <Text style={LoginStyle.loginFailText}>존재하지 않는 아이디 혹은 비밀번호 입니다.</Text>
+                </View>
+            )
+        }
+
         <TouchableOpacity activeOpacity={0.7} onPress={()=>(inputId.isValid&&inputPassword.isValid)&&userLogin()}>
           <View style={[LoginStyle.loginButton, (inputId.isValid&&inputPassword.isValid)&&LoginStyle.loginButtonActive]}>
-            <Text style={[LoginStyle.loginButtonText]}>로그인</Text>
+            {
+              isLoading ? (
+                  <ActivityIndicator size='large' color='#ffffff'/>
+              ): (
+                  <Text style={[LoginStyle.loginButtonText]}>로그인</Text>
+              )
+            }
           </View>
         </TouchableOpacity>
         <TouchableOpacity activeOpacity={0.7}>
+
           <Text style={LoginStyle.authText}>회원이 아니신가요?</Text>
         </TouchableOpacity>
       </View>
