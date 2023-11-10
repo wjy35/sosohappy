@@ -1,5 +1,6 @@
 package com.ssafy.help.match.event.emitter;
 
 public enum EventTopicPrefix {
-    POINT_CHANGE;
+    POINT_CHANGE,
+    HELPER_SEARCH;
 }
