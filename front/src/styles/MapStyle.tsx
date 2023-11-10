@@ -3,7 +3,7 @@ import { responsiveWidth } from "react-native-responsive-dimensions";
 
 const MapStyle = StyleSheet.create({
     createHelpWrap:{
-        width:responsiveWidth(92),
+        width:responsiveWidth(80),
         height:70,
         marginHorizontal:responsiveWidth(4),
         display:"flex",

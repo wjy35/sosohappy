@@ -1,6 +1,6 @@
 import Geolocation from "@react-native-community/geolocation";
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import helpMatchApi from "@/apis/helpMatchApi";
 
 interface propsType {
@@ -9,49 +9,72 @@ interface propsType {
 
 function useLocation({}: propsType) {
     const [coordinate, setCoordinate] = useState<any>();
-    let watchId:number;
+    // let watchId:number;
+    const [watchId, setWatchId] = useState<number|undefined>();
+    const [status, setStatus] = useState(0);
 
     Geolocation.setRNConfiguration({
         authorizationLevel: 'auto',
         skipPermissionRequests: false,
     });
 
-    const sendPosition = async (latitude: number, longitude: number) => {
-        try {
-            const res = await helpMatchApi.sendPosition({
-                latitude: latitude,
-                longitude: longitude,
-            })
-            if (res.status === 200){
-            }
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
-    const backgroundPositionFunc = (lati: number, longi: number) => {
-        // TODO: background에서 사용될 작업
-        sendPosition(lati, longi)
-        setCoordinate({
-            latitude: lati,
-            longitude: longi,
-        });
-    }
-
-    const foregroundPositionFunc = (lati: number, longi: number) => {
-        // TODO: foreground에서 사용될 작업
-        setCoordinate({
-            latitude: lati,
-            longitude: longi,
-        });
-    }
-
-    const getPosition = () => {
+    const init = () => {
+        ReactNativeForegroundService.remove_all_tasks(); // 앱 실행 시 백그라운드 태스크 전부 제거
+        ReactNativeForegroundService.stopAll();
         Geolocation.getCurrentPosition(
             position => {
                 const latitude = Number(JSON.stringify(position.coords.latitude));
                 const longitude = Number(JSON.stringify(position.coords.longitude));
-                backgroundPositionFunc(latitude, longitude);
+                setCoordinate({
+                    latitude: latitude,
+                    longitude: longitude,
+                })
+            },
+            error => {console.log(error)},
+        )
+    }
+
+    const sendPosition = async (latitude: number, longitude: number, memberId: number, otherMemberId: number|null) => {
+        try {
+            const res = await helpMatchApi.sendPosition({
+                latitude: latitude,
+                longitude: longitude,
+                memberId: memberId,
+                otherMemberId: otherMemberId,
+            })
+            if (res.status === 200){
+                console.log('uselocation success');
+            }
+        } catch (err) {
+            console.log('uselocation error');
+            console.log(err);
+        }
+    }
+
+    const backgroundPositionFunc = (lati: number, longi: number, memberId: number, otherMemberId: number|null) => {
+        // TODO: background에서 사용될 작업
+        sendPosition(lati, longi, memberId, otherMemberId);
+        setCoordinate({
+            latitude: lati,
+            longitude: longi,
+        });
+    }
+
+    const foregroundPositionFunc = (lati: number, longi: number, memberId: number, otherMemberId: number|null) => {
+        // TODO: foreground에서 사용될 작업
+        sendPosition(lati, longi, memberId, otherMemberId);
+        setCoordinate({
+            latitude: lati,
+            longitude: longi,
+        });
+    }
+
+    const getPosition = (memberId: number, otherMemberId: number|null) => {
+        Geolocation.getCurrentPosition(
+            position => {
+                const latitude = Number(JSON.stringify(position.coords.latitude));
+                const longitude = Number(JSON.stringify(position.coords.longitude));
+                backgroundPositionFunc(latitude, longitude, memberId, otherMemberId);
             },
             error => {console.log(error)},
         )
@@ -61,12 +84,13 @@ function useLocation({}: propsType) {
         Geolocation.clearWatch(watchId);
     };
 
-    const setBackground = () => {
+    const setBackground = (memberId: number, otherMemberId: number|null) => {
         console.log('background start');
+        setStatus(2);
         stopWatchPosition();
         ReactNativeForegroundService.add_task(
             () => {
-                getPosition();
+                getPosition(memberId, otherMemberId);
             },
             {
                 delay: 60000,
@@ -78,42 +102,35 @@ function useLocation({}: propsType) {
 
         ReactNativeForegroundService.start({
             id: 1244,
-            title: "Foreground Service",
-            message: "We are live World",
+            title: "소소하지만 소중한 행복",
+            message: "주변의 행운을 찾는 중입니다",
             icon: "ic_launcher",
-            button: true,
-            button2: true,
-            buttonText: "Button",
-            button2Text: "Anther Button",
-            buttonOnPress: "cray",
             setOnlyAlertOnce: true,
             color: "#000000",
-            progress: {
-                max: 100,
-                curr: 50,
-            },
         });
     };
 
-    const setForeground = () => {
+    const setForeground = (memberId: number, otherMemberId: number|null) => {
+        setStatus(1);
         ReactNativeForegroundService.remove_all_tasks(); // 앱 실행 시 백그라운드 태스크 전부 제거
         ReactNativeForegroundService.stopAll();
+        Geolocation.clearWatch(watchId);
 
         console.log('foreground start');
 
-        watchId = Geolocation.watchPosition(
+        const newWatchId = Geolocation.watchPosition(
             position => {
                 const latitude = Number(JSON.stringify(position.coords.latitude));
                 const longitude = Number(JSON.stringify(position.coords.longitude));
-                foregroundPositionFunc(latitude, longitude);
+                foregroundPositionFunc(latitude, longitude, memberId, otherMemberId);
             },
             error => {
                 console.log(error);
             },
             {
-                distanceFilter: 10, // Minimum distance (in meters) to update the location
-                interval: 900000, // Update interval (in milliseconds), which is 15 minutes
-                fastestInterval: 300000, // Fastest update interval (in milliseconds)
+                distanceFilter: 1, // Minimum distance (in meters) to update the location
+                interval: 10000, // Update interval (in milliseconds), which is 15 minutes
+                fastestInterval: 5000, // Fastest update interval (in milliseconds)
                 accuracy: {
                     android: 'highAccuracy',
                     ios: 'best',
@@ -130,9 +147,15 @@ function useLocation({}: propsType) {
                 },
             }
         );
+        setWatchId(newWatchId);
     }
 
-    return {coordinate, setBackground, setForeground};
+    useEffect(() => {
+        init();
+    }, []);
+
+
+    return {coordinate, setBackground, setForeground, status};
 }
 
 export default useLocation;

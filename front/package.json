@@ -17,10 +17,9 @@
     "@react-native-maps/polyline-direction": "^1.0.0",
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/stack": "^6.3.18",
+    "@sentry/react-native": "^5.12.0",
     "@supersami/rn-foreground-service": "^2.1.0",
     "axios": "^1.5.1",
-    "mobx": "^6.10.2",
-    "mobx-react": "^9.0.1",
     "module-resolver": "^1.0.0",
     "react": "18.2.0",
     "react-native": "0.72.6",
@@ -38,7 +37,9 @@
     "react-native-svg": "^13.14.0",
     "react-native-webview": "^13.6.2",
     "rn-secure-storage": "^2.0.8",
-    "socket.io-client": "^4.7.2"
+    "socket.io-client": "^4.7.2",
+    "webstomp-client": "^1.2.6",
+    "zustand": "^4.4.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
