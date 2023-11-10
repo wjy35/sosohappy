@@ -1,4 +1,4 @@
-import { useState } from "react"
+import {useEffect, useState} from "react"
 import { Text, View, Image} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import Header from "@/components/Header";
@@ -11,9 +11,34 @@ import MoeumImg from "@/assets/img/moeum-img.png"
 
 import SignUpSeparateStyle from "@/styles/SignUpSeparateStyle";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import {useNavigation} from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 
-const SignUpSeparate = () => {
+interface propsType{
+  socket: {
+    connect: Function,
+    send: Function,
+    status: String,
+    helpList: helpDetail[],
+    connected: boolean,
+    disConnect: Function,
+  };
+}
+
+interface helpDetail {
+  memberId: number;
+  nickname: string;
+  category: {
+    categoryId: number,
+    categoryName: string,
+    categoryImage: string,
+  };
+  longitude: number;
+  latitude: number;
+  content: string;
+  place: string;
+}
+
+const SignUpSeparate = ({socket}: propsType) => {
   const [selectedType, setSelectedType] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const navigation = useNavigation();
@@ -34,8 +59,12 @@ const SignUpSeparate = () => {
     } else {
       navigation.navigate("SignUpInput", {selectedType: selectedType});
     }
-
   }
+
+  useFocusEffect(()=>{
+    if (!socket.connected) return;
+    socket.disConnect();
+  })
 
   return (
     <CommonLayout headerType={0} footer={true}>
