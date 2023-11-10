@@ -25,6 +25,16 @@ const CreateHelp = (({location, socket}: propsType) => {
     const {userInfo} = useStore();
     const navigation = useNavigation();
 
+    useEffect(() => {
+        if (socket.status === 'WAIT_COMPLETE'){
+            navigation.navigate('Map');
+        } else if (socket.status === 'ON_MATCH_PROGRESS'){
+            // navigation.navigate('Main');
+        } else if (socket.status === 'ON_MOVE'){
+            navigation.navigate('Map');
+        }
+    }, [socket.status]);
+
     const selectCategory = (categoryInfo: any) => {
         setCategory(categoryInfo);
     }
