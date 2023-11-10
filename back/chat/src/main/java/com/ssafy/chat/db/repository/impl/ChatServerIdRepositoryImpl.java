@@ -18,8 +18,6 @@ public class ChatServerIdRepositoryImpl implements ChatServerIdRepository {
     private final RedisTemplate<String, String> redisTemplate;
 
     public void saveByMemberId(Long memberId){
-        System.out.println(memberId);
-        System.out.println(chatServerIdPrefix+memberId);
         redisTemplate.opsForValue().set(chatServerIdPrefix+memberId, chatServerInfo.getId());
     }
 
