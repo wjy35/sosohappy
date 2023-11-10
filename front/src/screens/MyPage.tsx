@@ -1,4 +1,4 @@
-import {useEffect, useState, useRef} from "react"
+import React, {useEffect, useState, useRef} from "react"
 import {View, Text, Image, TouchableOpacity, Animated} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import History from "@/components/History";
@@ -138,10 +138,16 @@ const MyPage = (({socket}: propsType) => {
     whatIsMyThumbnail();
   }, [])
 
-  useFocusEffect(()=>{
-    if (!socket.connected) return;
-    socket.disConnect();
-  })
+  useFocusEffect(
+      React.useCallback(() => {
+        const disConnect = () => {
+          if (!socket.connected) return;
+          socket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [socket.connected])
+  )
 
   return (
     <>
