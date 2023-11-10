@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class ChromeConfig {
     @Bean
     public WebDriver webDriver() {
-        System.setProperty("webdriver.chrome.driver", "/app/src/main/resources/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "/app/src/main/resources/chromedriver");
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
