@@ -2,13 +2,12 @@ package com.ssafy.help.match.socket.response;
 
 import com.ssafy.help.match.socket.dto.CategoryDTO;
 import lombok.Data;
-import java.util.List;
 
 @Data
-public class ReceiveMatchItem {
+public class PushMatchItem {
     Long memberId;
     String nickname;
-    List<CategoryDTO> categoryDTOList;
+    CategoryDTO category;
     Double latitude;
     Double longitude;
     String content;

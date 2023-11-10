@@ -1,14 +1,12 @@
 package com.ssafy.help.match.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.help.match.db.entity.SendMatchEntity;
 import com.ssafy.help.match.db.repository.MemberPointRepository;
 import com.ssafy.help.match.db.repository.SendMatchEntityRepository;
-import com.ssafy.help.match.socket.dto.MatchEventDTO;
-import com.ssafy.help.match.socket.mapper.ReceiveMatchMapper;
-import com.ssafy.help.match.socket.response.ReceiveMatchItem;
-import com.ssafy.help.match.socket.response.ReceiveMatchListResponse;
-import com.ssafy.help.match.socket.response.ReceiveMatchType;
+import com.ssafy.help.match.socket.dto.MatchPushEventDTO;
+import com.ssafy.help.match.socket.mapper.MatchEntityMapper;
+import com.ssafy.help.match.socket.response.PushMatchItem;
+import com.ssafy.help.match.socket.response.PushMatchListResponse;
 import com.ssafy.help.match.util.ObjectSerializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.Message;
@@ -20,7 +18,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class MatchEventListener implements MessageListener {
+public class MatchPushEventListener implements MessageListener {
     private final SendMatchEntityRepository sendMatchEntityRepository;
     private final MemberPointRepository memberPointRepository;
     private final ObjectSerializer objectSerializer;
@@ -28,22 +26,21 @@ public class MatchEventListener implements MessageListener {
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        MatchEventDTO matchEventDTO = objectSerializer.deserialize(message.getBody().toString(), MatchEventDTO.class);
-        SendMatchEntity sendMatchEntity = sendMatchEntityRepository.findByMemberId(matchEventDTO.getMemberId());
+        MatchPushEventDTO matchPushEventDTO = objectSerializer.deserialize(message.toString(), MatchPushEventDTO.class);
+        SendMatchEntity sendMatchEntity = sendMatchEntityRepository.findByMemberId(matchPushEventDTO.getMemberId());
         if(Optional.ofNullable(sendMatchEntity).isEmpty()) return;
 
-        Double distance = memberPointRepository.getDistance(matchEventDTO.getMemberId(), matchEventDTO.getMatchedMemberId());
+        Double distance = memberPointRepository.getDistance(matchPushEventDTO.getMemberId(), matchPushEventDTO.getMatchedMemberId());
 
-        List<ReceiveMatchItem> receiveMatchList = List.of(ReceiveMatchMapper.INSTANCE.toItem(sendMatchEntity, distance));
+        List<PushMatchItem> receiveMatchList = List.of(MatchEntityMapper.INSTANCE.toItem(sendMatchEntity, distance));
 
-        ReceiveMatchListResponse response = ReceiveMatchListResponse
+        PushMatchListResponse response = PushMatchListResponse
                 .builder()
-                .receiveMatchType(ReceiveMatchType.PUSH)
                 .receiveMatchList(receiveMatchList)
                 .build();
 
         simpMessageSendingOperations.convertAndSend(
-                "/topic/match/list/"+matchEventDTO.getMatchedMemberId(),
+                "/topic/match/list/"+ matchPushEventDTO.getMatchedMemberId(),
                 objectSerializer.serialize(response)
         );
     }

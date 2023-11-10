@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MatchEventDTO {
+public class MatchPopEventDTO {
     Long memberId;
     Long matchedMemberId;
 }

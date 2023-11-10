@@ -1,5 +1,6 @@
 package com.ssafy.help.match.db.repository.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.ssafy.help.match.db.entity.SendMatchEntity;
 import com.ssafy.help.match.db.repository.SendMatchEntityRepository;
 import com.ssafy.help.match.util.ObjectSerializer;
@@ -8,6 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Repository
@@ -15,7 +17,8 @@ import java.util.concurrent.TimeUnit;
 public class SendMatchEntityRepositoryImpl implements SendMatchEntityRepository {
     private final RedisTemplate<String,String> redisTemplate;
     private final ObjectSerializer objectSerializer;
-    private final String PREFIX="helpEntity:";
+    private final String PREFIX="matchEntity:";
+    private final String RECEIVE_MEMBER_ID_SET_PREFIX="receiveMemberIdSet:";
     private final Long MAX_HELP_MATCH_SECOND=60l;
 
 
@@ -31,10 +34,28 @@ public class SendMatchEntityRepositoryImpl implements SendMatchEntityRepository 
         SendMatchEntity sendMatchEntity = null;
 
         if(Optional.ofNullable(sendMatchEntityStr).isPresent()){
-            sendMatchEntity =  objectSerializer.deserialize(redisTemplate.opsForValue().get(PREFIX+memberId), SendMatchEntity.class);
+            sendMatchEntity =  objectSerializer.deserialize(sendMatchEntityStr, SendMatchEntity.class);
         }
 
         return sendMatchEntity;
     }
 
+    @Override
+    public SendMatchEntity getAndDeleteByMemberId(Long memberId) {
+        String sendMatchEntityStr = Optional.ofNullable(redisTemplate.opsForValue().getAndDelete(PREFIX+memberId))
+                .orElseThrow();
+
+        return objectSerializer.deserialize(sendMatchEntityStr, SendMatchEntity.class);
+    }
+
+    @Override
+    public void saveReceiveMemberIdSet(Long sendMemberId, Set<Long> receiveMemberSet) {
+        redisTemplate.opsForValue().set(RECEIVE_MEMBER_ID_SET_PREFIX+sendMemberId, objectSerializer.serialize(receiveMemberSet));
+    }
+
+    @Override
+    public Set<Long> getAndDeleteReceiveMemberIdSet(Long sendMemberId) {
+        String receiveMemberIdSetStr = redisTemplate.opsForValue().getAndDelete(RECEIVE_MEMBER_ID_SET_PREFIX+sendMemberId);
+        return objectSerializer.deserialize(receiveMemberIdSetStr,new TypeReference<Set<Long>>(){});
+    }
 }
