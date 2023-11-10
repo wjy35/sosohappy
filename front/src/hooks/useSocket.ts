@@ -1,6 +1,8 @@
 import * as Stomp from "webstomp-client";
 import {useEffect, useState} from "react";
-import {helpData} from "@/types";
+import {helpData, point} from "@/types";
+import helpMatchApi from "@/apis/helpMatchApi";
+import useStore from "@/store/store";
 
 function useSocket(){
     const [client, setClient] = useState(null);
@@ -54,8 +56,11 @@ function useSocket(){
             `/topic/match/list/${memberId}`,
             (frame) => {
                 const body = JSON.parse(frame.body);
-                if (body.receiveMatchType === 'PUSH'){
+                if (body.matchListCommand === 'PUSH'){
                     setHelpList([...helpList, ...body.receiveMatchList])
+                } else if (body.matchListCommand === 'POP') {
+
+
                 }
                 console.log(body);
             },
