@@ -88,66 +88,74 @@ const CreateHelp = (({location, socket}: propsType) => {
     )
 
     return (
-        <CommonLayout footer={true} headerType={0} nowPage={'Help'}>
-            <View>
-                <View style={CreateHelpStyle.createHelpTitleWrap}>
-                    <Text style={CreateHelpStyle.createHelpTitle}>
-                        반가워요!{"\n"}
-                        어떤 도움이 필요하신가요?
-                    </Text>
-                    <AllCategoryWrap category={category} selectCategory={selectCategory}/>
-                </View>
-                {
-                    category ? (
-                        <View style={CreateHelpStyle.detailInputWrap}>
-                            <View style={CreateHelpStyle.inputTitle}>
-                                <Text style={CreateHelpStyle.inputTitleText}>도움 내용을 입력해 주세요</Text>
-                            </View>
-                            <PlainInput {...helpContent}/>
-                            <View style={CreateHelpStyle.inputTitle}>
-                                <Text style={CreateHelpStyle.inputTitleText}>상세 위치를 입력해 주세요</Text>
-                            </View>
-                            <PlainInput {...locationDetail}/>
-                            <View style={CreateHelpStyle.categoryWrap}>
-                                <View style={CreateHelpStyle.categoryTitle}>
-                                    <Text style={CreateHelpStyle.categoryTitleText}>카테고리</Text>
+        <>
+            {
+                socket.isSearching && (
+                    <MapLoading socket={socket}/>
+                )
+            }
+            <CommonLayout footer={true} headerType={0} nowPage={'Help'}>
+                <View>
+                    <View style={CreateHelpStyle.createHelpTitleWrap}>
+                        <Text style={CreateHelpStyle.createHelpTitle}>
+                            반가워요!{"\n"}
+                            어떤 도움이 필요하신가요?
+                        </Text>
+                        <AllCategoryWrap category={category} selectCategory={selectCategory}/>
+                    </View>
+                    {
+                        category ? (
+                            <View style={CreateHelpStyle.detailInputWrap}>
+                                <View style={CreateHelpStyle.inputTitle}>
+                                    <Text style={CreateHelpStyle.inputTitleText}>도움 내용을 입력해 주세요</Text>
                                 </View>
-                                <View style={[CategoryWrapStyle.categoryItemWrap]}>
-                                    <SvgXml
-                                        xml={category.categoryImage}
-                                        style={CategoryWrapStyle.categoryItemImg}
-                                    />
-                                    <Text style={CategoryWrapStyle.categoryItemText}>{category.categoryName}</Text>
+                                <PlainInput {...helpContent}/>
+                                <View style={CreateHelpStyle.inputTitle}>
+                                    <Text style={CreateHelpStyle.inputTitleText}>상세 위치를 입력해 주세요</Text>
                                 </View>
-                            </View>
-                            <View>
-                                <TouchableOpacity activeOpacity={0.7} onPress={()=>{(helpContent.isValid&&locationDetail.isValid)&&sendHelp()}}>
-                                    <View style={CreateHelpStyle.submitButtonWrap}>
-                                        <Text style={[CreateHelpStyle.submitButtonText, (helpContent.isValid&&locationDetail.isValid)&&CreateHelpStyle.submitButtonActive]}>등록하기</Text>
+                                <PlainInput {...locationDetail}/>
+                                <View style={CreateHelpStyle.categoryWrap}>
+                                    <View style={CreateHelpStyle.categoryTitle}>
+                                        <Text style={CreateHelpStyle.categoryTitleText}>카테고리</Text>
                                     </View>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    ):(
-                        <View>
-                            <View style={CreateHelpStyle.recommendWrap}>
-                                <View style={CreateHelpStyle.recommendTitlewrap}>
-                                    <Text style={CreateHelpStyle.recommendTitle}>이런 카테고리는 <Text style={CreateHelpStyle.recommendPointText}>어떠세요?</Text></Text>
+                                    <View style={[CategoryWrapStyle.categoryItemWrap]}>
+                                        <SvgXml
+                                            xml={category.categoryImage}
+                                            style={CategoryWrapStyle.categoryItemImg}
+                                        />
+                                        <Text style={CategoryWrapStyle.categoryItemText}>{category.categoryName}</Text>
+                                    </View>
                                 </View>
-                                <RecommendCategoryWrap/>
+                                <View>
+                                    <TouchableOpacity activeOpacity={0.7} onPress={()=>{(helpContent.isValid&&locationDetail.isValid)&&sendHelp()}}>
+                                        <View style={[CreateHelpStyle.submitButtonWrap, (helpContent.isValid&&locationDetail.isValid)&&CreateHelpStyle.submitButtonActive]}>
+                                            <Text style={[CreateHelpStyle.submitButtonText]}>등록하기</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
+                        ):(
+                            <View>
+                                <View style={CreateHelpStyle.recommendWrap}>
+                                    <View style={CreateHelpStyle.recommendTitlewrap}>
+                                        <Text style={CreateHelpStyle.recommendTitle}>이런 카테고리는 <Text style={CreateHelpStyle.recommendPointText}>어떠세요?</Text></Text>
+                                    </View>
+                                    <RecommendCategoryWrap/>
+                                </View>
 
-                            <View style={CreateHelpStyle.recommendWrap}>
-                                <View style={CreateHelpStyle.recommendTitlewrap}>
-                                    <Text style={CreateHelpStyle.recommendTitle}>나와 비슷한 사람들이 <Text style={CreateHelpStyle.recommendPointText}>좋아해요.</Text></Text>
+                                <View style={CreateHelpStyle.recommendWrap}>
+                                    <View style={CreateHelpStyle.recommendTitlewrap}>
+                                        <Text style={CreateHelpStyle.recommendTitle}>나와 비슷한 사람들이 <Text style={CreateHelpStyle.recommendPointText}>좋아해요.</Text></Text>
+                                    </View>
+                                    <SimilarRecommendCategoryWrap/>
                                 </View>
-                                <SimilarRecommendCategoryWrap/>
                             </View>
-                        </View>
-                    )
-                }
-            </View>
-        </CommonLayout>
+                        )
+                    }
+                </View>
+            </CommonLayout>
+        </>
+
     );
 });
 
