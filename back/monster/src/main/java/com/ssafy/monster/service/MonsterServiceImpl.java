@@ -1,6 +1,5 @@
 package com.ssafy.monster.service;
 
-import com.netflix.discovery.shared.Pair;
 import com.ssafy.monster.common.exception.CustomException;
 import com.ssafy.monster.common.exception.ErrorCode;
 import com.ssafy.monster.domain.entity.MemberMonsterGrowth;
@@ -10,6 +9,7 @@ import com.ssafy.monster.domain.entity.MonsterType;
 import com.ssafy.monster.domain.mapper.GrowthMapper;
 import com.ssafy.monster.domain.mapper.ProfileMapper;
 import com.ssafy.monster.domain.res.CloverRes;
+import com.ssafy.monster.domain.res.LevelInfo;
 import com.ssafy.monster.domain.res.MonsterRes;
 import com.ssafy.monster.domain.mapper.CloverMapper;
 import com.ssafy.monster.domain.mapper.MonsterMapper;
@@ -55,17 +55,18 @@ public class MonsterServiceImpl implements MonsterService{
         cf = new ChoiceFormat(expArr, levelArr);
     }
 
-    private Pair<Integer, Double> getCurrentPoint(int currentClover){
-        int currentLevel = Integer.parseInt(cf.format(currentClover));
+    private LevelInfo getCurrentPoint(int monsterClover){
+        int currentLevel = Integer.parseInt(cf.format(monsterClover));
         if(currentLevel == expArr.length){
-            return new Pair<>(currentLevel, 1.0);
+            return new LevelInfo(currentLevel,0,0,1.0);
         }
         int requiredClover = (int) (expArr[currentLevel] - expArr[currentLevel-1]);
         Double prevRequiredClover = expArr[currentLevel-1];
+        int currentClover = (int) (monsterClover-prevRequiredClover);
 
-        Double currentPoint = (currentClover-prevRequiredClover) / requiredClover;
+        Double currentCloverRate = (monsterClover-prevRequiredClover) / requiredClover;
 
-        return new Pair<>(currentLevel, currentPoint);
+        return new LevelInfo(currentLevel, requiredClover, currentClover, currentCloverRate);
     }
 
     /**
@@ -83,9 +84,9 @@ public class MonsterServiceImpl implements MonsterService{
 
         // exp 계산
         int currentClover = growth.getMonsterClover();
-        Pair<Integer, Double> pair = getCurrentPoint(currentClover);
+        LevelInfo levelInfo = getCurrentPoint(currentClover);
         // result
-        MonsterRes monsterRes = MonsterMapper.INSTANCE.toRepresentativeMonsterRes(profile, growth, pair.second());
+        MonsterRes monsterRes = MonsterMapper.INSTANCE.toRepresentativeMonsterRes(profile, growth, levelInfo);
 
         return monsterRes;
     }
@@ -99,7 +100,7 @@ public class MonsterServiceImpl implements MonsterService{
         List<MemberMonsterGrowth> monsterList = growthRepository.findAllByMemberMonsterProfile_MemberId(memberId);
 
         List<MonsterRes> resList = monsterList
-                .stream().map(m -> MonsterMapper.INSTANCE.toMonsterRes(m, getCurrentPoint(m.getMonsterClover()).first(), getCurrentPoint(m.getMonsterClover()).second())
+                .stream().map(m -> MonsterMapper.INSTANCE.toMonsterRes(m, getCurrentPoint(m.getMonsterClover()))
                 ).collect(Collectors.toList());
 
         return resList;
@@ -143,10 +144,10 @@ public class MonsterServiceImpl implements MonsterService{
 
         // exp 계산
         int currentClover = growth.getMonsterClover();
-        Pair<Integer, Double> pair = getCurrentPoint(currentClover);
+        LevelInfo levelInfo = getCurrentPoint(currentClover);
 
         //result
-        MonsterRes monsterRes = MonsterMapper.INSTANCE.toMonsterRes(growth, pair.first(), pair.second());
+        MonsterRes monsterRes = MonsterMapper.INSTANCE.toMonsterRes(growth, levelInfo);
 
         return monsterRes;
     }
@@ -210,7 +211,7 @@ public class MonsterServiceImpl implements MonsterService{
                 .orElseThrow(() -> new CustomException(ErrorCode.MONSTER_NOT_FOUND));
         MemberMonsterGrowth growth = growthRepository.findByMemberMonsterProfile_MemberIdAndMonsterType_TypeId(memberId, info.getMonsterType().getTypeId()).get();
 
-        int currentLevel = getCurrentPoint(growth.getMonsterClover()).first();
+        int currentLevel = getCurrentPoint(growth.getMonsterClover()).getCurrentLevel();
         if(currentLevel < info.getMonsterLevel()) {
             throw new CustomException(ErrorCode.GROWTH_NOT_FOUND);
         }
