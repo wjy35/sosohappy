@@ -80,4 +80,18 @@ public class MonsterController {
         return new ResponseEntity<>(formattedResponse, HttpStatus.OK);
     }
 
+
+    @PatchMapping("/update/{profileMonsterId}")
+    public ResponseEntity<FormattedResponse> updateMonsterProfile(@RequestHeader Long memberId, @PathVariable int profileMonsterId){
+        monsterService.updateMemberMonsterProfile(memberId, profileMonsterId);
+
+        FormattedResponse formattedResponse = FormattedResponse.builder()
+                .status("success")
+                .message("프로필을 성공적으로 변경하였습니다.")
+                .build();
+
+        return new ResponseEntity<>(formattedResponse, HttpStatus.OK);
+    }
+
+
 }

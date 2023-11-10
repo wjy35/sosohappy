@@ -1,4 +1,4 @@
-package com.ssafy.monster.domain.topic.member;
+package com.ssafy.monster.controller.kafka.event.member;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;

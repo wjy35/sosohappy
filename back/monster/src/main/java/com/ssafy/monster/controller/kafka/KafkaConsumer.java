@@ -3,8 +3,8 @@ package com.ssafy.monster.controller.kafka;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.monster.common.exception.CustomException;
 import com.ssafy.monster.common.exception.ErrorCode;
-import com.ssafy.monster.domain.topic.member.MemberDTO;
-import com.ssafy.monster.domain.topic.member.MemberEvent;
+import com.ssafy.monster.controller.kafka.event.member.MemberDTO;
+import com.ssafy.monster.controller.kafka.event.member.MemberEvent;
 import com.ssafy.monster.service.MonsterServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -34,10 +34,6 @@ public class KafkaConsumer {
 
             if("c".equals(memberUpdateEvent.getOp())){
                 monsterService.setInitialMonster(after.getMemberId());
-            } else if("u".equals(memberUpdateEvent.getOp())) {
-                if(before.getProfileMonsterId() != after.getProfileMonsterId()){
-                    monsterService.updateMemberMonsterProfile(after.getMemberId(), after.getProfileMonsterId());
-                }
             } else if ("d".equals(memberUpdateEvent.getOp())) {
                 monsterService.deleteMemberMonsterProfile(before.getMemberId());
             }
