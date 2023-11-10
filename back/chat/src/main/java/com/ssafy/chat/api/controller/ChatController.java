@@ -36,11 +36,8 @@ public class ChatController {
     @PostMapping("/chat/send")
     public ResponseEntity<?> createChatRoom(@RequestBody ChatPayload chatPayload){
         ChatEntity chatEntity = chatMapper.createRequestToEntity(chatPayload);
-        try {
-            chatSaveService.saveChat(chatEntity, chatPayload.getChatRoomId());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+
+        chatSaveService.saveChat(chatEntity, chatPayload.getChatRoomId());
 
         ChatPublish chatPublish = chatMapper.createChatPublish(chatPayload);
 
