@@ -1,10 +1,9 @@
 package com.ssafy.chat.api.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.chat.api.request.ChatPublish;
 import com.ssafy.chat.api.response.ChatResponse;
 import com.ssafy.chat.api.service.ChatSendService;
+import com.ssafy.chat.util.ObjectSerializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ChatSendServiceImpl implements ChatSendService {
 
-    private final ObjectMapper objectMapper;
+    private final ObjectSerializer objectSerializer;
 
     private final SimpMessageSendingOperations simpMessageSendingOperations;
 
@@ -25,14 +24,12 @@ public class ChatSendServiceImpl implements ChatSendService {
                 .timestamp(chatPublish.getTimestamp())
                 .build();
 
-        try {
-            simpMessageSendingOperations.convertAndSend(
-                    chatPublish.getChatRoomDetailDestination(),
-            objectMapper.writeValueAsString(chatResponse)
-            );
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+
+        simpMessageSendingOperations.convertAndSend(
+                chatPublish.getChatRoomDetailDestination(),
+                objectSerializer.serialize(chatResponse)
+        );
+
     }
 
     @Override
@@ -42,13 +39,10 @@ public class ChatSendServiceImpl implements ChatSendService {
                 .content(chatPublish.getContent())
                 .timestamp(chatPublish.getTimestamp())
                 .build();
-        try {
-            simpMessageSendingOperations.convertAndSend(
-                    chatPublish.getChatRoomListDestination(),
-                    objectMapper.writeValueAsString(chatResponse)
-            );
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+
+        simpMessageSendingOperations.convertAndSend(
+                chatPublish.getChatRoomListDestination(),
+                objectSerializer.serialize(chatResponse)
+        );
     }
 }
