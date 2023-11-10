@@ -1,11 +1,10 @@
-import {useEffect, useState, useRef} from "react"
+import React, {useEffect, useState, useRef} from "react"
 import {View, Text, Image, TouchableOpacity, Animated} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import History from "@/components/History";
-import { useNavigation } from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import FortuneModal from "@/components/FortuneModal";
 
-import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 import GearIcon from "@/assets/img/gear-icon.png"
 import BellIcon from "@/assets/img/bell-icon.png"
 import BookIcon from "@/assets/img/book-icon.png"
@@ -15,16 +14,40 @@ import MyPageStyle from "@/styles/MyPageStyle";
 
 import { WebView } from "react-native-webview";
 import SosomonDictionary from "@/components/SosomonDictionary";
-import {observer} from "mobx-react";
-import useStore from "@/hooks/useStore";
+import useStore from "@/store/store";
 import monsterApi from "@/apis/monsterApi";
 import memberApi from "@/apis/memberApi";
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
 
-const MyPage = observer(() => {
+interface propsType{
+  socket: {
+    connect: Function,
+    send: Function,
+    status: String,
+    helpList: helpDetail[],
+    connected: boolean,
+    disConnect: Function,
+  };
+}
+
+interface helpDetail {
+  memberId: number;
+  nickname: string;
+  category: {
+    categoryId: number,
+    categoryName: string,
+    categoryImage: string,
+  };
+  longitude: number;
+  latitude: number;
+  content: string;
+  place: string;
+}
+
+const MyPage = (({socket}: propsType) => {
   const navigation = useNavigation();
   const [modalState, setModalState] = useState<Boolean>(false);
-  const {userStore} = useStore();
+  const {userInfo} = useStore();
   const [myProfile, setMyProfile] = useState<any>(null);
   const [defaultSosomon, setDefaultSosomon] = useState<any>(null);
   const [fortuneModalState, setFortuneModalState] = useState<Boolean>(false);
@@ -68,6 +91,7 @@ const MyPage = observer(() => {
 
   const changeProfileMonster = async (profileType: number, profileLevel: number) => {
     const profileMonsterId = (profileType-1)*10 + profileLevel;
+    console.log(profileMonsterId);
     try {
       const res = await memberApi.updateMember({
         profileMonsterId: profileMonsterId,
@@ -93,15 +117,9 @@ const MyPage = observer(() => {
   }
 
   const whatIsMyThumbnail = () => {
-    if(userStore.user.profileMonsterId){
-      let temp;
-      if(Number(userStore.user.profileMonsterId) < 10){
-        temp = "0" + temp;
-      }else{
-        temp = userStore.user.profileMonsterId;
-      }
-      setProfileMonsterType(Number(String(temp).slice(0,1)));
-      setProfileMonsterLevel(Number(String(temp).slice(1,2))-1);
+    if(userInfo.profileMonsterId){
+      setProfileMonsterType(Math.floor((userInfo.profileMonsterId-1)/10));
+      setProfileMonsterLevel((userInfo.profileMonsterId % 10 === 0)?9:(userInfo.profileMonsterId%10)-1);
     }
   }
 
@@ -114,12 +132,22 @@ const MyPage = observer(() => {
   useEffect(()=>{
     getProfileMonster();
     getMyCloverApi();
-    
   }, [])
 
   useEffect(() => {
     whatIsMyThumbnail();
   }, [])
+
+  useFocusEffect(
+      React.useCallback(() => {
+        const disConnect = () => {
+          if (!socket.connected) return;
+          socket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [socket.connected])
+  )
 
   return (
     <>
@@ -153,14 +181,14 @@ const MyPage = observer(() => {
             style={MyPageStyle.myProfileImg}
           />
         }
-        
+
         <View style={MyPageStyle.myProfileInfo}>
           {
-            userStore.user &&
+            userInfo &&
             <>
-              <Text style={[MyPageStyle.myName]}>{userStore.user.name}</Text>
+              <Text style={[MyPageStyle.myName]}>{userInfo.name}</Text>
                 {
-                  userStore.user.disabled ?
+                  userInfo.disabled ?
                   <Text style={[MyPageStyle.myRank]}>나눔이</Text>
                   :
                   <Text style={[MyPageStyle.myRank]}>모음이</Text>

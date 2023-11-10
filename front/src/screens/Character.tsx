@@ -2,7 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Image, Alert, Animated } from "react-native"
 import CommonLayout from "@/components/CommonLayout";
 import monsterApi from "@/apis/monsterApi";
-import useStore from "@/hooks/useStore";
+import useStore from "@/store/store";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 
 import CloverIcon from "@/assets/img/clover-icon.png"
 import BearAnimationIcon from "@/assets/img/bear-animation-icon.png"
@@ -21,11 +22,38 @@ interface feedTypes{
     feedType: number,
 }
 
-const Character = () => {
+interface propsType{
+    socket: {
+        connect: Function,
+        send: Function,
+        status: String,
+        helpList: helpDetail[],
+        connected: boolean,
+        disConnect: Function,
+    };
+}
+
+interface helpDetail {
+    memberId: number;
+    nickname: string;
+    category: {
+        categoryId: number,
+        categoryName: string,
+        categoryImage: string,
+    };
+    longitude: number;
+    latitude: number;
+    content: string;
+    place: string;
+}
+
+const Character = ({socket}: propsType) => {
     const [categoryType, setCategoryType] = useState<CategoryType>(CategoryType.army);
     const [myMonsters, setMyMonsters] = useState<any[] | null>(null);
     const loaderValue = useRef(new Animated.Value(0)).current;
-    const {userStore} = useStore();
+    const {userInfo} = useStore();
+    const navigation = useNavigation();
+    const [myClover, setMyClover] = useState(0);
 
     const feedSosomonCommon = async ({feedType}: feedTypes) => {
         if(myMonsters){
@@ -33,12 +61,13 @@ const Character = () => {
                 memberMonsterId: myMonsters[feedType].memberMonsterId,
                 clover: 1,
             });
-            console.log("levelUpApi", levelUpApi);
+            // console.log("levelUpApi", levelUpApi.data.message);
             if(levelUpApi.status === 200){
+                // console.log(levelUpApi.data)
                 if(levelUpApi.data.message === "보유중인 클로버가 부족합니다."){
                     Alert.alert("보유중인 클로버가 부족하여 먹이를 줄 수 없습니다.");
-                }else if(levelUpApi.data.message === "경험치 등록 완료"){
-                    Alert.alert("소소몬에게 성공적으로 먹이를 주었습니다.");
+                }else if(levelUpApi.data.message === "클로버를 성공적으로 반영하였습니다."){
+                    getMyDict();
                 }
             }else{
                 Alert.alert("시스템 오류, 관리자에게 문의하세요.");
@@ -73,7 +102,7 @@ const Character = () => {
             useNativeDriver: false,
         }).start();
     }
-    
+
     const width = loaderValue.interpolate({
         inputRange: [0, 100],
         outputRange: ["0%", "100%"],
@@ -96,52 +125,41 @@ const Character = () => {
         }
       }, [myMonsters, categoryType]);
 
-    useEffect(() => {
-        const getMyDict = async () => {
-            const collectedMonsterApi = await monsterApi.getMyDict();
+    const getMyDict = async () => {
+        const collectedMonsterApi = await monsterApi.getMyDict();
 
-            if(collectedMonsterApi.status === 200){
-                setMyMonsters(collectedMonsterApi.data.result?.monsterList);
-                console.log("myMonsters", myMonsters);
-            }
+        if(collectedMonsterApi.status === 200){
+            setMyMonsters(collectedMonsterApi.data.result?.monsterList);
+            // console.log("myMonsters", myMonsters);
         }
+    }
+    useEffect(() => {
         getMyDict();
     }, [])
 
+    useFocusEffect(()=>{
+        if (!socket.connected) return;
+        socket.disConnect();
+    })
+
     return(
-        <CommonLayout headerType={0} footer={false}>
+        <CommonLayout headerType={0} footer={true}>
 
             <View style={CharacterStyle.characterTitleWrap}>
-                    {
-                        userStore.user.name &&
-                        <Text style={CharacterStyle.characterTitle}>
-                            <Text style={CharacterStyle.characterTitleMyName}>{userStore.user.name}</Text> 님 어떤 캐릭터를{"\n"}
-                            성장시킬까요?
-                        </Text>
-                    }
-                <TouchableOpacity activeOpacity={0.7} onPress={() => feedSosomon()}>
-                    <View style={CharacterStyle.feedButton}>
-                        {
-                            categoryType === CategoryType.army && myMonsters &&
-                            <Text style={CharacterStyle.feedButtonText}>육지동물에게 먹이주기</Text>
-                        }
-                        {
-                            categoryType === CategoryType.navy && myMonsters &&
-                            <Text style={CharacterStyle.feedButtonText}>해양동물에게 먹이주기</Text>
-                        }
-                        {
-                            categoryType === CategoryType.airForce && myMonsters &&
-                            <Text style={CharacterStyle.feedButtonText}>비행동물에게 먹이주기</Text>
-                        }
-                    </View>
-                </TouchableOpacity>
+                {
+                    userInfo.name &&
+                    <Text style={CharacterStyle.characterTitle}>
+                        <Text style={CharacterStyle.characterTitleMyName}>{userInfo.name}</Text> 님 어떤 캐릭터를{"\n"}
+                        성장시킬까요?
+                    </Text>
+                }
             </View>
 
             <View style={CharacterStyle.feedAnimalWrap}>
                 <ScrollView
                     horizontal={true}
-                    onScrollEndDrag={(x: any) => {
-                        console.log(x.nativeEvent.contentOffset.x );
+                    onScroll={(x: any) => {
+                        // console.log(x.nativeEvent.contentOffset.x );
                         if(x.nativeEvent.contentOffset.x > 405){
                             setCategoryType(CategoryType.airForce);
                         }else if(x.nativeEvent.contentOffset.x > 185){
@@ -280,10 +298,13 @@ const Character = () => {
                         }}></Animated.View>
                         // <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[2].currentPoint) * 100}` + "%"}]}></View>
                     }
-                    
+
                 </View>
             </View>
 
+            {/*<View>*/}
+            {/*    <Text>현재 보유한 클로버: {myClover}</Text>*/}
+            {/*</View>*/}
 
             <View style={CharacterStyle.animationButtonWrap}>
                 <TouchableOpacity activeOpacity={0.7} onPress={() => feedSosomon()}>

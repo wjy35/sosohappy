@@ -7,14 +7,39 @@ import SignUpInputStyle from "@/styles/SignUpInputStyle";
 import {useEffect, useState} from "react";
 import PlainInput from "@/components/PlainInput";
 import useInput from "@/hooks/useInput";
-import {useNavigation, useRoute} from "@react-navigation/native";
+import {useFocusEffect, useNavigation, useRoute} from "@react-navigation/native";
 import memberApi from "@/apis/memberApi";
 import DropDownPicker from "react-native-dropdown-picker";
 import InputStyle from "@/styles/InputStyle";
 import {SvgXml} from "react-native-svg";
 import {backIcon, check} from "@/assets/icons/icons";
 
-const SignUpInput = () => {
+interface propsType{
+  socket: {
+    connect: Function,
+    send: Function,
+    status: String,
+    helpList: helpDetail[],
+    connected: boolean,
+    disConnect: Function,
+  };
+}
+
+interface helpDetail {
+  memberId: number;
+  nickname: string;
+  category: {
+    categoryId: number,
+    categoryName: string,
+    categoryImage: string,
+  };
+  longitude: number;
+  latitude: number;
+  content: string;
+  place: string;
+}
+
+const SignUpInput = ({socket}: propsType) => {
   const route = useRoute();
   const [isActive, setIsActive] = useState(false);
   const [selectedGender, setSelectedGender] = useState(2);
@@ -129,6 +154,11 @@ const SignUpInput = () => {
     setOpen(false);
     setSelectedGender(gender);
   }
+
+  useFocusEffect(()=>{
+    if (!socket.connected) return;
+    socket.disConnect();
+  })
 
   return (
     <CommonLayout headerType={0} footer={true}>

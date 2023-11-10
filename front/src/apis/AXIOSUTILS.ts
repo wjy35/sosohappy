@@ -91,9 +91,9 @@ const handleResponseError = async (error: AxiosError) => {
         //     return await refreshAccessTokenAndRetry(config);
         case 409:
             Alert.alert("이미 등록되어 있는 사용자입니다.");
-        case 500:
-            Alert.alert("시스템 에러, 관리자에게 문의 바랍니다.");
-            break;
+        // case 500:
+        //     Alert.alert("시스템 에러, 관리자에게 문의 바랍니다.");
+        //     break;
         default:
             console.error(error);
             return Promise.reject(error);
@@ -101,7 +101,7 @@ const handleResponseError = async (error: AxiosError) => {
 };
 
 const handleResponseSuccess = (response: any) => {
-    console.log("Success response");
+    // console.log("Success response");
     return response;
 };
 
