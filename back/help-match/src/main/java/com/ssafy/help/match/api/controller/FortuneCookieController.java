@@ -17,8 +17,8 @@ import java.util.List;
 public class FortuneCookieController {
     private final FortuneCookieService fortuneCookieService;
 
-    @GetMapping("/fortune-cookie/view")
-    ResponseEntity<FormattedResponse> view(@RequestHeader Long memberId){
+    @GetMapping("/fortune-cookie/list")
+    ResponseEntity<FormattedResponse> list(@RequestHeader Long memberId){
         List<FortuneCookieItem> fortuneCookieItemList = FortuneCookieMapper.INSTANCE
                 .toItem(fortuneCookieService.viewList(memberId));
 
