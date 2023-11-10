@@ -7,6 +7,7 @@ const SideMenuStyle = StyleSheet.create({
         height:"100%",
         backgroundColor:"#FFFFFF",
         position:"absolute",
+        right: 0,
         paddingHorizontal:20,
         zIndex: 2
     },
@@ -15,7 +16,7 @@ const SideMenuStyle = StyleSheet.create({
         flexDirection:"row",
         justifyContent:"space-between",
         alignItems:"center",
-        marginTop:44,
+        marginTop:24,
     },
     logoBg:{
         width:86,

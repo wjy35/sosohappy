@@ -58,6 +58,7 @@ const FortuneModalStyle = StyleSheet.create({
         fontSize:14,
         fontWeight:"700",
         color:"#3D3D3D",
+        textAlign:"center",
     },
     fortuneFooter:{
         fontSize:12,

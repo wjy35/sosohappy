@@ -13,12 +13,39 @@ import {exit, people, send2, hamburgerMenu, backIcon} from "@/assets/icons/icons
 
 import ChatStyle from "@/styles/ChatStyle";
 import YourChat from "@/components/YourCaht";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 
-const Chat = () => {
+interface propsType{
+  helpSocket: {
+    connect: Function,
+    send: Function,
+    status: String,
+    helpList: helpDetail[],
+    connected: boolean,
+    disConnect: Function,
+  };
+}
+
+interface helpDetail {
+  memberId: number;
+  nickname: string;
+  category: {
+    categoryId: number,
+    categoryName: string,
+    categoryImage: string,
+  };
+  longitude: number;
+  latitude: number;
+  content: string;
+  place: string;
+}
+
+const Chat = ({helpSocket}: propsType) => {
   const socket = io('http://10.0.2.2:4002');
   const [msg, setMsg] = useState<string>();
   const [msgList, setMsgList] = useState<Object[]>([]);
   const [roomNo, setroomNo] = useState<number>(1);
+  const navigation = useNavigation();
 
   const sendMsg = () => {
     socket.emit('send message', {roomNo, msg});
@@ -32,6 +59,11 @@ const Chat = () => {
   useEffect(() => {
     socket.emit('chat join', roomNo);
   }, [])
+
+  useFocusEffect(()=>{
+    if (!helpSocket.connected) return;
+    helpSocket.disConnect();
+  })
 
   return (
     <CommonLayout footer={false} headerType={1}>

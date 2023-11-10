@@ -1,4 +1,4 @@
-import {View, Text, Image, TouchableOpacity, ScrollView} from "react-native";
+import {View, Text, Image, TouchableOpacity} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import MainImg from "@/assets/img/main-img.png"
 import HandShakeIcon from "@/assets/img/handshake-icon.png"
@@ -8,17 +8,49 @@ import RightArrowIcon from "@/assets/img/right-arrow-icon.png"
 
 import MainStyle from "@/styles/MainStyle";
 
-import {observer} from 'mobx-react';
-import useStore from "@/hooks/useStore";
-import {useNavigation} from "@react-navigation/native";
+import useStore from "@/store/store"
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import React, {useEffect, useState} from "react";
+import {helpSocket} from "@/types";
+import helpMatchApi from "@/apis/helpMatchApi";
 
-const Main = observer(() => {
-  const {userStore} = useStore();
+interface propsType{
+  socket: helpSocket,
+}
+
+const Main = ({socket}: propsType) => {
+  const {userInfo, login, logout} = useStore();
   const navigation =  useNavigation();
+  const [helpStatus, setHelpStatus] = useState('');
 
   const goto = (next: string) => {
-    userStore.user?(navigation.navigate(next)):(navigation.navigate('Login'));
+    userInfo?(navigation.navigate(next)):(navigation.navigate('Login'));
   }
+
+  const getHelpStatus = async () => {
+    try {
+      const res = helpMatchApi.getHelpStatus();
+      if (res.status === 200){
+        setHelpStatus(res.data.result.helpMatchStatus)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  useFocusEffect(
+      React.useCallback(() => {
+        if (userInfo){
+          getHelpStatus();
+        }
+        const disConnect = () => {
+          if (!socket.connected) return;
+          socket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [socket.connected])
+  )
 
   return (
     <CommonLayout footer={true} headerType={0} nowPage={'Main'}>
@@ -40,7 +72,7 @@ const Main = observer(() => {
           </View>
         </TouchableOpacity>
         {
-          !userStore.user && (
+          !userInfo && (
                 <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('SignUpSeparate')}>
                   <Text style={MainStyle.signUpText}>회원이 아니신가요?</Text>
                 </TouchableOpacity>
@@ -88,13 +120,13 @@ const Main = observer(() => {
       </View>
 
       <View style={MainStyle.happyWrap}>
-        
+
           {
-            userStore.user ?
+            userInfo ?
             <View>
-              <Text style={MainStyle.happyMainTitle}>{userStore.user.name}님, 행운을 나누세요.</Text>
+              <Text style={MainStyle.happyMainTitle}>{userInfo.name}님, 행운을 나누세요.</Text>
               <Text style={MainStyle.happySubTitle}>
-                    오늘도 {userStore.user.name}님의 소소한 행운이 더 많이{"\n"}
+                    오늘도 {userInfo.name}님의 소소한 행운이 더 많이{"\n"}
                     전해질 수 있도록
               </Text>
             </View>
@@ -107,7 +139,7 @@ const Main = observer(() => {
               </Text>
             </View>
           }
-        
+
 
         <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('MyPage')}>
           <View style={MainStyle.moveMypageButton}>
@@ -128,6 +160,6 @@ const Main = observer(() => {
       </View>
     </CommonLayout>
   );
-});
+};
 
 export default Main;

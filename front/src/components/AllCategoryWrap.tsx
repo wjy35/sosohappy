@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import {View, Text, ScrollView, TouchableOpacity} from "react-native"
 import helpCategoryApi from "@/apis/helpCategoryApi"
 
@@ -26,17 +26,17 @@ const AllCategoryWrap = ({category, selectCategory}: propsType) => {
             defaultCategories &&
             defaultCategories.map((defaultCategory, index) => {
               return(
-                <>
-                <TouchableOpacity activeOpacity={0.7} onPress={()=>selectCategory(defaultCategory)}>
-                  <View style={[CategoryWrapStyle.categoryItemWrap]}>
-                    <SvgXml
-                      xml={defaultCategory.categoryImage}
-                      style={CategoryWrapStyle.categoryItemImg}
-                    />
-                    <Text style={CategoryWrapStyle.categoryItemText}>{defaultCategory.categoryName}</Text>
-                  </View>
-                </TouchableOpacity>
-                </>
+                <React.Fragment key={`allCategory${index}`}>
+                    <TouchableOpacity activeOpacity={0.7} onPress={()=>selectCategory(defaultCategory)}>
+                      <View style={[CategoryWrapStyle.categoryItemWrap]}>
+                        <SvgXml
+                          xml={defaultCategory.categoryImage}
+                          style={CategoryWrapStyle.categoryItemImg}
+                        />
+                        <Text style={CategoryWrapStyle.categoryItemText}>{defaultCategory.categoryName}</Text>
+                      </View>
+                    </TouchableOpacity>
+                </React.Fragment>
               );
             })
           }

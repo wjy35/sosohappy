@@ -8,10 +8,35 @@ import {addPlus} from "@/assets/icons/icons";
 
 import SignUpAuthStyle from "@/styles/SignUpAuthStyle";
 import {useEffect, useState} from "react";
-import {useNavigation, useRoute} from "@react-navigation/native";
+import {useFocusEffect, useNavigation, useRoute} from "@react-navigation/native";
 import {launchCamera, launchImageLibrary} from "react-native-image-picker";
 
-const SignUpAuth = () => {
+interface propsType{
+    socket: {
+        connect: Function,
+        send: Function,
+        status: String,
+        helpList: helpDetail[],
+        connected: boolean,
+        disConnect: Function,
+    };
+}
+
+interface helpDetail {
+    memberId: number;
+    nickname: string;
+    category: {
+        categoryId: number,
+        categoryName: string,
+        categoryImage: string,
+    };
+    longitude: number;
+    latitude: number;
+    content: string;
+    place: string;
+}
+
+const SignUpAuth = ({socket}: propsType) => {
     const route = useRoute();
     const [isActive, setIsActive] = useState(false);
     const navigation = useNavigation();
@@ -63,6 +88,11 @@ const SignUpAuth = () => {
     useEffect(() => {
         checkAuth();
     }, [image]);
+
+    useFocusEffect(()=>{
+        if (!socket.connected) return;
+        socket.disConnect();
+    })
 
     return (
         <CommonLayout headerType={0} footer={true}>
