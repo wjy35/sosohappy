@@ -68,8 +68,8 @@ const CreateHelp = (({location, socket}: propsType) => {
                 categoryName: category.categoryName,
                 categoryImage: category.categoryImage,
             },
-            longitude: 1,
-            latitude: 1,
+            longitude: location.longitude,
+            latitude: location.latitude,
             content: helpContent.text,
             place: locationDetail.text,
         };
