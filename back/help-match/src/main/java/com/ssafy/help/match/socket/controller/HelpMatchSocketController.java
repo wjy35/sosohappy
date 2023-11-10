@@ -88,13 +88,13 @@ public class HelpMatchSocketController{
 
     @GetMapping("/match/status")
     ResponseEntity<FormattedResponse> simpStatus(@RequestHeader Long memberId){
-        HelpMatchStatus helpMatchStatus = helpMatchService.getSimpStatus(memberId);
+        MatchStatusResponse response = helpMatchService.getStatus(memberId);
 
         FormattedResponse formattedResponse = FormattedResponse
                 .builder()
                 .status("success")
                 .message("SUCCESS GET STATUS")
-                .result("helpMatchStatus",helpMatchStatus)
+                .result("matchStatus",response)
                 .build();
 
         return new ResponseEntity<>(formattedResponse,HttpStatus.OK);
