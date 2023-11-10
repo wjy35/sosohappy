@@ -1,0 +1,16 @@
+package com.ssafy.help.match.event.producer;
+
+public enum KafkaEventTopic {
+    HELP_HISTORY_CREATE("help.history.create");
+
+    private final String topic;
+
+    KafkaEventTopic(String topic) {
+        this.topic = topic;
+    }
+
+    @Override
+    public String toString() {
+        return topic;
+    }
+}

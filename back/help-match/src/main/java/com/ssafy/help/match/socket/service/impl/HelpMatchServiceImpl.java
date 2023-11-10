@@ -4,6 +4,9 @@ import com.ssafy.help.match.db.entity.HelpEntity;
 import com.ssafy.help.match.db.entity.HelpMatchStatus;
 import com.ssafy.help.match.db.entity.HelpMatchType;
 import com.ssafy.help.match.db.repository.*;
+import com.ssafy.help.match.event.dto.HelperSearchEventDTO;
+import com.ssafy.help.match.event.emitter.EventEmitter;
+import com.ssafy.help.match.event.emitter.EventTopicPrefix;
 import com.ssafy.help.match.socket.dto.MatchPopEventDTO;
 import com.ssafy.help.match.socket.dto.MatchPushEventDTO;
 import com.ssafy.help.match.socket.dto.StatusChangeEventDTO;
@@ -45,6 +48,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     private final ObjectSerializer objectSerializer;
     private final double[] maxDistanceList = {500d,1000d,1500d};
     private final HelpEntityRepository helpEntityRepository;
+    private final EventEmitter eventEmitter;
 
     @Override
     public void cancel(Long memberId) {
@@ -143,6 +147,11 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     }
 
     private void matchInRange(Long memberId, Point point, double maxDistance,Set<Long> receiveMemberIdSet) {
+        eventEmitter.emit(
+                EventTopicPrefix.HELPER_SEARCH,
+                HelperSearchEventDTO.builder().memberId(memberId).metric(maxDistance).build()
+        );
+
         Long searchedMemberId;
 
         for(GeoResult<RedisGeoCommands.GeoLocation<String>> geoResult:memberPointRepository.search(point,maxDistance).getContent()){
