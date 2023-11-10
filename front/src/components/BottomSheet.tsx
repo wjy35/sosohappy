@@ -6,38 +6,49 @@ import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 
 import BottomSheetStyle from "@/styles/BottomSheetStyle";
 
-import axios from "axios"
 import { useNavigation } from "@react-navigation/native";
-
-enum matchingStatus {
-    Wait,
-    Matching,
-    Arrive
-}
+import helpMatchApi from "@/apis/helpMatchApi";
+import {helpDetail} from "@/types";
+import useStore from "@/store/store";
 
 interface propsType{
     updateBottomSheetStatus: Function,
-    selectedHelp: helpDetail|undefined
+    selectedHelp: helpDetail|undefined,
+    status: string,
 }
 
-interface helpDetail {
-    memberId: number,
-    nickname: string,
-    category: {
-        categoryId: number,
-        categoryName: string,
-        categoryImage: string,
-    },
-    longitude: number,
-    latitude: number,
-    content: string,
-    place: string,
-    distance: number,
-}
-
-const BottomSheet = ({updateBottomSheetStatus, selectedHelp}: propsType) => {
-    const [currentMatchingStatus, setCurrentMatchingStatus] = useState<matchingStatus>(matchingStatus.Wait);
+const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType) => {
     const navigation = useNavigation();
+    const {userInfo} = useStore();
+
+
+    const acceptHelp = async () => {
+        try {
+            const res = await helpMatchApi.acceptHelp({
+                helperMemberId: userInfo.memberId,
+                disabledMemberId: selectedHelp?.memberId,
+            })
+            if(res.status === 200){
+                updateBottomSheetStatus(false);
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const cancelHelp = async () => {
+        try {
+            const res = await helpMatchApi.cancelHelp({
+                memberId: userInfo.memberId,
+            })
+            if (res.status === 200) {
+                updateBottomSheetStatus(false);
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     return(
         <>
             {
@@ -53,34 +64,27 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp}: propsType) => {
                                 <View style={BottomSheetStyle.modalTitleCategory}>
 
                                     {
-                                        currentMatchingStatus === matchingStatus.Wait ?
+                                        status === 'DEFAULT' ?
                                             <Text style={BottomSheetStyle.modalTitleCategoryText}>새로운 행운력</Text>
                                             :
-                                            currentMatchingStatus === matchingStatus.Matching ?
+                                            status === 'ON_MOVE' ?
                                                 <Text style={BottomSheetStyle.modalTitleCategoryText}>매칭완료</Text>
                                                 :
-                                                currentMatchingStatus === matchingStatus.Arrive ?
-                                                    <Text style={BottomSheetStyle.modalTitleCategoryText}>컨택완료</Text>
-                                                    :
-                                                    <></>
+                                                <></>
                                     }
 
                                 </View>
                                 {
-                                    currentMatchingStatus === matchingStatus.Wait ?
+                                    status === 'DEFAULT' ?
                                         <Text style={BottomSheetStyle.modalTitleContent}>{selectedHelp.content}</Text>
                                         :
-                                        currentMatchingStatus === matchingStatus.Matching ?
+                                        status === 'ON_MOVE' ?
                                             <Text style={BottomSheetStyle.modalTitleContent}>컨택 진행중입니다.</Text>
                                             :
-                                            currentMatchingStatus === matchingStatus.Arrive ?
-                                                <Text style={BottomSheetStyle.modalTitleContent}>나눔이/모음이 컨택완료!</Text>
-                                                :
-                                                <></>
-
+                                            <></>
                                 }
                                 {
-                                    currentMatchingStatus === matchingStatus.Wait ?
+                                    status === 'DEFAULT' ?
                                         <Text style={BottomSheetStyle.modalTitleDescription}>약 {Math.round(selectedHelp.distance)}m · {selectedHelp.place}</Text>
                                         :
                                         <Text style={BottomSheetStyle.modalTitleDescription}>도움을 제공하고, 승인해주세요.</Text>
@@ -117,14 +121,14 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp}: propsType) => {
                             </View>
 
                             {
-                                currentMatchingStatus === matchingStatus.Wait ?
-                                    <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Chat')}>
+                                status === 'DEFAULT' ?
+                                    <TouchableOpacity activeOpacity={0.7} onPress={acceptHelp}>
                                         <View style={BottomSheetStyle.connectButton}>
                                             <Text style={BottomSheetStyle.connectButtonText}>연결하기</Text>
                                         </View>
                                     </TouchableOpacity>
                                     :
-                                    <TouchableOpacity activeOpacity={0.7} onPress={() => updateBottomSheetStatus(false)}>
+                                    <TouchableOpacity activeOpacity={0.7} onPress={cancelHelp}>
                                         <View style={BottomSheetStyle.connectButton}>
                                             <Text style={BottomSheetStyle.connectButtonText}>취소하기</Text>
                                         </View>

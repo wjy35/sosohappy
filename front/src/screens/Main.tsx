@@ -10,25 +10,40 @@ import MainStyle from "@/styles/MainStyle";
 
 import useStore from "@/store/store"
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {helpSocket} from "@/types";
+import helpMatchApi from "@/apis/helpMatchApi";
 
 interface propsType{
   socket: helpSocket,
 }
 
-const Main = (({socket}: propsType) => {
+const Main = ({socket}: propsType) => {
   const {userInfo, login, logout} = useStore();
   const navigation =  useNavigation();
+  const [helpStatus, setHelpStatus] = useState('');
 
   const goto = (next: string) => {
     userInfo?(navigation.navigate(next)):(navigation.navigate('Login'));
   }
 
+  const getHelpStatus = async () => {
+    try {
+      const res = helpMatchApi.getHelpStatus();
+      if (res.status === 200){
+        setHelpStatus(res.data.result.helpMatchStatus)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   useFocusEffect(
       React.useCallback(() => {
+        if (userInfo){
+          getHelpStatus();
+        }
         const disConnect = () => {
-          console.log('callback disconnect', socket.connected);
           if (!socket.connected) return;
           socket.disConnect();
         }
@@ -145,6 +160,6 @@ const Main = (({socket}: propsType) => {
       </View>
     </CommonLayout>
   );
-});
+};
 
 export default Main;
