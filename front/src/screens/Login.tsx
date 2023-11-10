@@ -10,33 +10,14 @@ import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging'
 import useStore from "@/store/store";
 import {useState} from "react";
+import {useEffect} from "react";
+import { helpSocket} from "@/types";
 
 interface propsType{
-  socket: {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-  };
+  socket: helpSocket,
 }
 
-interface helpDetail {
-  memberId: number;
-  nickname: string;
-  category: {
-    categoryId: number,
-    categoryName: string,
-    categoryImage: string,
-  };
-  longitude: number;
-  latitude: number;
-  content: string;
-  place: string;
-}
-
-const Login = (({socket}: propsType) => {
+const Login = ({socket}: propsType) => {
   const navigation = useNavigation();
   const {userInfo, login} = useStore();
   const [isFail, setIsFail] = useState(false);
@@ -143,6 +124,6 @@ const Login = (({socket}: propsType) => {
       </View>
     </CommonLayout>
   );
-});
+};
 
 export default Login;
