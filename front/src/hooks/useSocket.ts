@@ -92,6 +92,23 @@ function useSocket(){
         setSubscribe('progress');
     }
 
+    function getOtherPoint() {
+        client.subscribe(
+            `/topic/help/wait/${memberId}`,
+            (frame) => {
+                const body = JSON.parse(frame.body);
+                setOtherMemberPoint({
+                    ...otherMemberPoint,
+                    latitude: body.latitude,
+                    longitude: body.longitude,
+                });
+            },
+            {
+                id:"getOtherPoint"
+            });
+        setSubscribe('getOtherPoint');
+    }
+
     function send(payload: any){
         const data= {
             memberId:payload.memberId,
