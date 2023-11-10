@@ -19,7 +19,7 @@ public class FortuneCookieController {
     @GetMapping("/fortune-cookie/list")
     ResponseEntity<FormattedResponse> list(@RequestHeader Long memberId){
         List<FortuneCookieItem> fortuneCookieItemList = FortuneCookieMapper.INSTANCE
-                .toItem(fortuneCookieService.viewList(memberId));
+                .toItemList(fortuneCookieService.viewList(memberId));
 
         FormattedResponse response = FormattedResponse
                 .builder()
