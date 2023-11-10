@@ -7,9 +7,8 @@ import com.ssafy.help.match.socket.service.FortuneCookieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -27,6 +26,19 @@ public class FortuneCookieController {
                 .status("success")
                 .message("SUCCESS GET LIST")
                 .result("fortuneCookieList",fortuneCookieItemList)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/fortune-cookie/use/{fortuneCookieId}")
+    ResponseEntity<FormattedResponse> use(@RequestHeader Long memberId, @PathVariable String fortuneCookieId){
+        fortuneCookieService.use(memberId,fortuneCookieId);
+
+        FormattedResponse response = FormattedResponse
+                .builder()
+                .status("success")
+                .message("SUCCESS USE")
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
