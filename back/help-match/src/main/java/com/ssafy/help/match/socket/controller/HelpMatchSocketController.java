@@ -1,19 +1,29 @@
 package com.ssafy.help.match.socket.controller;
 
-import com.ssafy.help.match.socket.request.HelpMatchRequest;
+import com.ssafy.help.match.api.request.PointSaveRequest;
+import com.ssafy.help.match.api.response.FormattedResponse;
+import com.ssafy.help.match.api.service.MemberPointManageService;
+import com.ssafy.help.match.db.entity.HelpMatchStatus;
+import com.ssafy.help.match.socket.request.*;
 import com.ssafy.help.match.socket.response.MatchStatusResponse;
-import com.ssafy.help.match.socket.response.ReceiveMatchListResponse;
-import com.ssafy.help.match.socket.response.ReceiveMatchType;
+import com.ssafy.help.match.socket.response.PushMatchListResponse;
+import com.ssafy.help.match.socket.service.HelpService;
 import com.ssafy.help.match.util.ObjectSerializer;
 import com.ssafy.help.match.socket.service.HelpMatchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.geo.Point;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,19 +31,18 @@ public class HelpMatchSocketController{
     private final ObjectSerializer objectSerializer;
     private final SimpMessageSendingOperations simpMessageSendingOperations;
     private final HelpMatchService helpMatchService;
-    private final double[] metricList = {500d,1000d,1500d};
+    private final MemberPointManageService memberPointManageService;
 
     @SubscribeMapping("/topic/match/status/{memberId}")
     void status(@DestinationVariable Long memberId){
-        MatchStatusResponse response = helpMatchService.viewStatusByMemberId(memberId);
+        MatchStatusResponse response = helpMatchService.getStatus(memberId);
         simpMessageSendingOperations.convertAndSend("/topic/match/status/"+memberId, objectSerializer.serialize(response));
     }
 
     @SubscribeMapping("/topic/match/list/{memberId}")
     void list(@DestinationVariable Long memberId){
-        ReceiveMatchListResponse response = ReceiveMatchListResponse
+        PushMatchListResponse response = PushMatchListResponse
                 .builder()
-                .receiveMatchType(ReceiveMatchType.PUSH)
                 .receiveMatchList(helpMatchService.list(memberId))
                 .build();
 
@@ -42,11 +51,52 @@ public class HelpMatchSocketController{
 
     @MessageMapping("/match")
     void match(@Payload HelpMatchRequest helpMatchRequest){
-        MatchStatusResponse response = helpMatchService.saveAndGetMatchStatus(helpMatchRequest);
-        simpMessageSendingOperations.convertAndSend("/topic/match/status/"+helpMatchRequest.getMemberId(), objectSerializer.serialize(response));
+        helpMatchService.match(helpMatchRequest);
+    }
 
-        for(double metric: metricList){
-            helpMatchService.match(new Point(helpMatchRequest.getLongitude(),helpMatchRequest.getLatitude()),metric, helpMatchRequest.getMemberId());
+    @PostMapping("/cancel/match")
+    ResponseEntity<FormattedResponse> cancel(@RequestBody HelpMatchCancelRequest helpMatchCancelRequest ){
+
+        FormattedResponse response;
+        try{
+            helpMatchService.cancel(helpMatchCancelRequest.getMemberId());
+            response = FormattedResponse
+                    .builder()
+                    .status("success")
+                    .message("SUCCESS CANCEL")
+                    .build();
+        }catch (Exception e){
+            response = FormattedResponse
+                    .builder()
+                    .status("fail")
+                    .message("FAIL CANCEL")
+                    .build();
+            return new ResponseEntity<>(response,HttpStatus.BAD_GATEWAY);
         }
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @MessageMapping("/point")
+    void save(@Payload PointSaveRequest pointSaveRequest){
+        memberPointManageService.save(
+                new Point(pointSaveRequest.getLongitude(), pointSaveRequest.getLatitude()),
+                pointSaveRequest.getMemberId(),
+                pointSaveRequest.getOtherMemberId()
+        );
+    }
+
+    @GetMapping("/match/status")
+    ResponseEntity<FormattedResponse> simpStatus(@RequestHeader Long memberId){
+        MatchStatusResponse response = helpMatchService.getStatus(memberId);
+
+        FormattedResponse formattedResponse = FormattedResponse
+                .builder()
+                .status("success")
+                .message("SUCCESS GET STATUS")
+                .result("matchStatus",response)
+                .build();
+
+        return new ResponseEntity<>(formattedResponse,HttpStatus.OK);
     }
 }
