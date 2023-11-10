@@ -14,7 +14,7 @@ public class ChatSaveServiceImpl implements ChatSaveService {
     private final ChatRepository chatRepository;
 
     @Override
-    public void saveChat(ChatEntity chatEntity, int roomId) throws JsonProcessingException {
+    public void saveChat(ChatEntity chatEntity, int roomId) {
         chatRepository.saveChat(chatEntity, roomId);
     }
 }
