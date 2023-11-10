@@ -66,10 +66,16 @@ const CreateHelp = (({location, socket}: propsType) => {
         socket.send(payload);
     }
 
-    useFocusEffect(()=>{
-        if (socket.connected) return;
-        socket.connect();
-    })
+    useFocusEffect(
+        React.useCallback(() => {
+            const connect = () => {
+                if (socket.connected) return;
+                socket.connect();
+            }
+            connect();
+            return () => {};
+        }, [socket.connected])
+    )
 
     return (
         <CommonLayout footer={true} headerType={0} nowPage={'Help'}>
