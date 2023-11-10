@@ -16,6 +16,7 @@ public class ChatRoomEntity {
 
     @Column(name = "chat_room_id", unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.hibernate.annotations.Generated(GenerationTime.INSERT)
     private Integer chatRoomId;
 
     @Id
