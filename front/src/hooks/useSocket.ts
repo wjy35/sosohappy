@@ -15,9 +15,18 @@ function useSocket(){
         helpEntity: null,
         otherMemberPoint: null,
     });
+    const [otherMember, setOtherMember] = useState<number|null>(null);
+    const [isSearching, setIsSearching] = useState(false);
+    const [otherMemberPoint, setOtherMemberPoint] = useState<point>();
+    const {userInfo} = useStore();
+
+    function getMemberId(newMemberId: number) {
+        setMemberId(newMemberId)
+    }
 
     function connect() {
         // wss://sosohappy.co.kr/help-match-socket/endpoint
+        setStatus('');
         const clientInit = Stomp.client("wss://sosohappy.co.kr/help-match-socket/endpoint", {debug: false, binary: true});
         setClient(clientInit);
         clientInit.connect(
@@ -74,7 +83,6 @@ function useSocket(){
         client.subscribe(
             `/topic/match/progress/${memberId}`,
             (frame) => {
-                console.log(frame);
                 const body = JSON.parse(frame.body);
                 console.log(body);
             },
@@ -102,6 +110,7 @@ function useSocket(){
     }
 
     useEffect(() => {
+        if (!client) return;
         if (subscribe){
             client.unsubscribe(subscribe);
             // console.log(subscribe);
@@ -113,7 +122,24 @@ function useSocket(){
         }
     }, [status]);
 
-    return {connect, send, status, helpList, connected, disConnect, data};
+    useEffect(() => {
+        const init = async () => {
+            try {
+                const res = await helpMatchApi.getHelpStatus();
+                if (res.status === 200){
+                    const body = res.data.result.matchStatus;
+                    setData(body.data);
+                    setStatus(body.helpMatchStatus);
+                    body.data.helpEntity?.otherMemberId&&setOtherMember(body.data.helpEntity.otherMemberId);
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        userInfo&&init();
+    }, [userInfo])
+
+    return {connect, send, status, helpList, connected, disConnect, data, isSearching, getMemberId, otherMemberPoint, otherMember};
 }
 
 export default useSocket;
