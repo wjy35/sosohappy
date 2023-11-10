@@ -159,7 +159,7 @@ public class MonsterServiceImpl implements MonsterService{
     @Override
     @Transactional
     public void setInitialMonster(Long memberId) {
-        if(!profileRepository.existsByMemberId(memberId)){
+        if(profileRepository.existsByMemberId(memberId)){
             throw new CustomException(ErrorCode.MEMBER_EXIST_ERROR);
         }
 
