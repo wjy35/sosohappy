@@ -16,4 +16,7 @@ public class KafkaEventProducer {
         kafkaTemplate.send(topic.toString(),objectSerializer.serialize(eventDTO));
     }
 
+    public void produce(KafkaEventTopic topic, String data){
+        kafkaTemplate.send(topic.toString(),data);
+    }
 }
