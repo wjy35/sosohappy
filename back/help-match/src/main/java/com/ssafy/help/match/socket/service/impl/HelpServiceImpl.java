@@ -98,7 +98,6 @@ public class HelpServiceImpl implements HelpService {
         emitStatusChangeEvent(memberId);
 
         Long otherMemberId = helpEntity.getOtherMemberId();
-
         if(memberSessionEntityRepository.isOnMove(otherMemberId)) {
             memberSessionEntityRepository.setMatchStatus(otherMemberId,HelpMatchStatus.DEFAULT);
             memberSessionEntityRepository.setMatchType(otherMemberId,HelpMatchType.NONE);
