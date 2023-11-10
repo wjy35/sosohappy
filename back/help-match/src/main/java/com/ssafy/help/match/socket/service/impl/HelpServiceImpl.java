@@ -8,6 +8,9 @@ import com.ssafy.help.match.db.repository.HelpEntityRepository;
 import com.ssafy.help.match.db.repository.MemberSessionEntityRepository;
 import com.ssafy.help.match.db.repository.SendMatchEntityRepository;
 import com.ssafy.help.match.db.repository.SendMemberIdSetRepository;
+import com.ssafy.help.match.event.dto.HelpHistoryCreateEventDTO;
+import com.ssafy.help.match.event.producer.KafkaEventProducer;
+import com.ssafy.help.match.event.producer.KafkaEventTopic;
 import com.ssafy.help.match.socket.dto.MatchPopEventDTO;
 import com.ssafy.help.match.socket.dto.StatusChangeEventDTO;
 import com.ssafy.help.match.socket.mapper.HelpEntityMapper;
@@ -30,6 +33,7 @@ public class HelpServiceImpl implements HelpService {
     private final RedisTemplate<String,String> redisTemplate;
     private final ObjectSerializer objectSerializer;
     private final SendMemberIdSetRepository sendMemberIdSetRepository;
+    private final KafkaEventProducer kafkaEventProducer;
 
     @Value("${redis.topic.match-pop-event.prefix}")
     public String MATCH_POP_EVENT_TOPIC_PREFIX;
@@ -87,22 +91,32 @@ public class HelpServiceImpl implements HelpService {
     @Override
     public void complete(Long memberId) {
         if(!memberSessionEntityRepository.isWaitComplete(memberId)) throw new RuntimeException();
+        HelpEntity helpEntity = Optional.of(helpEntityRepository.getAndDeleteByMemberId(memberId)).get();
 
         memberSessionEntityRepository.setMatchStatus(memberId,HelpMatchStatus.DEFAULT);
         memberSessionEntityRepository.setMatchType(memberId,HelpMatchType.NONE);
         emitStatusChangeEvent(memberId);
 
-        Optional.ofNullable(helpEntityRepository.getAndDeleteByMemberId(memberId))
-                .ifPresent((helpEntity)->{
-                    Long otherMemberId = helpEntity.getOtherMemberId();
-                    if(memberSessionEntityRepository.isOnMove(otherMemberId)) {
-                        memberSessionEntityRepository.setMatchStatus(otherMemberId,HelpMatchStatus.DEFAULT);
-                        memberSessionEntityRepository.setMatchType(otherMemberId,HelpMatchType.NONE);
-                        helpEntityRepository.getAndDeleteByMemberId(otherMemberId);
-                        emitStatusChangeEvent(otherMemberId);
-                    }
-                });
-        // ToDo help-history 기록
+        Long otherMemberId = helpEntity.getOtherMemberId();
+        if(memberSessionEntityRepository.isOnMove(otherMemberId)) {
+            memberSessionEntityRepository.setMatchStatus(otherMemberId,HelpMatchStatus.DEFAULT);
+            memberSessionEntityRepository.setMatchType(otherMemberId,HelpMatchType.NONE);
+            helpEntityRepository.getAndDeleteByMemberId(otherMemberId);
+            emitStatusChangeEvent(otherMemberId);
+        }
+
+        HelpHistoryCreateEventDTO eventDTO = HelpHistoryCreateEventDTO
+                .builder()
+                .fromMemberId(otherMemberId)
+                .toMemberId(memberId)
+                .categoryId(helpEntity.getCategory().getCategoryId())
+                .content(helpEntity.getContent())
+                .latitude(helpEntity.getLatitude())
+                .longitude(helpEntity.getLongitude())
+                .build();
+
+        kafkaEventProducer.produce(KafkaEventTopic.HELP_HISTORY_CREATE,eventDTO);
+
         // ToDo Clover 생성
     }
 
