@@ -33,6 +33,15 @@ const MapLoadingStyle = StyleSheet.create({
     loadingTextBold:{
         fontWeight:"700",
     },
+    matchCancelButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 80,
+        height: 30,
+        marginTop: 20,
+        backgroundColor: '#427CF9',
+        borderRadius: 99,
+    }
 })
 
 export default MapLoadingStyle;

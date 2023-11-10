@@ -10,33 +10,14 @@ import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging'
 import useStore from "@/store/store";
 import {useState} from "react";
+import {useEffect} from "react";
+import { helpSocket} from "@/types";
 
 interface propsType{
-  socket: {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-  };
+  socket: helpSocket,
 }
 
-interface helpDetail {
-  memberId: number;
-  nickname: string;
-  category: {
-    categoryId: number,
-    categoryName: string,
-    categoryImage: string,
-  };
-  longitude: number;
-  latitude: number;
-  content: string;
-  place: string;
-}
-
-const Login = (({socket}: propsType) => {
+const Login = ({socket}: propsType) => {
   const navigation = useNavigation();
   const {userInfo, login} = useStore();
   const [isFail, setIsFail] = useState(false);
@@ -76,20 +57,19 @@ const Login = (({socket}: propsType) => {
       });
 
       if (res.status === 200 && res.data.status === 'success'){
+        await RNSecureStorage.set("accessToken", res.data.result.authorization.accessToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
+        await RNSecureStorage.set("refreshToken", res.data.result.authorization.refreshToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
+
         const userInfo = await memberApi.getMember();
 
         if (userInfo.status === 200){
           setIsLoading(false);
-          navigation.replace('Main');
           login(userInfo.data.result.member);
+          socket.getMemberId(userInfo.data.result.member.memberId);
+          navigation.replace('Main');
         }
-
-        await RNSecureStorage.set("accessToken", res.data.result.authorization.accessToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
-        await RNSecureStorage.set("refreshToken", res.data.result.authorization.refreshToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
-
         const fcmToken = await getFcmToken();
         const insertFcmTokenApi = await pushAlarmApi.insertFcmToken({fcmToken});
-
       } else if (res.status === 200) {
         setIsFail(true);
         setIsLoading(false);
@@ -137,12 +117,11 @@ const Login = (({socket}: propsType) => {
           </View>
         </TouchableOpacity>
         <TouchableOpacity activeOpacity={0.7}>
-
           <Text style={LoginStyle.authText}>회원이 아니신가요?</Text>
         </TouchableOpacity>
       </View>
     </CommonLayout>
   );
-});
+};
 
 export default Login;

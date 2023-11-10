@@ -34,11 +34,13 @@ function useLocation({}: propsType) {
         )
     }
 
-    const sendPosition = async (latitude: number, longitude: number) => {
+    const sendPosition = async (latitude: number, longitude: number, memberId: number, otherMemberId: number|null) => {
         try {
             const res = await helpMatchApi.sendPosition({
                 latitude: latitude,
                 longitude: longitude,
+                memberId: memberId,
+                otherMemberId: otherMemberId,
             })
             if (res.status === 200){
                 console.log('uselocation success');
@@ -49,30 +51,30 @@ function useLocation({}: propsType) {
         }
     }
 
-    const backgroundPositionFunc = (lati: number, longi: number) => {
+    const backgroundPositionFunc = (lati: number, longi: number, memberId: number, otherMemberId: number|null) => {
         // TODO: background에서 사용될 작업
-        sendPosition(lati, longi)
+        sendPosition(lati, longi, memberId, otherMemberId);
         setCoordinate({
             latitude: lati,
             longitude: longi,
         });
     }
 
-    const foregroundPositionFunc = (lati: number, longi: number) => {
+    const foregroundPositionFunc = (lati: number, longi: number, memberId: number, otherMemberId: number|null) => {
         // TODO: foreground에서 사용될 작업
-        sendPosition(lati, longi);
+        sendPosition(lati, longi, memberId, otherMemberId);
         setCoordinate({
             latitude: lati,
             longitude: longi,
         });
     }
 
-    const getPosition = () => {
+    const getPosition = (memberId: number, otherMemberId: number|null) => {
         Geolocation.getCurrentPosition(
             position => {
                 const latitude = Number(JSON.stringify(position.coords.latitude));
                 const longitude = Number(JSON.stringify(position.coords.longitude));
-                backgroundPositionFunc(latitude, longitude);
+                backgroundPositionFunc(latitude, longitude, memberId, otherMemberId);
             },
             error => {console.log(error)},
         )
@@ -82,13 +84,13 @@ function useLocation({}: propsType) {
         Geolocation.clearWatch(watchId);
     };
 
-    const setBackground = () => {
+    const setBackground = (memberId: number, otherMemberId: number|null) => {
         console.log('background start');
         setStatus(2);
         stopWatchPosition();
         ReactNativeForegroundService.add_task(
             () => {
-                getPosition();
+                getPosition(memberId, otherMemberId);
             },
             {
                 delay: 60000,
@@ -108,10 +110,11 @@ function useLocation({}: propsType) {
         });
     };
 
-    const setForeground = () => {
+    const setForeground = (memberId: number, otherMemberId: number|null) => {
         setStatus(1);
         ReactNativeForegroundService.remove_all_tasks(); // 앱 실행 시 백그라운드 태스크 전부 제거
         ReactNativeForegroundService.stopAll();
+        Geolocation.clearWatch(watchId);
 
         console.log('foreground start');
 
@@ -119,15 +122,15 @@ function useLocation({}: propsType) {
             position => {
                 const latitude = Number(JSON.stringify(position.coords.latitude));
                 const longitude = Number(JSON.stringify(position.coords.longitude));
-                foregroundPositionFunc(latitude, longitude);
+                foregroundPositionFunc(latitude, longitude, memberId, otherMemberId);
             },
             error => {
                 console.log(error);
             },
             {
-                distanceFilter: 10, // Minimum distance (in meters) to update the location
-                interval: 900000, // Update interval (in milliseconds), which is 15 minutes
-                fastestInterval: 300000, // Fastest update interval (in milliseconds)
+                distanceFilter: 1, // Minimum distance (in meters) to update the location
+                interval: 10000, // Update interval (in milliseconds), which is 15 minutes
+                fastestInterval: 5000, // Fastest update interval (in milliseconds)
                 accuracy: {
                     android: 'highAccuracy',
                     ios: 'best',
@@ -150,6 +153,7 @@ function useLocation({}: propsType) {
     useEffect(() => {
         init();
     }, []);
+
 
     return {coordinate, setBackground, setForeground, status};
 }

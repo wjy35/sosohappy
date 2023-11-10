@@ -1,3 +1,17 @@
+export interface helpSocket {
+    connect: Function,
+    send: Function,
+    status: String,
+    helpList: helpDetail[],
+    connected: boolean,
+    disConnect: Function,
+    data: helpData,
+    isSearching: boolean,
+    getMemberId: Function,
+    otherMemberPoint: point,
+    otherMember: number|null,
+}
+
 export interface helpData {
     helpEntity: helpEntity|null,
     otherMemberPoint: point|null,
@@ -17,8 +31,8 @@ export interface helpEntity {
 }
 
 export interface point{
-    x: number,
-    y: number,
+    latitude: number,
+    longitude: number,
 }
 
 export interface helpDetail {
@@ -33,14 +47,4 @@ export interface helpDetail {
     latitude: number;
     content: string;
     place: string;
-}
-
-export interface helpSocket {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-    data: helpData
 }
