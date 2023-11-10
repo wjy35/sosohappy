@@ -89,5 +89,10 @@ spring:
             - Path=/help-match-socket/**
           filters:
             - RewritePath=/help-match-socket/(?<path>.*),/$\{path}
-        
+        - id: ocr
+          uri: lb://OCR-SERVICE/
+          predicates:
+            - Path=/ocr/**
+          filters:
+            - RewritePath=/ocr/(?<path>.*),/$\{path}
         
