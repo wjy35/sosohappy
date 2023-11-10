@@ -9,6 +9,7 @@ interface propsType {
     disabledMemberId?: number;
     memberId?: number;
     otherMemberId?: number;
+    fortuneCookieId?: number;
 }
 
 const helpMatchApi = {
@@ -76,6 +77,18 @@ const helpMatchApi = {
         )
         return res;
     },
+    getFortuneList: async () => {
+        const res = PrivateInstance.get(
+            `${domain}/fortune-cookie/list`
+        )
+        return res;
+    },
+    openFortuneCookie: async ({fortuneCookieId}: propsType)=>{
+        const res = PrivateInstance.delete(
+            `${domain}/fortune-cookie/use/${fortuneCookieId}`
+        )
+        return res;
+    }
 };
 
 export default helpMatchApi;
