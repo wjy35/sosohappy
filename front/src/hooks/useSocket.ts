@@ -41,6 +41,7 @@ function useSocket(){
                         const body = JSON.parse(frame.body);
                         setData(body.data);
                         setStatus(body.helpMatchStatus);
+                        body.data.helpEntity?.otherMemberId&&setOtherMember(body.data.helpEntity.otherMemberId)
                     },
                     {
                         id: "status"
@@ -133,9 +134,18 @@ function useSocket(){
             // console.log(subscribe);
         }
         if (status === 'DEFAULT'){
+            setIsSearching(false);
             getList();
-        } else if (status === 'helpMatchStatus'){
-
+            setOtherMember(null);
+        } else if (status === 'ON_MATCH_PROGRESS'){
+            setIsSearching(true);
+            getProgress();
+        } else if (status === 'ON_MOVE'){
+            setHelpList([]);
+        } else if (status === 'WAIT_COMPLETE'){
+            setIsSearching(false);
+            setHelpList([]);
+            getOtherPoint();
         }
     }, [status]);
 
