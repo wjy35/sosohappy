@@ -15,6 +15,9 @@ public class ChromeConfig {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("headless");
+        options.addArguments("no-sandbox");
+        options.addArguments("disable-dev-shm-usage");
+        options.addArguments("lang=ko");
 
         return new ChromeDriver(options);
     }
