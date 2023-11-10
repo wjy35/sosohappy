@@ -19,6 +19,36 @@ interface propsType{
 
 const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType) => {
     const navigation = useNavigation();
+    const {userInfo} = useStore();
+
+
+    const acceptHelp = async () => {
+        try {
+            const res = await helpMatchApi.acceptHelp({
+                helperMemberId: userInfo.memberId,
+                disabledMemberId: selectedHelp?.memberId,
+            })
+            if(res.status === 200){
+                updateBottomSheetStatus(false);
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const cancelHelp = async () => {
+        try {
+            const res = await helpMatchApi.cancelHelp({
+                memberId: userInfo.memberId,
+            })
+            if (res.status === 200) {
+                updateBottomSheetStatus(false);
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     return(
         <>
             {
