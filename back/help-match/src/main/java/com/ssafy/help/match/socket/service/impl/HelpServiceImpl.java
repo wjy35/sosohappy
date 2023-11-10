@@ -1,13 +1,7 @@
 package com.ssafy.help.match.socket.service.impl;
 
-import com.ssafy.help.match.db.entity.HelpEntity;
-import com.ssafy.help.match.db.entity.HelpMatchStatus;
-import com.ssafy.help.match.db.entity.HelpMatchType;
-import com.ssafy.help.match.db.entity.SendMatchEntity;
-import com.ssafy.help.match.db.repository.HelpEntityRepository;
-import com.ssafy.help.match.db.repository.MemberSessionEntityRepository;
-import com.ssafy.help.match.db.repository.SendMatchEntityRepository;
-import com.ssafy.help.match.db.repository.SendMemberIdSetRepository;
+import com.ssafy.help.match.db.entity.*;
+import com.ssafy.help.match.db.repository.*;
 import com.ssafy.help.match.event.dto.HelpHistoryCreateEventDTO;
 import com.ssafy.help.match.event.producer.KafkaEventProducer;
 import com.ssafy.help.match.event.producer.KafkaEventTopic;
@@ -34,6 +28,7 @@ public class HelpServiceImpl implements HelpService {
     private final ObjectSerializer objectSerializer;
     private final SendMemberIdSetRepository sendMemberIdSetRepository;
     private final KafkaEventProducer kafkaEventProducer;
+    private final FortuneCookieEntityRepository fortuneCookieEntityRepository;
 
     @Value("${redis.topic.match-pop-event.prefix}")
     public String MATCH_POP_EVENT_TOPIC_PREFIX;
@@ -117,7 +112,13 @@ public class HelpServiceImpl implements HelpService {
 
         kafkaEventProducer.produce(KafkaEventTopic.HELP_HISTORY_CREATE,eventDTO);
 
-        // ToDo Clover 생성
+        FortuneCookieEntity fortuneCookieEntity = FortuneCookieEntity
+                .builder()
+                .otherMemberId(memberId)
+                .content(helpEntity.getContent())
+                .build();
+
+        fortuneCookieEntityRepository.save(otherMemberId,fortuneCookieEntity);
     }
 
     @Override
