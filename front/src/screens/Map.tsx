@@ -16,7 +16,7 @@ import useStore from "@/store/store";
 
 interface propsType{
   location: any;
-  socket: helpSocket
+  socket: helpSocket;
 }
 
 const Map = ({location, socket}: propsType) => {
@@ -35,8 +35,8 @@ const Map = ({location, socket}: propsType) => {
   }
 
   const pressAroundMarker = (aroundMarker: helpDetail) => {
-    setSelectedHelp(aroundMarker);
-    setBottomSheetStatus(true);
+      setSelectedHelp(aroundMarker);
+      setBottomSheetStatus(true);
   }
 
   //Todo : 현재는 파이낸셜센터 - 멀티캠퍼스 정적 위경도 넣어줌 (추후 GPS에 따른 위경도 변경)
@@ -70,7 +70,6 @@ const Map = ({location, socket}: propsType) => {
       .then(response => response.json())
       .then(response => {
           setPoints(response);
-          setLoading(false);
       })
       .catch(err => console.error(err));
   }
@@ -87,16 +86,20 @@ const Map = ({location, socket}: propsType) => {
   )
 
     useEffect(() => {
-        console.log(socket.status);
         if (socket.status === 'ON_MOVE'){
-            // setLoading(true);
-            // getArrivalToDesinationPointLine(socket.data.helpEntity.longitude, socket.data.helpEntity.latitude);
+            getArrivalToDesinationPointLine(socket.data.helpEntity.longitude, socket.data.helpEntity.latitude);
+            setSelectedHelp(socket.data.helpEntity);
+        } else if (socket.status === 'DEFAULT'){
+            setPoints(null);
         }
     }, [socket.status]);
 
+  useEffect(()=>{
+      console.log(socket.otherMemberPoint)
+  }, [socket.otherMemberPoint])
+
   return (
       <>
-          {/*<MapLoading/>*/}
           <CommonLayout footer={true} headerType={0}>
               <View style={MapStyle.mapContainer}>
                   <MapView
@@ -113,17 +116,28 @@ const Map = ({location, socket}: propsType) => {
                           longitudeDelta: 0.009,
                       }}
                   >
-                      <Marker
-                          description="my position"
-                          coordinate={{latitude: location.latitude, longitude: location.longitude}}
-                      >
-                          <Image
-                              source={require("@/assets/sosomon/type4/Whale.png")}
-                              // source={require("@/assets/sosomon/type1/FennecFox.png")}
-                              style={{width: 100, height: 100, bottom: -20}}
-                          />
-                      </Marker>
-
+                      {
+                          (socket.status==='WAIT_COMPLETE'&&socket.otherMemberPoint?.latitude)&&(
+                                  <Marker
+                                      description="helperPosition"
+                                      coordinate={{latitude: socket.otherMemberPoint?.latitude, longitude: socket.otherMemberPoint?.longitude}}
+                                  >
+                                      <Image
+                                          source={require("@/assets/sosomon/type4/Whale.png")}
+                                          style={{width: 100, height: 100, bottom: -20}}
+                                      />
+                                  </Marker>
+                          )
+                      }
+                      {
+                          (socket.status==='WAIT_COMPLETE'&&socket.data.otherMemberPoint?.latitude)&&(
+                              <Marker
+                                  description="helperStartPosition"
+                                  coordinate={{latitude: socket.data.otherMemberPoint?.latitude, longitude: socket.data.otherMemberPoint?.longitude}}
+                                  pinColor="#E9747A"
+                              />
+                          )
+                      }
                       {
                           (socket.status==='DEFAULT')&&socket.helpList.map((aroundMarker, index) => {
                               return(
@@ -139,48 +153,62 @@ const Map = ({location, socket}: propsType) => {
                           })
                       }
                       {
-                          (!loading&&socket.status==='ON_MOVE')&&points?.features?.map((point, index) => {
-                              if(point.geometry.type === "LineString"){
-                                  const pathCoordinates = [];
+                          (socket.status==='ON_MOVE'&&socket.data.helpEntity?.latitude)&&(
+                              <>
+                                  <Marker
+                                      description="helpTargetLocation"
+                                      coordinate={{latitude: socket.data?.helpEntity?.latitude, longitude: socket.data?.helpEntity?.longitude}}
+                                      pinColor="#E9747A"
+                                      onPress={() => pressAroundMarker(socket.data?.helpEntity)}
+                                  />
+                                  {
+                                      points?.features?.map((point, index) => {
+                                          if(point.geometry.type === "LineString"){
+                                              const pathCoordinates = [];
 
-                                  for(let i=0; i<point.geometry.coordinates.length; i++){
-                                      pathCoordinates.push({latitude: point.geometry.coordinates[i][1], longitude: point.geometry.coordinates[i][0]});
+                                              for(let i=0; i<point.geometry.coordinates.length; i++){
+                                                  pathCoordinates.push({latitude: point.geometry.coordinates[i][1], longitude: point.geometry.coordinates[i][0]});
+                                              }
+                                              return(
+                                                  <React.Fragment key={`points${index}`}>
+                                                      <Polyline
+                                                          coordinates={pathCoordinates}
+                                                          strokeColor="red"
+                                                          strokeWidth={5}
+                                                      />
+                                                  </React.Fragment>
+                                              );
+                                          }
+                                      })
                                   }
-                                  return(
-                                      <React.Fragment key={`points${index}`}>
-                                          <Polyline
-                                              coordinates={pathCoordinates}
-                                              strokeColor="red"
-                                              strokeWidth={2}
-                                          />
-                                      </React.Fragment>
-                                  );
-                              }
-                          })
+                              </>
+                          )
                       }
                   </MapView>
               </View>
               {
                   (socket.status==='DEFAULT' && userInfo.disabled) && (
-                      <TouchableOpacity activeOpacity={0.7}>
-                          <View style={MapStyle.createHelpWrap}>
-                              <Image
-                                  source={ColorMegaphoneIcon}
-                                  style={MapStyle.megaphoneIcon}
-                              />
-                              <View style={MapStyle.createHelpInfo}>
-                                  <Text style={MapStyle.helpSubTitle}>도움이 필요하신가요?</Text>
-                                  <Text style={MapStyle.helpMainTitle}>주변에 요청해보세요!</Text>
+                      <View style={{position: 'absolute', top: 10}}>
+                          <TouchableOpacity activeOpacity={0.7} onPress={()=>navigation.navigate('CreateHelp')}>
+                              <View style={MapStyle.createHelpWrap}>
+                                  <Image
+                                      source={ColorMegaphoneIcon}
+                                      style={MapStyle.megaphoneIcon}
+                                  />
+                                  <View style={MapStyle.createHelpInfo}>
+                                      <Text style={MapStyle.helpSubTitle}>도움이 필요하신가요?</Text>
+                                      <Text style={MapStyle.helpMainTitle}>주변에 요청해보세요!</Text>
+                                  </View>
+                                  <Text style={MapStyle.helpButton}>도움요청</Text>
                               </View>
-                              <Text style={MapStyle.helpButton}>도움요청</Text>
-                          </View>
-                      </TouchableOpacity>
+                          </TouchableOpacity>
+                      </View>
                   )
               }
 
               {
                   bottomSheetStatus ?
-                      <BottomSheet selectedHelp={selectedHelp} updateBottomSheetStatus={(updateStatus:Boolean) => updateBottomSheetStatus(updateStatus)}/>
+                      <BottomSheet selectedHelp={selectedHelp} updateBottomSheetStatus={(updateStatus:Boolean) => updateBottomSheetStatus(updateStatus)} status={socket.status}/>
                       :
                       <></>
               }
