@@ -6,14 +6,11 @@ import com.ssafy.chat.util.ObjectSerializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
 @RequiredArgsConstructor
 public class ChatMessageListener implements MessageListener {
-
-    private final RedisTemplate redisTemplate;
 
     private final ChatSendService chatSendService;
 
@@ -21,14 +18,10 @@ public class ChatMessageListener implements MessageListener {
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        try{
-            ChatPublish chatPublish = objectSerializer.deserialize((String) redisTemplate.getValueSerializer().deserialize(message.getBody()), ChatPublish.class);
+        ChatPublish chatPublish = objectSerializer.deserialize(message.toString(), ChatPublish.class);
 
-            chatSendService.sendForDetail(chatPublish);
-            chatSendService.sendForList(chatPublish);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        chatSendService.sendForDetail(chatPublish);
+        chatSendService.sendForList(chatPublish);
     }
 
 }
