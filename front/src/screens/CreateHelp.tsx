@@ -8,38 +8,16 @@ import CategoryWrapStyle from "@/styles/CategoryWrapStyle";
 import {SvgXml} from "react-native-svg";
 import RecommendCategoryWrap from "@/components/RecommendCategoryWrap";
 import SimilarRecommendCategoryWrap from "@/components/SimilarRecommendCategoryWrap";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import useStore from "@/store/store";
 import useInput from "@/hooks/useInput";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {helpSocket, point} from "@/types";
+import MapLoading from "@/components/MapLoading";
 
 interface propsType{
-    location: {
-        latitude: number,
-        longitude: number,
-    };
-    socket: {
-        connect: Function;
-        send: Function;
-        status: String;
-        helpList: helpDetail[];
-        connected: boolean;
-        disConnect: Function;
-    },
-}
-
-interface helpDetail {
-    memberId: number,
-    nickname: string,
-    category: {
-        categoryId: number,
-        categoryName: string,
-        categoryImage: string,
-    },
-    longitude: number,
-    latitude: number,
-    content: string,
-    place: string,
+    location: point;
+    socket: helpSocket,
 }
 
 const CreateHelp = (({location, socket}: propsType) => {
