@@ -9,7 +9,8 @@ import java.sql.Timestamp;
 @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ChatEntity {
-    private Long memberId;
+    private Long sendMemberId;
+    private Long receiveMemberId;
     private int type;
     private String content;
     @Builder.Default
