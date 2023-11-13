@@ -250,6 +250,7 @@ const MyPage = (({socket}: propsType) => {
                     source={{uri: `http://sosohappy.co.kr:8888/sosomon/${profileMonsterType}/${profileMonsterLevel}`}}
                     // source={{uri: `http://sosohappy.co.kr:8888/sosomon/2/5`}}
                     style={MyPageStyle.MySelectedCharImg}
+                    nestedScrollEnabled
                 />
             )
         }
