@@ -20,9 +20,9 @@ public class KafkaConsumer {
 
     private final MonsterServiceImpl monsterService;
     @KafkaListener(topics = "member-command-mysql.member.member")
-    public void consume(ConsumerRecord<String,String> consumerRecord) {
+    public void MemberConsume(ConsumerRecord<?,?> consumerRecord) {
         if(isEmptyEvent(consumerRecord)) return;
-        String message = consumerRecord.value();
+        String message = consumerRecord.value().toString();
 
         ObjectMapper objMapper = new ObjectMapper();
 
@@ -40,6 +40,15 @@ public class KafkaConsumer {
         } catch (IOException e) {
             throw new CustomException(ErrorCode.JSON_PARSE_ERROR);
         }
+    }
+
+    @KafkaListener(topics = "fortune-cookie.use")
+    public void UseConsume(ConsumerRecord<?,?> consumerRecord) {
+        if(isEmptyEvent(consumerRecord)) return;
+        String message = consumerRecord.value().toString();
+
+        monsterService.updateClover(Long.parseLong(message), 1);
+
     }
 
     private boolean isEmptyEvent(ConsumerRecord<?,?> consumerRecord){
