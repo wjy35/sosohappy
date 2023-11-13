@@ -1,29 +1,28 @@
 package com.ssafy.chat.api.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.chat.api.mapper.ChatMapper;
 import com.ssafy.chat.api.request.ChatPayload;
 import com.ssafy.chat.api.request.ChatPublish;
+import com.ssafy.chat.api.response.ChatResponse;
 import com.ssafy.chat.api.response.FormattedResponse;
 import com.ssafy.chat.api.service.ChatServerManageService;
-import com.ssafy.chat.api.service.ChatSaveService;
+import com.ssafy.chat.api.service.ChatService;
 import com.ssafy.chat.db.entity.ChatEntity;
 import com.ssafy.chat.util.ObjectSerializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 public class ChatController {
 
-    private final ChatSaveService chatSaveService;
+    private final ChatService chatService;
 
     private final ChatServerManageService chatServerManageService;
 
@@ -34,17 +33,18 @@ public class ChatController {
     private final ObjectSerializer objectSerializer;
 
     @PostMapping("/chat/send")
-    public ResponseEntity<?> createChatRoom(@RequestBody ChatPayload chatPayload){
+    public ResponseEntity<?> sendChat(@RequestBody ChatPayload chatPayload){
         ChatEntity chatEntity = chatMapper.createRequestToEntity(chatPayload);
 
-        chatSaveService.saveChat(chatEntity, chatPayload.getChatRoomId());
+        chatService.saveChat(chatEntity, chatPayload.getChatRoomId());
 
         ChatPublish chatPublish = chatMapper.createChatPublish(chatPayload);
 
         Optional.ofNullable(chatServerManageService.getChatServerIdByMemberId(chatPayload.getReceiveMemberId()))
                 .ifPresentOrElse((chatServerId)->{
+                            System.out.println("chatServerId: "+chatServerId);
                             redisTemplate.convertAndSend(
-                                    "1",
+                                    chatServerId,
                                     objectSerializer.serialize(chatPublish)
                             );
                         }
@@ -52,11 +52,24 @@ public class ChatController {
 
         FormattedResponse response = FormattedResponse.builder()
                 .status("success")
-                .message("GET HELP COUNT")
+                .message("SUCCESS SEND CHAT")
                 .result("chatRoomId", chatPayload.getChatRoomId())
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/chat/{chatRoomId}")
+    public ResponseEntity<?> getChatList(@PathVariable int chatRoomId){
+
+        List<ChatResponse> chatResponseList = chatService.getChatList(chatRoomId);
+
+        FormattedResponse response = FormattedResponse.builder()
+                .status("success")
+                .message("GET Chat List")
+                .result("chatResponseList", chatResponseList)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
