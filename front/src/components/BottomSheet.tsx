@@ -21,7 +21,6 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
     const navigation = useNavigation();
     const {userInfo} = useStore();
 
-
     const acceptHelp = async () => {
         try {
             const res = await helpMatchApi.acceptHelp({
@@ -128,11 +127,22 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
                                         </View>
                                     </TouchableOpacity>
                                     :
-                                    <TouchableOpacity activeOpacity={0.7} onPress={cancelHelp}>
-                                        <View style={BottomSheetStyle.connectButton}>
-                                            <Text style={BottomSheetStyle.connectButtonText}>취소하기</Text>
+                                    <View style={{flexDirection: 'row'}}>
+                                        <View style={{flex: 1}}>
+                                            <TouchableOpacity activeOpacity={0.7} onPress={arriveHelp}>
+                                                <View style={BottomSheetStyle.connectButton}>
+                                                    <Text style={BottomSheetStyle.connectButtonText}>도착완료</Text>
+                                                </View>
+                                            </TouchableOpacity>
                                         </View>
-                                    </TouchableOpacity>
+                                        <View style={{flex: 1}}>
+                                            <TouchableOpacity activeOpacity={0.7} onPress={cancelHelp}>
+                                                <View style={BottomSheetStyle.cancelButton}>
+                                                    <Text style={BottomSheetStyle.connectButtonText}>취소하기</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
                             }
                         </View>
                     </Modal>
