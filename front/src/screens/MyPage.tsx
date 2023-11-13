@@ -133,8 +133,8 @@ const MyPage = (({socket}: propsType) => {
 
   const whatIsMyThumbnail = () => {
     if(userInfo.profileMonsterId){
-      setProfileMonsterType(Math.floor((userInfo.profileMonsterId-1)/10));
-      setProfileMonsterLevel((userInfo.profileMonsterId % 10 === 0)?9:(userInfo.profileMonsterId%10)-1);
+      setProfileMonsterType(Math.floor((userInfo.profileMonsterId-1)/10) + 1);
+      setProfileMonsterLevel((userInfo.profileMonsterId % 10 === 0)?10:(userInfo.profileMonsterId%10));
     }
   }
 
@@ -173,30 +173,30 @@ const MyPage = (({socket}: propsType) => {
     <CommonLayout headerType={0} footer={true}>
       <View style={MyPageStyle.myProfileWrap}>
         {
-          profileMonsterType === 0 &&
-          <Image
-            source={type1[profileMonsterLevel]}
-            style={MyPageStyle.myProfileImg}
-          />
-        }
-        {
           profileMonsterType === 1 &&
           <Image
-            source={type2[profileMonsterLevel]}
+            source={type1[profileMonsterLevel-1]}
             style={MyPageStyle.myProfileImg}
           />
         }
         {
           profileMonsterType === 2 &&
           <Image
-            source={type3[profileMonsterLevel]}
+            source={type2[profileMonsterLevel-1]}
             style={MyPageStyle.myProfileImg}
           />
         }
         {
           profileMonsterType === 3 &&
           <Image
-            source={type4[profileMonsterLevel]}
+            source={type3[profileMonsterLevel-1]}
+            style={MyPageStyle.myProfileImg}
+          />
+        }
+        {
+          profileMonsterType === 4 &&
+          <Image
+            source={type4[profileMonsterLevel-1]}
             style={MyPageStyle.myProfileImg}
           />
         }
