@@ -1,0 +1,19 @@
+@mixin setSize($width: null, $height: null, $center: null){
+    width: $width;
+    height: $height;
+    @if($center != null) {
+        margin: 0 auto;
+    }
+}
+
+@mixin flex($flex: null, $content: null, $items: null){
+    display:$flex;
+    justify-content: $content;
+    align-items: $items;
+}
+
+@mixin font($size: null, $weight: null, $color: null){
+    font-size: $size;
+    font-weight: $weight;
+    color: $color;
+}
