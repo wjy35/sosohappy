@@ -19,7 +19,7 @@ import java.util.StringTokenizer;
 @Component
 @RequiredArgsConstructor
 public class MatchEntityKeyEventListener implements MessageListener {
-    private final String MATCH_ENTITY_PREFIX="matchEntity:";
+    private final String MATCH_ENTITY_PREFIX="matchEntity";
     private final MemberSessionEntityRepository memberSessionEntityRepository;
     private final SendMatchEntityRepository sendMatchEntityRepository;
     private final SendMemberIdSetRepository sendMemberIdSetRepository;
@@ -44,13 +44,7 @@ public class MatchEntityKeyEventListener implements MessageListener {
     }
 
     private boolean isOtherEvent(String key){
-        if(key.length()<=MATCH_ENTITY_PREFIX.length()) return true;
-
-        for(int i=0; i<MATCH_ENTITY_PREFIX.length(); i++){
-            if(MATCH_ENTITY_PREFIX.charAt(i)!=key.charAt(i)) return true;
-        }
-
-        return false;
+        return !key.equals(MATCH_ENTITY_PREFIX);
     }
 
     @Async
