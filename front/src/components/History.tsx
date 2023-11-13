@@ -15,6 +15,7 @@ interface propsType{
 
 const History = ({updateFortuneModalState}: propsType) => {
     const [historyList, setHistoryList] = useState([]);
+    const [maxPage, setMaxPage] = useState<number>(3);
 
     const openCookie = () => {
         
@@ -32,6 +33,10 @@ const History = ({updateFortuneModalState}: propsType) => {
         }
     }
 
+    const showFortuneMore = () => {
+        setMaxPage((prevMaxPage:number) => prevMaxPage + 3);
+    }
+
     useEffect(()=>{
         getHistory();
     }, [])
@@ -41,12 +46,22 @@ const History = ({updateFortuneModalState}: propsType) => {
             <View>
                 {
                     historyList.map((el, idx)=>{
-                        return (
-                            <View style={HistoryStyle.historyWrap} key={`helpHistory${idx}`}>
-                                <HistoryItem thumbnail={el.categoryImage} content={el.content} createdDate={el.createdAt} openCookie={openCookie} updateFortuneModalState={updateFortuneModalState}/>
-                            </View>
-                        )
+                        if(idx < maxPage){
+                            return (
+                                <View style={HistoryStyle.historyWrap} key={`helpHistory${idx}`}>
+                                    <HistoryItem thumbnail={el.categoryImage} content={el.content} createdDate={el.createdAt} openCookie={openCookie} updateFortuneModalState={updateFortuneModalState}/>
+                                </View>
+                            )
+                        }
                     })
+                }
+                {
+                    maxPage < historyList.length &&
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => showFortuneMore()}>
+                        <View style={HistoryStyle.moreButton}>
+                            <Text style={HistoryStyle.moreButtonText}>더보기</Text>
+                        </View>
+                    </TouchableOpacity>
                 }
             </View>
         </>
