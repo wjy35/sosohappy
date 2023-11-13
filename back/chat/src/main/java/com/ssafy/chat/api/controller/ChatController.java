@@ -1,8 +1,8 @@
 package com.ssafy.chat.api.controller;
 
 import com.ssafy.chat.api.mapper.ChatMapper;
-import com.ssafy.chat.api.request.ChatPayload;
-import com.ssafy.chat.api.request.ChatPublish;
+import com.ssafy.chat.api.request.ChatRequest;
+import com.ssafy.chat.api.dto.ChatPublish;
 import com.ssafy.chat.api.response.ChatResponse;
 import com.ssafy.chat.api.response.FormattedResponse;
 import com.ssafy.chat.api.service.ChatServerManageService;
@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin("*")
 @RequiredArgsConstructor
 public class ChatController {
 
@@ -33,14 +34,14 @@ public class ChatController {
     private final ObjectSerializer objectSerializer;
 
     @PostMapping("/chat/send")
-    public ResponseEntity<?> sendChat(@RequestBody ChatPayload chatPayload){
-        ChatEntity chatEntity = chatMapper.createRequestToEntity(chatPayload);
+    public ResponseEntity<?> sendChat(@RequestBody ChatRequest chatRequest){
+        ChatEntity chatEntity = chatMapper.createRequestToEntity(chatRequest);
 
-        chatService.saveChat(chatEntity, chatPayload.getChatRoomId());
+        chatService.saveChat(chatEntity, chatRequest.getChatRoomId());
 
-        ChatPublish chatPublish = chatMapper.createChatPublish(chatPayload);
+        ChatPublish chatPublish = chatMapper.createChatPublish(chatRequest);
 
-        Optional.ofNullable(chatServerManageService.getChatServerIdByMemberId(chatPayload.getReceiveMemberId()))
+        Optional.ofNullable(chatServerManageService.getChatServerIdByMemberId(chatRequest.getReceiveMemberId()))
                 .ifPresentOrElse((chatServerId)->{
                             redisTemplate.convertAndSend(
                                     chatServerId,
@@ -48,11 +49,16 @@ public class ChatController {
                             );
                         }
                         ,()->{});
+        ChatResponse chatResponse = ChatResponse.builder()
+                .memberId(chatPublish.getSendMemberId())
+                .content(chatPublish.getContent())
+                .timestamp(chatPublish.getTimestamp()).build();
 
         FormattedResponse response = FormattedResponse.builder()
                 .status("success")
                 .message("SUCCESS SEND CHAT")
-                .result("chatRoomId", chatPayload.getChatRoomId())
+                .result("chatRoomId", chatRequest.getChatRoomId())
+                .result("chat", chatResponse)
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
