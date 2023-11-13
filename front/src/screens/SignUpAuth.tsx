@@ -24,9 +24,10 @@ const SignUpAuth = ({socket}: propsType) => {
     const [isActive, setIsActive] = useState(false);
     const navigation = useNavigation();
     const [image, setImage] = useState<any>();
+    const [docsNumber, setDocsNumber] = useState<string>('');
 
-    const goNext = () => {
-        navigation.navigate('SignUpInput', {selectedType: route.params.selectedType, disabled: true});
+    const goNext = async () => {
+        await checkDocs()
     }
 
     const selectImage = () => {
@@ -45,6 +46,22 @@ const SignUpAuth = ({socket}: propsType) => {
         });
     };
 
+    const createFormData = (photo, body= {}) => {
+        const data = new FormData();
+
+        data.append("file", {
+            name: photo.fileName,
+            type: photo.type,
+            uri: photo.uri
+        });
+
+        Object.keys(body).forEach(key => {
+            data.append(key, body[key]);
+        });
+
+        return data;
+    };
+
     const takeCamera = () => {
         launchCamera(
             {
@@ -58,6 +75,44 @@ const SignUpAuth = ({socket}: propsType) => {
         ).catch((err) => {
             console.warn(err);
         });
+    }
+
+    const sendImage = async () => {
+        const data = {
+            name: image.assets[0].fileName,
+            type: image.assets[0].type,
+            uri: image.assets[0].uri,
+        }
+            // data: image.assets[0].base64,
+
+        try {
+            fetch('https://sosohappy.co.kr/ocr/send',{
+                method: 'post',
+                body: createFormData(image.assets[0], {name: memberName.text}),
+            }).then(res=>res.json())
+                .then(res => {
+                    setDocsNumber(res.result.documentNumber);
+                    setIsActive(true);
+                })
+                .catch(err => console.log(err));
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const checkDocs = async () => {
+        try {
+            const res = await ocrApi.checkAuth({
+                name: memberName.text,
+                documentNumber: docsNumber,
+            })
+            if (res.status === 200){
+                // console.log(res)
+                navigation.navigate('SignUpInput', {selectedType: route.params.selectedType, disabled: true, name: memberName.text});
+            }
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     const checkAuth = () => {
