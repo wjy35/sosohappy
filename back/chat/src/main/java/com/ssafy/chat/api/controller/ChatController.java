@@ -42,7 +42,6 @@ public class ChatController {
 
         Optional.ofNullable(chatServerManageService.getChatServerIdByMemberId(chatPayload.getReceiveMemberId()))
                 .ifPresentOrElse((chatServerId)->{
-                            System.out.println("chatServerId: "+chatServerId);
                             redisTemplate.convertAndSend(
                                     chatServerId,
                                     objectSerializer.serialize(chatPublish)
