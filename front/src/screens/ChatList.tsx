@@ -12,6 +12,7 @@ import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 import ChatListStyle from "@/styles/ChatListStyle"
 import ChatListItem from "@/components/ChatListItem";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import chatApi from "@/apis/chatApi";
 
 interface propsType{
   socket: {
@@ -53,10 +54,20 @@ const ChatList = ({socket}: propsType) => {
     setNoneCheckedState(false);
   }
 
+  const getChatList = async () => {
+    const chatList =  await chatApi.getChatList(1);
+    console.log(chatList);
+
+  }
+
   useFocusEffect(()=>{
     if (!socket.connected) return;
     socket.disConnect();
   })
+
+  useEffect(() => {
+    getChatList();
+  },[]);
 
   return (
     <CommonLayout>

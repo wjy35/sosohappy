@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, TextInput, ScrollView } from "react-nativ
 import CommonLayout from "@/components/CommonLayout";
 import MyChat from "@/components/MyChat";
 import ChatDate from "@/components/ChatDate";
-import io from "socket.io-client"
+import chatApi from "@/apis/chatApi";
 
 import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 
@@ -41,29 +41,30 @@ interface helpDetail {
 }
 
 const Chat = ({helpSocket}: propsType) => {
-  const socket = io('http://10.0.2.2:4002');
   const [msg, setMsg] = useState<string>();
   const [msgList, setMsgList] = useState<Object[]>([]);
-  const [roomNo, setroomNo] = useState<number>(1);
+  const [roomNo, setroomNo] = useState<number|null>(null);
   const navigation = useNavigation();
 
   const sendMsg = () => {
-    socket.emit('send message', {roomNo, msg});
-    setMsg('');
+
   }
 
-  socket.on('upload chat', (data:Object) => {
-    setMsgList([...msgList, data]);
-  });
-
-  useEffect(() => {
-    socket.emit('chat join', roomNo);
-  }, [])
+  const connectChatRoom = async () => {
+    const roomNoRes = await chatApi.makeChatRoom({senderMemberId:"1", receiveMemberId:"2"});
+    if(roomNoRes.data.status === "success"){
+      setroomNo(roomNoRes.data.result.chatRoomId);
+    }
+  }
 
   useFocusEffect(()=>{
     if (!helpSocket.connected) return;
     helpSocket.disConnect();
   })
+
+  useEffect(() => {
+    connectChatRoom();
+  },[])
 
   return (
     <CommonLayout footer={false} headerType={1}>

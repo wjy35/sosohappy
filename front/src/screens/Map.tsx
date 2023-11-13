@@ -5,7 +5,7 @@ import BottomSheet from "@/components/BottomSheet";
 import MapLoading from "@/components/MapLoading";
 import MapView, {PROVIDER_GOOGLE, Marker, Polyline} from "react-native-maps";
 import {MAP_LINE_API_KEY} from "@env"
-import {clover} from "@/assets/icons/icons";
+import {clover, chatIcon} from "@/assets/icons/icons";
 
 import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 
@@ -13,6 +13,7 @@ import MapStyle from "@/styles/MapStyle";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {helpDetail, helpSocket} from "@/types";
 import useStore from "@/store/store";
+import { SvgXml } from "react-native-svg";
 
 interface propsType{
   location: any;
@@ -212,6 +213,11 @@ const Map = ({location, socket}: propsType) => {
                       :
                       <></>
               }
+              <SvgXml
+                xml={chatIcon}
+                style={MapStyle.floatingIcon}
+                onPress={() => navigation.navigate('Chat')}
+              />
           </CommonLayout>
       </>
   );
