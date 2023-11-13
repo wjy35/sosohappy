@@ -89,7 +89,7 @@ const Main = ({socket}: propsType) => {
           <Text style={MainStyle.boxSubTitle}>소소한 행복이 행운을 가져다줘요</Text>
         </View>
         <View style={MainStyle.boxFlexWrap}>
-          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Map')}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('CreateHelp')}>
             <View style={MainStyle.boxContentWrap}>
               <Text style={MainStyle.boxContentTitle}>
                 도움이{"\n"}
@@ -103,7 +103,7 @@ const Main = ({socket}: propsType) => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('CreateHelp')}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Map')}>
             <View style={MainStyle.boxContentWrap}>
               <Text style={MainStyle.boxContentTitle}>
                 소소한 행복을{"\n"}
