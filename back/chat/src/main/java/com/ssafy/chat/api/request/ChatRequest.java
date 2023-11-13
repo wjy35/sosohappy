@@ -6,7 +6,7 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 @Data
-public class ChatPayload {
+public class ChatRequest {
     private int chatRoomId;
     private Long sendMemberId;
     private Long receiveMemberId;
@@ -16,7 +16,7 @@ public class ChatPayload {
     private Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
     @Builder
-    public ChatPayload(int chatRoomId, Long sendMemberId, Long receiveMemberId, Long type, String content) {
+    public ChatRequest(int chatRoomId, Long sendMemberId, Long receiveMemberId, Long type, String content) {
         this.chatRoomId = chatRoomId;
         this.sendMemberId = sendMemberId;
         this.receiveMemberId = receiveMemberId;
