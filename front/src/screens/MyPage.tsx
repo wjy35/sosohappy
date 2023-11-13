@@ -1,14 +1,16 @@
 import React, {useEffect, useState, useRef} from "react"
-import {View, Text, Image, TouchableOpacity, Animated} from "react-native";
+import {View, Text, Image, TouchableOpacity, Animated, Alert} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import History from "@/components/History";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import FortuneModal from "@/components/FortuneModal";
+import DialogInput from "react-native-dialog-input"
 
 import GearIcon from "@/assets/img/gear-icon.png"
 import BellIcon from "@/assets/img/bell-icon.png"
 import BookIcon from "@/assets/img/book-icon.png"
 import GrayMoreIcon from "@/assets/img/gray-more-icon.png"
+import { siren } from "@/assets/icons/icons";
 
 import MyPageStyle from "@/styles/MyPageStyle";
 
@@ -18,6 +20,8 @@ import useStore from "@/store/store";
 import monsterApi from "@/apis/monsterApi";
 import memberApi from "@/apis/memberApi";
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
+import { SvgXml } from "react-native-svg";
+import { createUser } from "@/collections/users";
 
 interface propsType{
   socket: {
@@ -55,6 +59,7 @@ const MyPage = (({socket}: propsType) => {
   const loaderValue = useRef(new Animated.Value(0)).current;
   const [profileMonsterType, setProfileMonsterType] = useState<number>(0);
   const [profileMonsterLevel, setProfileMonsterLevel] = useState<number>(0);
+  const [isDialogState, setIsDialogState] = useState<Boolean>(false);
 
   const load = (initialWidth: number) => {
     Animated.timing(loaderValue, {
@@ -91,7 +96,6 @@ const MyPage = (({socket}: propsType) => {
 
   const changeProfileMonster = async (profileType: number, profileLevel: number) => {
     const profileMonsterId = (profileType-1)*10 + profileLevel;
-    console.log(profileMonsterId);
     try {
       const res = await memberApi.updateMember({
         profileMonsterId: profileMonsterId,
@@ -105,6 +109,17 @@ const MyPage = (({socket}: propsType) => {
     } catch (err){
       console.log(err);
     }
+  }
+
+  const sendPoliceReport = (inputText:string) => {
+    if(inputText == ""){
+      Alert.alert("사용자의 이름을 입력해주세요.");
+      return;
+    }
+
+    createUser({"id": "siren","name": inputText});
+
+    setIsDialogState(false);
   }
 
   const updateFortuneModalState = (status: Boolean) => {
@@ -121,6 +136,10 @@ const MyPage = (({socket}: propsType) => {
       setProfileMonsterType(Math.floor((userInfo.profileMonsterId-1)/10));
       setProfileMonsterLevel((userInfo.profileMonsterId % 10 === 0)?9:(userInfo.profileMonsterId%10)-1);
     }
+  }
+
+  const police = () => {
+    setIsDialogState(true);
   }
 
   useEffect(() => {
@@ -197,10 +216,10 @@ const MyPage = (({socket}: propsType) => {
           }
         </View>
         <View style={MyPageStyle.myProfileIconWrap}>
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => police()}>
             <View>
-              <Image
-                source={GearIcon}
+              <SvgXml
+                xml={siren}
                 style={MyPageStyle.myProfileGearIcon}
               />
             </View>
@@ -310,6 +329,16 @@ const MyPage = (({socket}: propsType) => {
     {
       fortuneModalState &&
       <FortuneModal updateFortuneModalState={updateFortuneModalState}/>
+    }
+    {
+      isDialogState &&
+      <DialogInput isDialogVisible={isDialogState}
+        title={"신고하기"}
+        message={"어떤 사용자를 신고하시겠습니까?"}
+        hintInput ={"이름을 입력해주세요."}
+        submitInput={ (inputText: string) => sendPoliceReport(inputText) }
+        closeDialog={ () => setIsDialogState(false) }>
+      </DialogInput>
     }
     </>
   );
