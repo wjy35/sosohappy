@@ -39,9 +39,40 @@ const SideMenuStyle = StyleSheet.create({
         height:16,
     },
 
+    profileWrap:{
+        display:"flex",
+        flexDirection:"row",
+        justifyContent:"flex-start",
+        alignItems:"center",
+        marginTop:16,
+    },
+    profileImgWrap:{
+
+    },
+    profileImg:{
+        width:80,
+        height:80,
+        borderRadius:160,
+    },
+    profileInfoWrap:{
+
+    },
+    profileName:{
+        fontSize:16,
+        fontWeight:"700",
+        color:"#26232A"
+    },
+    profileRank:{
+        fontSize:13,
+        fontWeight:"500",
+        color:"#B4B4B4",
+        marginLeft:2,
+        marginTop:1,
+    },
+
 
     navWrap:{
-        marginTop:32,
+        marginTop:16,
     },
     menuList:{
         width:"100%",

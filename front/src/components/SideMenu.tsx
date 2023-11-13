@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity, Alert} from "react-native"
+import {View, Text, TouchableOpacity, Alert, Image} from "react-native"
 import SideMenuStyle from "@/styles/SideMenuStyle";
 import {useNavigation} from "@react-navigation/native";
 import { sosohappyWhiteLogo, user, gear, chat, peace, home, close, menuDocs } from "@/assets/icons/icons";
@@ -6,6 +6,7 @@ import { SvgXml } from "react-native-svg";
 import memberApi from "@/apis/memberApi";
 import Modal from "react-native-modal";
 import useStore from "@/store/store";
+import { type1, type2, type3, type4 } from "@/assets/sosomon";
 
 interface props {
     closeSide: Function;
@@ -16,6 +17,7 @@ interface props {
 const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
     const navigation = useNavigation();
     const {userInfo, logout} = useStore();
+    console.log(userInfo);
 
     const userLogout = async () => {
         logout();
@@ -28,6 +30,34 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
 
     const moveSettingPage = () => {
         Alert.alert('향후 업데이트 예정입니다.');
+    }
+
+    const whatIsMyThumbnail = () => {
+        if(userInfo && userInfo.profileMonsterId != null){
+            let tempMonsterId = userInfo.profileMonsterId;
+            if(Number(tempMonsterId) < 10){
+                tempMonsterId = "0" + tempMonsterId;
+            }
+            const animalType = Math.floor(tempMonsterId / 10);
+            const animalLevel = tempMonsterId % 10;
+            console.log("animalType", animalType);
+            console.log("animalLevel", animalLevel);
+    
+            switch(animalType){
+                case 1:
+                    return type1[animalLevel];
+                    break;
+                case 2:
+                    return type2[animalLevel];
+                    break;
+                case 3:
+                    return type3[animalLevel];
+                    break;
+                case 4:
+                    return type4[animalLevel];
+                    break;
+            }
+        }
     }
 
     return(
@@ -57,6 +87,28 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
                             />
                         </TouchableOpacity>
                     </View>
+
+                    {
+                        userInfo &&
+                        <View style={SideMenuStyle.profileWrap}>
+                            <View style={SideMenuStyle.profileImgWrap}>
+                                <Image
+                                    source={whatIsMyThumbnail()}
+                                    style={SideMenuStyle.profileImg}
+                                />
+                            </View>
+                            <View style={SideMenuStyle.profileInfoWrap}>
+                                <Text style={SideMenuStyle.profileName}>{userInfo.name}</Text>
+                                    {
+                                        userInfo.disabled === true ?
+                                        <Text style={SideMenuStyle.profileRank}>나눔이</Text>
+                                        :
+                                        <Text style={SideMenuStyle.profileRank}>모음이</Text>
+                                    }
+                            </View>
+                        </View>
+                    }
+
                     <View style={SideMenuStyle.navWrap}>
                         <TouchableOpacity activeOpacity={0.7} onPress={()=>navigation.navigate("Main")}>
                             <View style={[SideMenuStyle.menuList, nowPage==="Main" && SideMenuStyle.menuListActive]}>
