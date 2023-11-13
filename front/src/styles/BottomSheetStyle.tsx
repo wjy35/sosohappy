@@ -126,20 +126,33 @@ const BottomSheetStyle = StyleSheet.create({
     },
 
     connectButton:{
-        width:"100%",
+        // width:"100%",
+        flex: 1,
         height:42,
         borderRadius:10,
         backgroundColor:"#9D9AF9",
-        display:"flex",
         justifyContent:"center",
         alignItems:"center",
         marginTop:26,
         marginBottom:20,
+        marginHorizontal: 5,
     },
     connectButtonText:{
         fontSize:18,
         fontWeight:"700",
         color:"#FFFFFF",
+    },
+    cancelButton:{
+        width:"100%",
+        // flex: 1,
+        height:42,
+        borderRadius:10,
+        backgroundColor:"#ff3333",
+        justifyContent:"center",
+        alignItems:"center",
+        marginTop:26,
+        marginBottom:20,
+        marginHorizontal: 5,
     },
 })
 
