@@ -13,6 +13,7 @@
     "@react-native-community/geolocation": "^3.1.0",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-firebase/app": "^18.6.0",
+    "@react-native-firebase/firestore": "^18.6.1",
     "@react-native-firebase/messaging": "^18.6.0",
     "@react-native-maps/polyline-direction": "^1.0.0",
     "@react-navigation/native": "^6.1.8",

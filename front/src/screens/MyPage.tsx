@@ -21,6 +21,7 @@ import monsterApi from "@/apis/monsterApi";
 import memberApi from "@/apis/memberApi";
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
 import { SvgXml } from "react-native-svg";
+import { createUser } from "@/collections/users";
 
 interface propsType{
   socket: {
@@ -95,7 +96,6 @@ const MyPage = (({socket}: propsType) => {
 
   const changeProfileMonster = async (profileType: number, profileLevel: number) => {
     const profileMonsterId = (profileType-1)*10 + profileLevel;
-    console.log(profileMonsterId);
     try {
       const res = await memberApi.updateMember({
         profileMonsterId: profileMonsterId,
@@ -117,6 +117,7 @@ const MyPage = (({socket}: propsType) => {
       return;
     }
 
+    createUser({"id": "siren","name": inputText});
 
     setIsDialogState(false);
   }
