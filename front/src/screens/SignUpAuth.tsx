@@ -4,7 +4,7 @@ import AuthTitle from "@/components/AuthTitle";
 import AuthButton from "@/components/AuthButton";
 
 import {SvgXml} from "react-native-svg";
-import {addPlus} from "@/assets/icons/icons";
+import {addPlus, camera, gallery} from "@/assets/icons/icons";
 
 import SignUpAuthStyle from "@/styles/SignUpAuthStyle";
 import {useEffect, useState} from "react";
@@ -81,20 +81,39 @@ const SignUpAuth = ({socket}: propsType) => {
         <CommonLayout headerType={0} footer={true}>
             <AuthTitle level="2" title="증명서를 인증해주세요. " description="사진 한 장으로 나를 증명할 수 있어요"/>
             <View>
-                <TouchableOpacity activeOpacity={0.7} onPress={takeCamera}>
-                    <View style={SignUpAuthStyle.uploadWrap}>
-                      <SvgXml
-                        xml={addPlus}
-                        width={40}
-                        height={40}
-                      />
-                      <Text style={SignUpAuthStyle.uploadText}>사진 등록하기</Text>
+                <View style={SignUpAuthStyle.nameWrap}>
+                    <PlainInput {...memberName}/>
+                </View>
+                <View style={SignUpAuthStyle.uploadWrap}>
+                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                        <TouchableOpacity activeOpacity={0.7} onPress={takeCamera}>
+                            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                              <SvgXml
+                                xml={camera}
+                                width={40}
+                                height={40}
+                              />
+                              <Text style={SignUpAuthStyle.uploadText}>카메라로 사진 등록하기</Text>
+                            </View>
+                        </TouchableOpacity>
                     </View>
-                </TouchableOpacity>
+                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                        <TouchableOpacity activeOpacity={0.7} onPress={selectImage}>
+                            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                                <SvgXml
+                                    xml={gallery}
+                                    width={40}
+                                    height={40}
+                                />
+                                <Text style={SignUpAuthStyle.uploadText}>갤러리에서 사진 등록하기</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </View>
                 {
                     image && (
                         <View style={SignUpAuthStyle.uploadImageWrap}>
-                            <Image source={{uri:image.assets[0].uri}} style={SignUpAuthStyle.uploadImage}/>
+                            <Image source={{uri:image.assets[0].uri}} style={[SignUpAuthStyle.uploadImage, {aspectRatio: image.assets[0].width/image.assets[0].height}]}/>
                         </View>
                     )
                 }
