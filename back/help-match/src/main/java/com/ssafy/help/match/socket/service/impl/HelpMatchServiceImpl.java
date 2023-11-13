@@ -7,6 +7,8 @@ import com.ssafy.help.match.db.repository.*;
 import com.ssafy.help.match.event.dto.HelperSearchEventDTO;
 import com.ssafy.help.match.event.emitter.EventEmitter;
 import com.ssafy.help.match.event.emitter.EventTopicPrefix;
+import com.ssafy.help.match.event.producer.KafkaEventProducer;
+import com.ssafy.help.match.event.producer.KafkaEventTopic;
 import com.ssafy.help.match.socket.dto.MatchPopEventDTO;
 import com.ssafy.help.match.socket.dto.MatchPushEventDTO;
 import com.ssafy.help.match.socket.dto.StatusChangeEventDTO;
@@ -49,6 +51,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     private final double[] maxDistanceList = {500d,1000d,1500d};
     private final HelpEntityRepository helpEntityRepository;
     private final EventEmitter eventEmitter;
+    private final KafkaEventProducer kafkaEventProducer;
 
     @Override
     public void cancel(Long memberId) {
@@ -210,7 +213,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
 
             redisTemplate.convertAndSend(MATCH_PUSH_EVENT_TOPIC_PREFIX +uuid, objectSerializer.serialize(matchPushEventDTO));
         }else{
-            // ToDo Notification Event
+            kafkaEventProducer.produce(KafkaEventTopic.HELP_MATCH_PUSH,searchedMemberId.toString());
         }
     }
 
