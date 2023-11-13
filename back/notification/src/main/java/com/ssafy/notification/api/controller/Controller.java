@@ -32,24 +32,6 @@ public class Controller {
                 .message("SUCCESS SAVE")
                 .build();
 
-        // Todo Test 용 임시 코드 삭제
-        Notification notification = Notification
-                .builder()
-                .setTitle("소소행")
-                .setBody("응애 나 애기 석주")
-                .build();
-
-        Message message = Message
-                .builder()
-                .setToken(memberDeviceSaveRequest.getDeviceToken())
-                .setNotification(notification)
-                .build();
-        try {
-            firebaseMessaging.send(message);
-        } catch (FirebaseMessagingException e) {
-            throw new RuntimeException(e);
-        }
-
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
