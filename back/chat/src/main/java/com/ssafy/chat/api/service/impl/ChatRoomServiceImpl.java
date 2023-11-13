@@ -30,7 +30,15 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         Optional<ChatRoomEntity> chatRoomEntityOption = chatRoomRepository.findByChatRoomByUserIds(chatRoomCreateRequest.getSenderMemberId(), chatRoomCreateRequest.getReceiverMemberId());
         if(chatRoomEntityOption.isEmpty()){
             ChatRoomEntity chatRoomEntity = chatRoomMapper.createRequestToEntity(chatRoomCreateRequest);
-            return chatRoomRepository.save(chatRoomEntity).getChatRoomId();
+            int chatRoomId = chatRoomRepository.save(chatRoomEntity).getChatRoomId();
+            ChatEntity chatEntity = ChatEntity.builder()
+                    .type(0)
+                    .sendMemberId(0L)
+                    .receiveMemberId(0L)
+                    .content("채팅이 시작되었습니다.")
+                    .build();
+            chatRepository.saveChat(chatEntity, chatRoomId);
+            return chatRoomId;
         }else {
             return chatRoomEntityOption.get().getChatRoomId();
         }
@@ -51,6 +59,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             List<Long> memberList = getMemberList(chatRoomEntity);
 
             CurrentChat currentChat = chatRoomMapper.entityToParam(chatEntity);
+            currentChat.setMemberId(chatEntity.getSendMemberId());
 
             chatRoomLists.add(chatRoomMapper.entityToParam(chatRoomId, memberList, currentChat));
         }

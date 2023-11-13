@@ -24,7 +24,7 @@ public class ChatRoomController {
 
         FormattedResponse response = FormattedResponse.builder()
                 .status("success")
-                .message("GET HELP COUNT")
+                .message("SUCCESS CREATE CHATROOM")
                 .result("chatRoomId", chatRoomId)
                 .build();
 
