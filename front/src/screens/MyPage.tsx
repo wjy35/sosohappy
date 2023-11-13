@@ -57,8 +57,8 @@ const MyPage = (({socket}: propsType) => {
   const [fortuneModalState, setFortuneModalState] = useState<Boolean>(false);
   const [myClover, setMyClover] = useState<any>(null);
   const loaderValue = useRef(new Animated.Value(0)).current;
-  const [profileMonsterType, setProfileMonsterType] = useState<number>(0);
-  const [profileMonsterLevel, setProfileMonsterLevel] = useState<number>(0);
+  const [profileMonsterType, setProfileMonsterType] = useState<number>(Math.floor((userInfo.profileMonsterId-1)/10) + 1);
+  const [profileMonsterLevel, setProfileMonsterLevel] = useState<number>((userInfo.profileMonsterId % 10 === 0)?10:(userInfo.profileMonsterId%10));
   const [isDialogState, setIsDialogState] = useState<Boolean>(false);
 
   const load = (initialWidth: number) => {
