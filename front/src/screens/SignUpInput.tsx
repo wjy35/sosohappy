@@ -112,8 +112,9 @@ const SignUpInput = ({socket}: propsType) => {
   const memberName = useInput({
     placeholder: '이름을 입력해 주세요',
     title: '이름을 입력해 주세요',
-    initialIsValid: false,
+    initialIsValid: route.params?.name?true:false,
     onChange: checkMemberName,
+    initialState: route.params?.name?route.params.name:'',
   });
 
   const memberNickname = useInput({
@@ -168,7 +169,7 @@ const SignUpInput = ({socket}: propsType) => {
         <PlainInput {...memberId}/>
         <PlainInput {...memberPassword} secureTextEntry={true}/>
         <PlainInput {...memberCheckPassword} secureTextEntry={true}/>
-        <PlainInput {...memberName}/>
+        <PlainInput {...memberName} editable={route.params?.name?false:true}/>
         <PlainInput {...memberNickname}/>
         <PlainInput {...memberType} editable={false}/>
         <Text style={SignUpInputStyle.signUpInputText}>성별을 입력해주세요.</Text>
