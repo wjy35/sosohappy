@@ -51,6 +51,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             List<Long> memberList = getMemberList(chatRoomEntity);
 
             CurrentChat currentChat = chatRoomMapper.entityToParam(chatEntity);
+            currentChat.setMemberId(chatEntity.getSendMemberId());
 
             chatRoomLists.add(chatRoomMapper.entityToParam(chatRoomId, memberList, currentChat));
         }
