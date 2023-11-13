@@ -78,35 +78,30 @@ public class OcrService {
 
         driver.get(baseURL);
 
-        try{
+        WebElement target = driver.findElement(By.cssSelector("#doc_ref_no1"));
+        target.sendKeys(parts[0]);
+        target = driver.findElement(By.cssSelector("#doc_ref_no2"));
+        target.sendKeys(parts[1]);
+        target = driver.findElement(By.cssSelector("#doc_ref_no3"));
+        target.sendKeys(parts[2]);
+        target = driver.findElement(By.cssSelector("#doc_ref_no4"));
+        target.sendKeys(parts[3]);
 
-            WebElement target = driver.findElement(By.cssSelector("#doc_ref_no1"));
-            target.sendKeys(parts[0]);
-            target = driver.findElement(By.cssSelector("#doc_ref_no2"));
-            target.sendKeys(parts[1]);
-            target = driver.findElement(By.cssSelector("#doc_ref_no3"));
-            target.sendKeys(parts[2]);
-            target = driver.findElement(By.cssSelector("#doc_ref_no4"));
-            target.sendKeys(parts[3]);
+        target = driver.findElement(By.cssSelector("#form2 > p > span.ibtn.large.navy > a"));
+        target.click();
 
-            target = driver.findElement(By.cssSelector("#form2 > p > span.ibtn.large.navy > a"));
-            target.click();
+        target = driver.findElement(By.cssSelector("#doc_ref_key"));
+        target.sendKeys(name);
 
-            target = driver.findElement(By.cssSelector("#doc_ref_key"));
-            target.sendKeys(name);
+        target = driver.findElement(By.cssSelector("#form1 > p > span.ibtn.large.navy > a"));
+        target.click();
 
-            target = driver.findElement(By.cssSelector("#form1 > p > span.ibtn.large.navy > a"));
-            target.click();
+        target = driver.findElement(By.cssSelector("#form1 > table > tbody > tr > td:nth-child(1)"));
 
-            target = driver.findElement(By.cssSelector("#form1 > table > tbody > tr > td:nth-child(1)"));
-
-            if(target.getText().equals("장애인증명서 발급")) {
-                return true;
-            } else {
-                throw new CustomException(INVALID_DOCUMENT_ERROR);
-            }
-        } catch (Exception e) {
-            throw new CustomException(INVALID_DOCUMENT_ERROR);
+        if(target.getText().equals("장애인증명서 발급")) {
+            return true;
+        } else {
+            return false;
         }
 
     }
