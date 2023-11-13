@@ -62,7 +62,7 @@ const SignUpAuth = ({socket}: propsType) => {
 
     const checkAuth = () => {
         if (image){
-            setIsActive(true);
+            sendImage();
         } else {
             setIsActive(false);
         }
@@ -70,12 +70,25 @@ const SignUpAuth = ({socket}: propsType) => {
 
     useEffect(() => {
         checkAuth();
+        // console.log(image.assets[0])
     }, [image]);
 
     useFocusEffect(()=>{
         if (!socket.connected) return;
         socket.disConnect();
     })
+
+    const checkMemberName = (newText: string) => {
+        // TODO: 글자수제한 필요 5글자 넘어가면 에러남
+        memberName.updateIsValid(newText !== "");
+    };
+
+    const memberName = useInput({
+        placeholder: '이름을 입력해 주세요',
+        title: '이름을 입력해 주세요',
+        initialIsValid: false,
+        onChange: checkMemberName,
+    });
 
     return (
         <CommonLayout headerType={0} footer={true}>
