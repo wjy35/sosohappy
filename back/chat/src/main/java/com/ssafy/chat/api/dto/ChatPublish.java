@@ -1,5 +1,5 @@
 
-package com.ssafy.chat.api.request;
+package com.ssafy.chat.api.dto;
 
 import lombok.Builder;
 import lombok.Data;

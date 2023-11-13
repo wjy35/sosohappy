@@ -1,6 +1,6 @@
 package com.ssafy.chat.api.controller;
 
-import com.ssafy.chat.api.request.ChatPublish;
+import com.ssafy.chat.api.dto.ChatPublish;
 import com.ssafy.chat.api.service.ChatService;
 import com.ssafy.chat.util.ObjectSerializer;
 import lombok.RequiredArgsConstructor;

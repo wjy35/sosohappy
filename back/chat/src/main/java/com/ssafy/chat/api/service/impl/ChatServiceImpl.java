@@ -1,6 +1,6 @@
 package com.ssafy.chat.api.service.impl;
 
-import com.ssafy.chat.api.request.ChatPublish;
+import com.ssafy.chat.api.dto.ChatPublish;
 import com.ssafy.chat.api.response.ChatResponse;
 import com.ssafy.chat.api.service.ChatService;
 import com.ssafy.chat.db.entity.ChatEntity;
