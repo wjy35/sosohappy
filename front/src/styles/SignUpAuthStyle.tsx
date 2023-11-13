@@ -9,9 +9,10 @@ const SignUpAuthStyle = StyleSheet.create({
         borderColor:"#E5E5E5",
         marginHorizontal:responsiveWidth(4),
         display:"flex",
-        justifyContent:"center",
+        justifyContent:"space-around",
         alignItems:"center",
         marginTop:27,
+        flexDirection: 'row'
     },
     uploadImageWrap:{
         borderWidth:2,
@@ -33,9 +34,12 @@ const SignUpAuthStyle = StyleSheet.create({
         marginTop:6,
     },
     uploadImage: {
-        width:"100%",
-        height: 160,
-    }
+        width: '100%',
+        resizeMode: 'cover',
+    },
+    nameWrap: {
+        marginHorizontal:responsiveWidth(4),
+    },
 })
 
 export default SignUpAuthStyle;
