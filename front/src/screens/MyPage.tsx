@@ -84,10 +84,6 @@ const MyPage = (({socket}: propsType) => {
       const res = await monsterApi.getMyDetail();
       if (res.status === 200){
         setDefaultSosomon(res.data.result.monster);
-        setMyProfile({
-          type: res.data.result.monster.typeId,
-          level: res.data.result.monster.level,
-        })
       }
     } catch (err) {
       console.log(err);
@@ -101,10 +97,8 @@ const MyPage = (({socket}: propsType) => {
         profileMonsterId: profileMonsterId,
       })
       if (res.status === 200){
-        setMyProfile({
-          type: profileType,
-          level: profileLevel,
-        })
+        setProfileMonsterType(profileType)
+        setProfileMonsterLevel(profileLevel)
       }
     } catch (err){
       console.log(err);
@@ -138,6 +132,10 @@ const MyPage = (({socket}: propsType) => {
     }
   }
 
+  useEffect(() => {
+    whatIsMyThumbnail();
+  }, [])
+
   const police = () => {
     setIsDialogState(true);
   }
@@ -153,9 +151,7 @@ const MyPage = (({socket}: propsType) => {
     getMyCloverApi();
   }, [])
 
-  useEffect(() => {
-    whatIsMyThumbnail();
-  }, [])
+
 
   useFocusEffect(
       React.useCallback(() => {
@@ -249,9 +245,10 @@ const MyPage = (({socket}: propsType) => {
 
       <View style={MyPageStyle.ThumbnailCharacterWrap}>
         {
-          myProfile && (
+            profileMonsterType && (
                 <WebView
-                    source={{uri: `http://sosohappy.co.kr:8888/sosomon/${myProfile.type}/${myProfile.level}`}}
+                    source={{uri: `http://sosohappy.co.kr:8888/sosomon/${profileMonsterType}/${profileMonsterLevel}`}}
+                    // source={{uri: `http://sosohappy.co.kr:8888/sosomon/2/5`}}
                     style={MyPageStyle.MySelectedCharImg}
                 />
             )
