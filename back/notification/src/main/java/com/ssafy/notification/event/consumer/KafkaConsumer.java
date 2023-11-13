@@ -6,6 +6,7 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.ssafy.notification.db.repository.MemberDeviceEntityRepository;
 import com.ssafy.notification.event.dto.FortuneCookieCreateEventDTO;
+import com.ssafy.notification.event.dto.HelpMatchPushEventDTO;
 import com.ssafy.notification.util.KafkaEventMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -28,6 +29,15 @@ public class KafkaConsumer {
         FortuneCookieCreateEventDTO eventDTO = kafkaEventMapper.toEvent(consumerRecord, FortuneCookieCreateEventDTO.class);
 
         notification(eventDTO.getMemberId(),fortuneCookieMessageList[random.nextInt(fortuneCookieMessageList.length)]);
+    }
+
+    @KafkaListener(topics = "fortune-cookie.create")
+    public void consumeHelpMatchPushEvent(ConsumerRecord<?,?> consumerRecord){
+        if(isEmptyEvent(consumerRecord)) return;
+
+        HelpMatchPushEventDTO eventDTO = kafkaEventMapper.toEvent(consumerRecord, HelpMatchPushEventDTO.class);
+
+        notification(eventDTO.getMemberId(),"새로운 도움 요청이 도착했어요!");
     }
 
     private boolean isEmptyEvent(ConsumerRecord<?,?> consumerRecord){
