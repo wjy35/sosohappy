@@ -48,6 +48,19 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
         }
     }
 
+    const arriveHelp = async () => {
+        try {
+            const res = await helpMatchApi.helpArrive({
+                memberId: userInfo.memberId,
+            })
+            if (res.status === 200) {
+                updateBottomSheetStatus(false);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     return(
         <>
             {
