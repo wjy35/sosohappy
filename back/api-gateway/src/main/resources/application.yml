@@ -95,4 +95,10 @@ spring:
             - Path=/ocr/**
           filters:
             - RewritePath=/ocr/(?<path>.*),/$\{path}
+        - id: chat
+          uri: lb:ws://CHAT-SERVICE/
+          predicates:
+            - Path=/chat/**
+          filters:
+            - RewritePath=/chat/(?<path>.*),/$\{path}
         
