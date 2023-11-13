@@ -10,30 +10,13 @@ import SignUpAuthStyle from "@/styles/SignUpAuthStyle";
 import {useEffect, useState} from "react";
 import {useFocusEffect, useNavigation, useRoute} from "@react-navigation/native";
 import {launchCamera, launchImageLibrary} from "react-native-image-picker";
+import PlainInput from "@/components/PlainInput";
+import useInput from "@/hooks/useInput";
+import ocrApi from "@/apis/ocrApi";
+import {helpSocket} from "@/types";
 
 interface propsType{
-    socket: {
-        connect: Function,
-        send: Function,
-        status: String,
-        helpList: helpDetail[],
-        connected: boolean,
-        disConnect: Function,
-    };
-}
-
-interface helpDetail {
-    memberId: number;
-    nickname: string;
-    category: {
-        categoryId: number,
-        categoryName: string,
-        categoryImage: string,
-    };
-    longitude: number;
-    latitude: number;
-    content: string;
-    place: string;
+    socket: helpSocket;
 }
 
 const SignUpAuth = ({socket}: propsType) => {
