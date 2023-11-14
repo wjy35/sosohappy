@@ -1,6 +1,6 @@
 import {PrivateInstance, PublicInstance} from "@/apis/AXIOSUTILS";
 
-const domain = '/chat';
+const domain = 'chat';
 
 interface makeChatProps{
   senderMemberId: string,
@@ -14,10 +14,18 @@ interface sendMsgProps{
   content: string,
 }
 
+interface chatListProps{
+  roomNo: number,
+}
+
 const chatApi = {
-  getChatList: async (chatRoom : number) => {
+  getChatRoomList: async (myMemberId : string) => {
     const res = PublicInstance.get(
-        `${domain}/${chatRoom}`,
+        `${domain}/chatroom`,{
+          headers:{
+            memberId: myMemberId,
+          }
+        }
     )
     return res;
   },
@@ -33,7 +41,7 @@ const chatApi = {
   },
   sendChat: async ({roomNo, sendMemberId, receiveMemberId, content}: sendMsgProps) => {
     const res= PublicInstance.post(
-      `${domain}/send`,
+      `${domain}/chat/send`,
       {
         chatRoomId:roomNo,
         sendMemberId:sendMemberId,
@@ -41,6 +49,12 @@ const chatApi = {
         type:"1", // 0번 system, 1번 text
         content:content,
       }
+    )
+    return res;
+  },
+  getChatList: async ({roomNo} : chatListProps) => {
+    const res = PublicInstance.get(
+      `${domain}/chat/${roomNo}`
     )
     return res;
   }
