@@ -14,6 +14,7 @@ import { type1, type2, type3, type4 } from "@/assets/sosomon";
 
 import CharacterStyle from "@/styles/CharacterStyle";
 import { SvgXml } from "react-native-svg";
+import {helpSocket} from "@/types";
 
 enum CategoryType{
     "army",
@@ -26,28 +27,7 @@ interface feedTypes{
 }
 
 interface propsType{
-    socket: {
-        connect: Function,
-        send: Function,
-        status: String,
-        helpList: helpDetail[],
-        connected: boolean,
-        disConnect: Function,
-    };
-}
-
-interface helpDetail {
-    memberId: number;
-    nickname: string;
-    category: {
-        categoryId: number,
-        categoryName: string,
-        categoryImage: string,
-    };
-    longitude: number;
-    latitude: number;
-    content: string;
-    place: string;
+    socket: helpSocket
 }
 
 const Character = ({socket}: propsType) => {
@@ -67,7 +47,6 @@ const Character = ({socket}: propsType) => {
             });
             // console.log("levelUpApi", levelUpApi.data.message);
             if(levelUpApi.status === 200){
-                // console.log(levelUpApi.data)
                 if(levelUpApi.data.message === "보유중인 클로버가 부족합니다."){
                     Alert.alert("보유중인 클로버가 부족하여 먹이를 줄 수 없습니다.");
                 }else if(levelUpApi.data.message === "클로버를 성공적으로 반영하였습니다."){
@@ -125,13 +104,13 @@ const Character = ({socket}: propsType) => {
         if(myMonsters){
             switch(categoryType){
                 case CategoryType.army:
-                    load(myMonsters[0].currentPoint);
+                    load((myMonsters[0].levelInfo.currentClover)/(myMonsters[0].levelInfo.requiredClover));
                     break;
                 case CategoryType.navy:
-                    load(myMonsters[1].currentPoint);
+                    load((myMonsters[1].levelInfo.currentClover)/(myMonsters[1].levelInfo.requiredClover));
                     break;
                 case CategoryType.airForce:
-                    load(myMonsters[2].currentPoint);
+                    load((myMonsters[2].levelInfo.currentClover)/(myMonsters[2].levelInfo.requiredClover));
                     break;
             }
         }
@@ -156,7 +135,7 @@ const Character = ({socket}: propsType) => {
 
     return(
         <>
-        
+
             <CommonLayout headerType={0} footer={true}>
 
                 <View style={CharacterStyle.characterTitleWrap}>
@@ -184,134 +163,134 @@ const Character = ({socket}: propsType) => {
                         }}
                     >
 
-                        {
-                            myMonsters && (
-                                <View style={categoryType === CategoryType.army && CharacterStyle.feedAnimalActive}>
-                                    <ImageBackground
-                                        source={type1[myMonsters[0].level]}
-                                        style={CharacterStyle.feedAnimalImg}
-                                        resizeMode="cover"
-                                    />
-                                </View>
+                    {
+                        myMonsters && (
+                            <View style={categoryType === CategoryType.army && CharacterStyle.feedAnimalActive}>
+                                <ImageBackground
+                                    source={type1[myMonsters[0].levelInfo.currentLevel-1]}
+                                    style={CharacterStyle.feedAnimalImg}
+                                    resizeMode="cover"
+                                />
+                            </View>
+                        )
+                    }
+                    {
+                        myMonsters && (
+                            <View style={categoryType === CategoryType.navy && CharacterStyle.feedAnimalActive}>
+                                <ImageBackground
+                                    source={type2[myMonsters[1].levelInfo.currentLevel-1]}
+                                    style={CharacterStyle.feedAnimalImg}
+                                    resizeMode="cover"
+                                />
+                            </View>
                             )
-                        }
-                        {
-                            myMonsters && (
-                                <View style={categoryType === CategoryType.navy && CharacterStyle.feedAnimalActive}>
-                                    <ImageBackground
-                                        source={type2[myMonsters[1].level]}
-                                        style={CharacterStyle.feedAnimalImg}
-                                        resizeMode="cover"
-                                    />
-                                </View>
-                                )
-                        }
-                        {
-                            myMonsters && (
-                                <View style={categoryType === CategoryType.airForce && CharacterStyle.feedAnimalActive}>
-                                    <ImageBackground
-                                        source={type3[myMonsters[2].level]}
-                                        style={CharacterStyle.feedAnimalImg}
-                                        resizeMode="cover"
-                                    />
-                                </View>
-                                )
-                        }
-                    </ScrollView>
-                </View>
+                    }
+                    {
+                        myMonsters && (
+                            <View style={categoryType === CategoryType.airForce && CharacterStyle.feedAnimalActive}>
+                                <ImageBackground
+                                    source={type3[myMonsters[2].levelInfo.currentLevel-1]}
+                                    style={CharacterStyle.feedAnimalImg}
+                                    resizeMode="cover"
+                                />
+                            </View>
+                            )
+                    }
+                </ScrollView>
+            </View>
 
-                <View style={CharacterStyle.selectedCharaterWrap}>
+            <View style={CharacterStyle.selectedCharaterWrap}>
+                {
+                    categoryType === CategoryType.army && myMonsters &&
+                    <Image
+                        source={type1[myMonsters[0].levelInfo.currentLevel-1]}
+                        style={CharacterStyle.selectedCharacterImg}
+                    />
+                }
+                {
+                    categoryType === CategoryType.navy && myMonsters &&
+                    <Image
+                        source={type2[myMonsters[1].levelInfo.currentLevel-1]}
+                        style={CharacterStyle.selectedCharacterImg}
+                    />
+                }
+                {
+                    categoryType === CategoryType.airForce && myMonsters &&
+                    <Image
+                        source={type3[myMonsters[2].levelInfo.currentLevel-1]}
+                        style={CharacterStyle.selectedCharacterImg}
+                    />
+                }
+                <View style={CharacterStyle.selectedCharacterInfo}>
+                    <Text style={CharacterStyle.selectedCharacterInfoTitle}>현재 성장 단계</Text>
                     {
                         categoryType === CategoryType.army && myMonsters &&
-                        <Image
-                            source={type1[myMonsters[0].level]}
-                            style={CharacterStyle.selectedCharacterImg}
-                        />
+                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>육지동물 Lv.{myMonsters[0].levelInfo.currentLevel}</Text>
                     }
                     {
                         categoryType === CategoryType.navy && myMonsters &&
-                        <Image
-                            source={type2[myMonsters[1].level]}
-                            style={CharacterStyle.selectedCharacterImg}
-                        />
+                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>해양동물 Lv.{myMonsters[1].levelInfo.currentLevel}</Text>
                     }
                     {
                         categoryType === CategoryType.airForce && myMonsters &&
-                        <Image
-                            source={type3[myMonsters[2].level]}
-                            style={CharacterStyle.selectedCharacterImg}
-                        />
+                        <Text style={CharacterStyle.selectedCharacterInfoLevel}>비행동물 Lv.{myMonsters[2].levelInfo.currentLevel}</Text>
                     }
-                    <View style={CharacterStyle.selectedCharacterInfo}>
-                        <Text style={CharacterStyle.selectedCharacterInfoTitle}>현재 성장 단계</Text>
-                        {
-                            categoryType === CategoryType.army && myMonsters &&
-                            <Text style={CharacterStyle.selectedCharacterInfoLevel}>육지동물 Lv.{myMonsters[0].level}</Text>
-                        }
-                        {
-                            categoryType === CategoryType.navy && myMonsters &&
-                            <Text style={CharacterStyle.selectedCharacterInfoLevel}>해양동물 Lv.{myMonsters[1].level}</Text>
-                        }
-                        {
-                            categoryType === CategoryType.airForce && myMonsters &&
-                            <Text style={CharacterStyle.selectedCharacterInfoLevel}>비행동물 Lv.{myMonsters[2].level}</Text>
-                        }
-                    </View>
                 </View>
-                <View style={CharacterStyle.expWrap}>
-                    <Text style={CharacterStyle.expTitle}>
-                        Exp.
-                        {
-                            categoryType === CategoryType.army && myMonsters &&
-                            Number(myMonsters[0].currentPoint) * 100 + "%"
-                        }
-                        {
-                            categoryType === CategoryType.navy && myMonsters &&
-                            Number(myMonsters[1].currentPoint) * 100 + "%"
-                        }
-                        {
-                            categoryType === CategoryType.airForce && myMonsters &&
-                            Number(myMonsters[2].currentPoint) * 100 + "%"
-                        }
-                    </Text>
-                    <View style={CharacterStyle.expStatusWrap}>
-                        <View style={CharacterStyle.expStatusBg}></View>
-                        {
-                            categoryType === CategoryType.army && myMonsters &&
-                            <Animated.View
-                            style={{
-                                width,
-                                height:28,
-                                borderRadius:10,
-                                backgroundColor:"#8B8BEF",
-                                position:"absolute",
-                            }}></Animated.View>
-                            // <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[0].currentPoint) * 100}` + "%"}]}></View>
-                        }
-                        {
-                            categoryType === CategoryType.navy && myMonsters &&
-                            <Animated.View
-                            style={{
-                                width,
-                                height:28,
-                                borderRadius:10,
-                                backgroundColor:"#8B8BEF",
-                                position:"absolute",
-                            }}></Animated.View>
-                            // <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[1].currentPoint) * 100}` + "%"}]}></View>
-                        }
-                        {
-                            categoryType === CategoryType.airForce && myMonsters &&
-                            <Animated.View
-                            style={{
-                                width,
-                                height:28,
-                                borderRadius:10,
-                                backgroundColor:"#8B8BEF",
-                                position:"absolute",
-                            }}></Animated.View>
-                            // <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[2].currentPoint) * 100}` + "%"}]}></View>
-                        }
+            </View>
+            <View style={CharacterStyle.expWrap}>
+                <Text style={CharacterStyle.expTitle}>
+                    현재 클로버:{"  "}
+                    {
+                        categoryType === CategoryType.army && myMonsters &&
+                        Number(myMonsters[0].levelInfo.currentClover) + "/" + Number(myMonsters[0].levelInfo.requiredClover)
+                    }
+                    {
+                        categoryType === CategoryType.navy && myMonsters &&
+                        Number(myMonsters[1].levelInfo.currentClover) + "/" + Number(myMonsters[1].levelInfo.requiredClover)
+                    }
+                    {
+                        categoryType === CategoryType.airForce && myMonsters &&
+                        Number(myMonsters[2].levelInfo.currentClover) + "/" + Number(myMonsters[2].levelInfo.requiredClover)
+                    }
+                </Text>
+                <View style={CharacterStyle.expStatusWrap}>
+                    <View style={CharacterStyle.expStatusBg}></View>
+                    {
+                        categoryType === CategoryType.army && myMonsters &&
+                        <Animated.View
+                        style={{
+                            width,
+                            height:28,
+                            borderRadius:10,
+                            backgroundColor:"#8B8BEF",
+                            position:"absolute",
+                        }}></Animated.View>
+                        // <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[0].currentPoint) * 100}` + "%"}]}></View>
+                    }
+                    {
+                        categoryType === CategoryType.navy && myMonsters &&
+                        <Animated.View
+                        style={{
+                            width,
+                            height:28,
+                            borderRadius:10,
+                            backgroundColor:"#8B8BEF",
+                            position:"absolute",
+                        }}></Animated.View>
+                        // <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[1].currentPoint) * 100}` + "%"}]}></View>
+                    }
+                    {
+                        categoryType === CategoryType.airForce && myMonsters &&
+                        <Animated.View
+                        style={{
+                            width,
+                            height:28,
+                            borderRadius:10,
+                            backgroundColor:"#8B8BEF",
+                            position:"absolute",
+                        }}></Animated.View>
+                        // <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[2].currentPoint) * 100}` + "%"}]}></View>
+                    }
 
                     </View>
                 </View>
