@@ -22,7 +22,6 @@ interface propsType{
 }
 
 const ChatList = ({socket, chatSocket}: propsType) => {
->>>>>>> front/src/screens/ChatList.tsx
   const [noneCheckedState, setNoneCheckedState] = useState<Boolean>(true);
   const [allMsgState, setAllMsgState] = useState<Boolean>(false);
   const [chatList, setChatList] = useState<Object[] | null>(null);
