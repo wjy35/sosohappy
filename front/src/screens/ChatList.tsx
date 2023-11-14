@@ -21,23 +21,6 @@ interface propsType{
   chatSocket: ChatSocket
 }
 
-<<<<<<< front/src/screens/ChatList.tsx
-interface helpDetail {
-  memberId: number;
-  nickname: string;
-  category: {
-    categoryId: number,
-    categoryName: string,
-    categoryImage: string,
-  };
-  longitude: number;
-  latitude: number;
-  content: string;
-  place: string;
-}
-
-const ChatList = ({socket}: propsType) => {
-=======
 const ChatList = ({socket, chatSocket}: propsType) => {
 >>>>>>> front/src/screens/ChatList.tsx
   const [noneCheckedState, setNoneCheckedState] = useState<Boolean>(true);
