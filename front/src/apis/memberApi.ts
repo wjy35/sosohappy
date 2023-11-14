@@ -93,7 +93,13 @@ const memberApi = {
             `${queryDomain}/availability/memberSignId/${memberSignId}/`
         );
         return res;
-    }
+    },
+    publicMemberShow: async (memberId: number) => {
+      const res = PublicInstance.get(
+        `${queryDomain}/public/${memberId}`
+      )
+      return res;
+    },
 
 };
 
