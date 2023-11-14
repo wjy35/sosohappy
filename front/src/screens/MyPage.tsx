@@ -317,11 +317,6 @@ const MyPage = (({socket}: propsType) => {
       <View style={MyPageStyle.historyTitleWrap}>
         <Text style={MyPageStyle.historyTitle}>나의 최근 행운</Text>
         <History updateFortuneModalState={updateFortuneModalState}/>
-        {/*<TouchableOpacity activeOpacity={0.7}>*/}
-        {/*    <View style={MyPageStyle.moreButton}>*/}
-        {/*        <Text style={MyPageStyle.moreButtonText}>더보기</Text>*/}
-        {/*    </View>*/}
-        {/*</TouchableOpacity>*/}
       </View>
     </CommonLayout>
     {

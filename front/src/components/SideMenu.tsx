@@ -17,7 +17,6 @@ interface props {
 const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
     const navigation = useNavigation();
     const {userInfo, logout} = useStore();
-    console.log(userInfo);
 
     const userLogout = async () => {
         logout();
@@ -40,8 +39,6 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
             }
             const animalType = Math.floor(tempMonsterId / 10);
             const animalLevel = tempMonsterId % 10;
-            console.log("animalType", animalType);
-            console.log("animalLevel", animalLevel);
     
             switch(animalType){
                 case 1:

@@ -4,13 +4,16 @@ import CommonLayout from "@/components/CommonLayout";
 import monsterApi from "@/apis/monsterApi";
 import useStore from "@/store/store";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import DialogInput from "react-native-dialog-input"
 
 import CloverIcon from "@/assets/img/clover-icon.png"
 import BearAnimationIcon from "@/assets/img/bear-animation-icon.png"
+import { clovers } from "@/assets/icons/icons";
 
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
 
 import CharacterStyle from "@/styles/CharacterStyle";
+import { SvgXml } from "react-native-svg";
 import {helpSocket} from "@/types";
 
 enum CategoryType{
@@ -34,6 +37,7 @@ const Character = ({socket}: propsType) => {
     const {userInfo} = useStore();
     const navigation = useNavigation();
     const [myClover, setMyClover] = useState(0);
+    const [isDialogState, setIsDialogState] = useState<Boolean>();
 
     const feedSosomonCommon = async ({feedType}: feedTypes) => {
         if(myMonsters){
@@ -52,6 +56,10 @@ const Character = ({socket}: propsType) => {
                 Alert.alert("시스템 오류, 관리자에게 문의하세요.");
             }
         }
+    }
+
+    const feedManyCloversApi = async (inputText: string) => {
+        console.log("clover", inputText);
     }
 
     const feedSosomon = async () => {
@@ -80,6 +88,10 @@ const Character = ({socket}: propsType) => {
             duration: 1500,
             useNativeDriver: false,
         }).start();
+    }
+
+    const feedManyClovers = () => {
+        setIsDialogState(true);
     }
 
     const width = loaderValue.interpolate({
@@ -122,32 +134,34 @@ const Character = ({socket}: propsType) => {
     })
 
     return(
-        <CommonLayout headerType={0} footer={true}>
+        <>
 
-            <View style={CharacterStyle.characterTitleWrap}>
-                {
-                    userInfo.name &&
-                    <Text style={CharacterStyle.characterTitle}>
-                        <Text style={CharacterStyle.characterTitleMyName}>{userInfo.name}</Text> 님 어떤 캐릭터를{"\n"}
-                        성장시킬까요?
-                    </Text>
-                }
-            </View>
+            <CommonLayout headerType={0} footer={true}>
 
-            <View style={CharacterStyle.feedAnimalWrap}>
-                <ScrollView
-                    horizontal={true}
-                    onScroll={(x: any) => {
-                        // console.log(x.nativeEvent.contentOffset.x );
-                        if(x.nativeEvent.contentOffset.x > 405){
-                            setCategoryType(CategoryType.airForce);
-                        }else if(x.nativeEvent.contentOffset.x > 185){
-                            setCategoryType(CategoryType.navy);
-                        }else{
-                            setCategoryType(CategoryType.army);
-                        }
-                    }}
-                >
+                <View style={CharacterStyle.characterTitleWrap}>
+                    {
+                        userInfo.name &&
+                        <Text style={CharacterStyle.characterTitle}>
+                            <Text style={CharacterStyle.characterTitleMyName}>{userInfo.name}</Text> 님 어떤 캐릭터를{"\n"}
+                            성장시킬까요?
+                        </Text>
+                    }
+                </View>
+
+                <View style={CharacterStyle.feedAnimalWrap}>
+                    <ScrollView
+                        horizontal={true}
+                        onScroll={(x: any) => {
+                            // console.log(x.nativeEvent.contentOffset.x );
+                            if(x.nativeEvent.contentOffset.x > 405){
+                                setCategoryType(CategoryType.airForce);
+                            }else if(x.nativeEvent.contentOffset.x > 185){
+                                setCategoryType(CategoryType.navy);
+                            }else{
+                                setCategoryType(CategoryType.army);
+                            }
+                        }}
+                    >
 
                     {
                         myMonsters && (
@@ -278,34 +292,45 @@ const Character = ({socket}: propsType) => {
                         // <View style={[CharacterStyle.expStatusMy, {width:`${Number(myMonsters[2].currentPoint) * 100}` + "%"}]}></View>
                     }
 
+                    </View>
                 </View>
-            </View>
 
-            {/*<View>*/}
-            {/*    <Text>현재 보유한 클로버: {myClover}</Text>*/}
-            {/*</View>*/}
+                {/*<View>*/}
+                {/*    <Text>현재 보유한 클로버: {myClover}</Text>*/}
+                {/*</View>*/}
 
-            <View style={CharacterStyle.animationButtonWrap}>
-                <TouchableOpacity activeOpacity={0.7} onPress={() => feedSosomon()}>
-                    <View style={CharacterStyle.animationButton}>
-                        <Image
-                            source={CloverIcon}
-                            style={CharacterStyle.animationButtonThumbnail}
-                        />
-                        <Text style={CharacterStyle.animationButtonText}>행운 주기</Text>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.7}>
-                    <View style={CharacterStyle.animationButton}>
-                        <Image
-                            source={BearAnimationIcon}
-                            style={CharacterStyle.animationButtonThumbnail}
-                        />
-                        <Text style={CharacterStyle.animationButtonText}>애니메이션 보기</Text>
-                    </View>
-                </TouchableOpacity>
-            </View>
-        </CommonLayout>
+                <View style={CharacterStyle.animationButtonWrap}>
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => feedSosomon()}>
+                        <View style={CharacterStyle.animationButton}>
+                            <Image
+                                source={CloverIcon}
+                                style={CharacterStyle.animationButtonThumbnail}
+                            />
+                            <Text style={CharacterStyle.animationButtonText}>행운 주기</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => feedManyClovers()}>
+                        <View style={CharacterStyle.animationButton}>
+                            <SvgXml
+                                xml={clovers}
+                                style={CharacterStyle.animationButtonThumbnail}
+                            />
+                            <Text style={CharacterStyle.animationButtonText}>여러 개 행운주기</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            </CommonLayout>
+            {
+                isDialogState &&
+                <DialogInput isDialogVisible={isDialogState}
+                    title={"소소몬에게 먹이주기"}
+                    message={"몇 개의 clover를 소소몬에게 주겠습니까?"}
+                    hintInput ={"clover 개수 입력"}
+                    submitInput={ (inputText: string) => feedManyCloversApi(inputText) }
+                    closeDialog={ () => setIsDialogState(false) }>
+                </DialogInput>
+            }
+        </>
     );
 }
 

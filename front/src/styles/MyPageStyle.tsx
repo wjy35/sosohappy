@@ -177,24 +177,6 @@ const MyPageStyle = StyleSheet.create({
         color:"#78797B",
         marginHorizontal:responsiveWidth(4),
     },
-    moreButton:{
-        width:responsiveWidth(30),
-        height:32,
-        backgroundColor:"#ECEEED",
-        borderRadius:8,
-        display:"flex",
-        justifyContent:"center",
-        alignItems:"center",
-        marginTop:29,
-        marginBottom:53,
-        position:"relative",
-        left:responsiveWidth(35) - 16,
-    },
-    moreButtonText:{
-        fontSize:14,
-        fontWeight:"700",
-        color:"#767C7A",
-    },
 })
 
 export default MyPageStyle;
