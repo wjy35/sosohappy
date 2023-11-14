@@ -8,6 +8,9 @@ import com.ssafy.chat.api.response.FormattedResponse;
 import com.ssafy.chat.api.service.ChatServerManageService;
 import com.ssafy.chat.api.service.ChatService;
 import com.ssafy.chat.db.entity.ChatEntity;
+import com.ssafy.chat.event.dto.ChatSendEventDTO;
+import com.ssafy.chat.event.producer.KafkaEventProducer;
+import com.ssafy.chat.event.producer.KafkaEventTopic;
 import com.ssafy.chat.util.ObjectSerializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -32,6 +35,8 @@ public class ChatController {
 
     private final ObjectSerializer objectSerializer;
 
+    private final KafkaEventProducer kafkaEventProducer;
+
     @PostMapping("/chat/send")
     public ResponseEntity<?> sendChat(@RequestBody ChatRequest chatRequest){
         ChatEntity chatEntity = chatMapper.createRequestToEntity(chatRequest);
@@ -47,7 +52,16 @@ public class ChatController {
                                     objectSerializer.serialize(chatPublish)
                             );
                         }
-                        ,()->{});
+                        ,()->{
+                            ChatSendEventDTO chatSendEventDTO = ChatSendEventDTO.builder()
+                                    .sendMemberId(chatRequest.getSendMemberId())
+                                    .receiveMemberId(chatRequest.getReceiveMemberId())
+                                    .content(chatRequest.getContent())
+                                    .timestamp(chatRequest.getTimestamp())
+                                    .build();
+
+                            kafkaEventProducer.produce(KafkaEventTopic.CHAT_NOTIFICATION,chatSendEventDTO);
+                        });
         ChatResponse chatResponse = ChatResponse.builder()
                 .memberId(chatPublish.getSendMemberId())
                 .content(chatPublish.getContent())
