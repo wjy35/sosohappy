@@ -11,6 +11,7 @@ import BearAnimationIcon from "@/assets/img/bear-animation-icon.png"
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
 
 import CharacterStyle from "@/styles/CharacterStyle";
+import {helpSocket} from "@/types";
 
 enum CategoryType{
     "army",
@@ -23,28 +24,7 @@ interface feedTypes{
 }
 
 interface propsType{
-    socket: {
-        connect: Function,
-        send: Function,
-        status: String,
-        helpList: helpDetail[],
-        connected: boolean,
-        disConnect: Function,
-    };
-}
-
-interface helpDetail {
-    memberId: number;
-    nickname: string;
-    category: {
-        categoryId: number,
-        categoryName: string,
-        categoryImage: string,
-    };
-    longitude: number;
-    latitude: number;
-    content: string;
-    place: string;
+    socket: helpSocket
 }
 
 const Character = ({socket}: propsType) => {
