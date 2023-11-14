@@ -256,11 +256,12 @@ const MyPage = ({socket, chatSocket}: propsType) => {
               }
             <Text style={MyPageStyle.expSubTitle}>당신의 선행력을 수치로 보여드려요</Text>
           </View>
-          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Character')}>
-            <Image
-              source={GrayMoreIcon}
-              style={MyPageStyle.grayMoreIcon}
-            />
+          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Character')} style={MyPageStyle.feedFlexBox}>
+              <Image
+                source={GrayMoreIcon}
+                style={MyPageStyle.grayMoreIcon}
+              />
+              <Text style={MyPageStyle.moveFeedText}>먹이주러가기</Text>
           </TouchableOpacity>
         </View>
 
