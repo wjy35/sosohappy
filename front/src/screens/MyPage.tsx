@@ -22,33 +22,14 @@ import memberApi from "@/apis/memberApi";
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
 import { SvgXml } from "react-native-svg";
 import { createUser } from "@/collections/users";
+import {ChatSocket, helpSocket} from "@/types";
 
 interface propsType{
-  socket: {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-  };
+  socket: helpSocket;
+  chatSocket: ChatSocket
 }
 
-interface helpDetail {
-  memberId: number;
-  nickname: string;
-  category: {
-    categoryId: number,
-    categoryName: string,
-    categoryImage: string,
-  };
-  longitude: number;
-  latitude: number;
-  content: string;
-  place: string;
-}
-
-const MyPage = (({socket}: propsType) => {
+const MyPage = ({socket, chatSocket}: propsType) => {
   const navigation = useNavigation();
   const [modalState, setModalState] = useState<Boolean>(false);
   const {userInfo} = useStore();
@@ -335,6 +316,6 @@ const MyPage = (({socket}: propsType) => {
     }
     </>
   );
-});
+};
 
 export default MyPage;

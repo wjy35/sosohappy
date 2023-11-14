@@ -12,15 +12,16 @@ import React, {useEffect, useState} from "react";
 import useStore from "@/store/store";
 import useInput from "@/hooks/useInput";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import {helpSocket, point} from "@/types";
+import {ChatSocket, helpSocket, point} from "@/types";
 import MapLoading from "@/components/MapLoading";
 
 interface propsType{
     location: point;
     socket: helpSocket,
+    chatSocket: ChatSocket
 }
 
-const CreateHelp = (({location, socket}: propsType) => {
+const CreateHelp = (({location, socket, chatSocket}: propsType) => {
     const [category, setCategory] = useState<any>(null);
     const {userInfo} = useStore();
     const navigation = useNavigation();

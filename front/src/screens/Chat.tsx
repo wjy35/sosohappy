@@ -14,33 +14,15 @@ import {exit, people, send2, hamburgerMenu, backIcon} from "@/assets/icons/icons
 import ChatStyle from "@/styles/ChatStyle";
 import YourChat from "@/components/YourCaht";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {helpSocket, ChatSocket} from "@/types";
 
 interface propsType{
-  helpSocket: {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-  };
+  helpSocket: helpSocket;
+  chatSocket: ChatSocket
 }
 
-interface helpDetail {
-  memberId: number;
-  nickname: string;
-  category: {
-    categoryId: number,
-    categoryName: string,
-    categoryImage: string,
-  };
-  longitude: number;
-  latitude: number;
-  content: string;
-  place: string;
-}
 
-const Chat = ({helpSocket}: propsType) => {
+const Chat = ({helpSocket, chatSocket}: propsType) => {
   const socket = io('http://10.0.2.2:4002');
   const [msg, setMsg] = useState<string>();
   const [msgList, setMsgList] = useState<Object[]>([]);

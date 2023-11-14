@@ -11,15 +11,16 @@ import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 
 import MapStyle from "@/styles/MapStyle";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import {helpDetail, helpSocket} from "@/types";
+import {ChatSocket, helpDetail, helpSocket} from "@/types";
 import useStore from "@/store/store";
 
 interface propsType{
   location: any;
   socket: helpSocket;
+  chatSocket: ChatSocket
 }
 
-const Map = ({location, socket}: propsType) => {
+const Map = ({location, socket, chatSocket}: propsType) => {
   const mapWidth = Dimensions.get("window").width;
   const mapHeight = Dimensions.get("window").height;
   const [bottomSheetStatus, setBottomSheetStatus] = useState<Boolean>(false);
