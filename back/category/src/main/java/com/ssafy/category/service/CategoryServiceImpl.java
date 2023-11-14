@@ -66,6 +66,7 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     @Transactional
     public void addCategoryPick(Long toMemberId, Long category_id) {
+
         Category category = categoryRepository.findByCategoryId(category_id)
                 .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
 
