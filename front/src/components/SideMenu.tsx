@@ -19,8 +19,8 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
     const {userInfo, logout} = useStore();
 
     const userLogout = async () => {
-        logout();
-        Alert.alert("로그아웃 되었습니다.");
+        navigation.navigate('Main');
+        await logout();
     };
 
     const goto = (next: string) => {
@@ -34,24 +34,20 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
     const whatIsMyThumbnail = () => {
         if(userInfo && userInfo.profileMonsterId != null){
             let tempMonsterId = userInfo.profileMonsterId;
-            if(Number(tempMonsterId) < 10){
-                tempMonsterId = "0" + tempMonsterId;
-            }
-            const animalType = Math.floor(tempMonsterId / 10);
-            const animalLevel = tempMonsterId % 10;
-    
+            const animalType = Math.floor((tempMonsterId-1) / 10) + 1;
+            const animalLevel = (tempMonsterId % 10 === 0)?10:(tempMonsterId%10);
             switch(animalType){
                 case 1:
-                    return type1[animalLevel];
+                    return type1[animalLevel-1];
                     break;
                 case 2:
-                    return type2[animalLevel];
+                    return type2[animalLevel-1];
                     break;
                 case 3:
-                    return type3[animalLevel];
+                    return type3[animalLevel-1];
                     break;
                 case 4:
-                    return type4[animalLevel];
+                    return type4[animalLevel-1];
                     break;
             }
         }
@@ -118,66 +114,72 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
                             </View>
                         </TouchableOpacity>
                         {
-                            userInfo?.disabled && (
-                                <TouchableOpacity activeOpacity={0.7} onPress={()=>goto("CreateHelp")}>
-                                    <View style={[SideMenuStyle.menuList, nowPage==="Help" && SideMenuStyle.menuListActive]}>
-                                        <SvgXml
-                                            xml={peace}
-                                            width={24}
-                                            height={24}
-                                        />
-                                        <Text style={[SideMenuStyle.menuItemText]}>도움 요청</Text>
-                                    </View>
-                                </TouchableOpacity>
+                            userInfo?.memberId && (
+                                <>
+                                    {
+                                        userInfo?.disabled && (
+                                            <TouchableOpacity activeOpacity={0.7} onPress={()=>goto("CreateHelp")}>
+                                                <View style={[SideMenuStyle.menuList, nowPage==="Help" && SideMenuStyle.menuListActive]}>
+                                                    <SvgXml
+                                                        xml={peace}
+                                                        width={24}
+                                                        height={24}
+                                                    />
+                                                    <Text style={[SideMenuStyle.menuItemText]}>도움 요청</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        )
+                                    }
+                                    <TouchableOpacity activeOpacity={0.7} onPress={()=>goto("ChatList")}>
+                                        <View style={[SideMenuStyle.menuList, nowPage==="Chat" && SideMenuStyle.menuListActive]}>
+                                            <SvgXml
+                                                xml={chat}
+                                                width={24}
+                                                height={24}
+                                            />
+                                            <Text style={[SideMenuStyle.menuItemText]}>채팅</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity activeOpacity={0.7} onPress={()=>goto("MyPage")}>
+                                        <View style={[SideMenuStyle.menuList, nowPage==="MyPage" && SideMenuStyle.menuListActive]}>
+                                            <SvgXml
+                                                xml={user}
+                                                width={24}
+                                                height={24}
+                                            />
+                                            <Text style={[SideMenuStyle.menuItemText]}>마이페이지</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    {/*<TouchableOpacity activeOpacity={0.7} onPress={moveSettingPage}>*/}
+                                    {/*    <View style={[SideMenuStyle.menuList]}>*/}
+                                    {/*        <SvgXml*/}
+                                    {/*            xml={gear}*/}
+                                    {/*            width={24}*/}
+                                    {/*            height={24}*/}
+                                    {/*        />*/}
+                                    {/*        <Text style={[SideMenuStyle.menuItemText]}>정보수정</Text>*/}
+                                    {/*    </View>*/}
+                                    {/*</TouchableOpacity>*/}
+                                    <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Certificate')}>
+                                        <View style={[SideMenuStyle.menuList]}>
+                                            <SvgXml
+                                                xml={menuDocs}
+                                                width={24}
+                                                height={24}
+                                            />
+                                            <Text style={[SideMenuStyle.menuItemText]}>증명서 발급</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </>
                             )
                         }
-                        <TouchableOpacity activeOpacity={0.7} onPress={()=>goto("ChatList")}>
-                            <View style={[SideMenuStyle.menuList, nowPage==="Chat" && SideMenuStyle.menuListActive]}>
-                                <SvgXml
-                                    xml={chat}
-                                    width={24}
-                                    height={24}
-                                />
-                                <Text style={[SideMenuStyle.menuItemText]}>채팅</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity activeOpacity={0.7} onPress={()=>goto("MyPage")}>
-                            <View style={[SideMenuStyle.menuList, nowPage==="MyPage" && SideMenuStyle.menuListActive]}>
-                                <SvgXml
-                                    xml={user}
-                                    width={24}
-                                    height={24}
-                                />
-                                <Text style={[SideMenuStyle.menuItemText]}>마이페이지</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity activeOpacity={0.7} onPress={moveSettingPage}>
-                            <View style={[SideMenuStyle.menuList]}>
-                                <SvgXml
-                                    xml={gear}
-                                    width={24}
-                                    height={24}
-                                />
-                                <Text style={[SideMenuStyle.menuItemText]}>정보수정</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Certificate')}>
-                            <View style={[SideMenuStyle.menuList]}>
-                                <SvgXml
-                                    xml={menuDocs}
-                                    width={24}
-                                    height={24}
-                                />
-                                <Text style={[SideMenuStyle.menuItemText]}>증명서 발급</Text>
-                            </View>
-                        </TouchableOpacity>
                     </View>
 
                     <View style={SideMenuStyle.authButtonWrap}>
                         {
                             userInfo ? (
                                 <>
-                                    <TouchableOpacity activeOpacity={0.7} onPress={logout}>
+                                    <TouchableOpacity activeOpacity={0.7} onPress={userLogout}>
                                         <View style={SideMenuStyle.loginButton}>
                                             <Text style={SideMenuStyle.loginButtonText}>로그아웃</Text>
                                         </View>

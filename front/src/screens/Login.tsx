@@ -11,13 +11,14 @@ import messaging from '@react-native-firebase/messaging'
 import useStore from "@/store/store";
 import {useState} from "react";
 import {useEffect} from "react";
-import { helpSocket} from "@/types";
+import {ChatSocket, helpSocket} from "@/types";
 
 interface propsType{
   socket: helpSocket,
+  chatSocket: ChatSocket
 }
 
-const Login = ({socket}: propsType) => {
+const Login = ({socket, chatSocket}: propsType) => {
   const navigation = useNavigation();
   const {userInfo, login} = useStore();
   const [isFail, setIsFail] = useState(false);

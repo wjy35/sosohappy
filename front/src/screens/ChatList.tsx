@@ -14,18 +14,14 @@ import ChatListItem from "@/components/ChatListItem";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import chatApi from "@/apis/chatApi";
 import memberApi from "@/apis/memberApi";
+import {ChatSocket, helpSocket} from "@/types";
 
 interface propsType{
-  socket: {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-  };
+  socket: helpSocket;
+  chatSocket: ChatSocket
 }
 
+<<<<<<< front/src/screens/ChatList.tsx
 interface helpDetail {
   memberId: number;
   nickname: string;
@@ -41,6 +37,9 @@ interface helpDetail {
 }
 
 const ChatList = ({socket}: propsType) => {
+=======
+const ChatList = ({socket, chatSocket}: propsType) => {
+>>>>>>> front/src/screens/ChatList.tsx
   const [noneCheckedState, setNoneCheckedState] = useState<Boolean>(true);
   const [allMsgState, setAllMsgState] = useState<Boolean>(false);
   const [chatList, setChatList] = useState<Object[] | null>(null);

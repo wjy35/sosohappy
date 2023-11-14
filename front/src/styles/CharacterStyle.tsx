@@ -114,7 +114,7 @@ const CharacterStyle = StyleSheet.create({
         height:responsiveWidth(26),
     },
     animationButtonText:{
-
+        marginTop:6,
     },
 })
 

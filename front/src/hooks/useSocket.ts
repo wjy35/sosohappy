@@ -69,8 +69,8 @@ function useSocket(){
                 if (body.matchListCommand === 'PUSH'){
                     setHelpList([...helpList, ...body.receiveMatchList])
                 } else if (body.matchListCommand === 'POP') {
-
-
+                    const _matchList = helpList.filter(el => !body.memberIdList.includes(el.memberId))
+                    setHelpList(_matchList);
                 }
                 console.log(body);
             },
