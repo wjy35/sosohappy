@@ -1,10 +1,6 @@
 import { View, Text, TouchableOpacity } from "react-native"
 import HistoryItem from "./HistoryItem";
 
-import FishThumbnail from "@/assets/img/fish-thumbnail.png"
-import CloverIcon from "@/assets/img/clover-icon.png"
-import FortuneCookieIcon from "@/assets/img/fortune-cookie-icon.png"
-
 import HistoryStyle from "@/styles/HistoryStyle";
 import {useEffect, useState} from "react";
 import helpHistoryApi from "@/apis/helpHistoryApi";
