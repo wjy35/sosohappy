@@ -42,8 +42,9 @@ const Main = ({socket, chatSocket}: propsType) => {
 
   const getFortuneList = async () => {
     const fortuneList = await helpMatchApi.getFortuneList();
+    console.log(fortuneList.data.result.fortuneCookieList.length)
     if(fortuneList.status === 200 && userInfo){
-      if(fortuneList.data.result.fortuneCookieList.length === 0){
+      if(fortuneList.data.result.fortuneCookieList.length > 0){
         Alert.alert("포츈쿠키 알림이 도착했어요.", "열어보지 않은 포츈쿠키가 있어요. 마이페이지로 이동하시겠어요?", [
           {text: '취소', onPress: () => {}},
           {text: '이동하기', onPress: () => navigation.navigate("MyPage")}
@@ -54,13 +55,17 @@ const Main = ({socket, chatSocket}: propsType) => {
 
   const getMatchingStatus = async () => {
     
-    const matchingStatus = await helpMatchApi.getHelpStatus();
+    const matchingStatusRes = await helpMatchApi.getHelpStatus();
+    const matchingStatus = matchingStatusRes.data.result.matchStatus.helpMatchStatus
     // TODO 추후 WAIT로 변경
-    if(matchingStatus.data.result.matchStatus.helpMatchStatus === "WAIT"){
+    if(matchingStatus === "WAIT"){
       Alert.alert("도움요청 알림", "진행되었으나 완료되지 않은 도움요청이 있어요. 완료하시겠습니까?",[
         {text: '완료하기', onPress: () => completeHelp()}
       ])
-
+    }else if(matchingStatus === "ON_MOVE"){
+      Alert.alert("도움요청 알림", "도움요청 진행중입니다. 지도화면으로 이동합니다.", [
+        {text: '이동하기', onPress: () => navigation.navigate('Map')}
+      ]);
     }
   }
 
