@@ -66,6 +66,8 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     @Transactional
     public void addCategoryPick(Long toMemberId, Long category_id) {
+
+        // 예외처리?? categorㅛ
         Category category = categoryRepository.findByCategoryId(category_id).get();
 
         CategoryPick init = CategoryMapper.INSTANCE.toPickEntity(toMemberId, category);
