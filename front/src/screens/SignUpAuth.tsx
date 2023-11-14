@@ -13,13 +13,14 @@ import {launchCamera, launchImageLibrary} from "react-native-image-picker";
 import PlainInput from "@/components/PlainInput";
 import useInput from "@/hooks/useInput";
 import ocrApi from "@/apis/ocrApi";
-import {helpSocket} from "@/types";
+import {ChatSocket, helpSocket} from "@/types";
 
 interface propsType{
     socket: helpSocket;
+    chatSocket: ChatSocket;
 }
 
-const SignUpAuth = ({socket}: propsType) => {
+const SignUpAuth = ({socket, chatSocket}: propsType) => {
     const route = useRoute();
     const [isActive, setIsActive] = useState(false);
     const navigation = useNavigation();

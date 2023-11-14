@@ -13,33 +13,14 @@ import DropDownPicker from "react-native-dropdown-picker";
 import InputStyle from "@/styles/InputStyle";
 import {SvgXml} from "react-native-svg";
 import {backIcon, check} from "@/assets/icons/icons";
+import {ChatSocket, helpSocket} from "@/types";
 
 interface propsType{
-  socket: {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-  };
+  socket: helpSocket;
+  chatSocket: ChatSocket;
 }
 
-interface helpDetail {
-  memberId: number;
-  nickname: string;
-  category: {
-    categoryId: number,
-    categoryName: string,
-    categoryImage: string,
-  };
-  longitude: number;
-  latitude: number;
-  content: string;
-  place: string;
-}
-
-const SignUpInput = ({socket}: propsType) => {
+const SignUpInput = ({socket, chatSocket}: propsType) => {
   const route = useRoute();
   const [isActive, setIsActive] = useState(false);
   const [selectedGender, setSelectedGender] = useState(2);

@@ -12,34 +12,14 @@ import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 import ChatListStyle from "@/styles/ChatListStyle"
 import ChatListItem from "@/components/ChatListItem";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {ChatSocket, helpSocket} from "@/types";
 
 interface propsType{
-  socket: {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-  };
+  socket: helpSocket;
+  chatSocket: ChatSocket
 }
 
-interface helpDetail {
-  memberId: number;
-  nickname: string;
-  category: {
-    categoryId: number,
-    categoryName: string,
-    categoryImage: string,
-  };
-  longitude: number;
-  latitude: number;
-  content: string;
-  place: string;
-}
-
-
-const ChatList = ({socket}: propsType) => {
+const ChatList = ({socket, chatSocket}: propsType) => {
   const [noneCheckedState, setNoneCheckedState] = useState<Boolean>(true);
   const [allMsgState, setAllMsgState] = useState<Boolean>(false);
   const navigation = useNavigation();
