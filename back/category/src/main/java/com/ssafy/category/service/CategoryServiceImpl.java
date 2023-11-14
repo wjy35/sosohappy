@@ -29,7 +29,7 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public CategoryRes getCategoryInfo(Long categoryId) {
         Category category = categoryRepository.findByCategoryId(categoryId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
         return CategoryMapper.INSTANCE.toCategoryRes(category);
     }
 
@@ -67,8 +67,8 @@ public class CategoryServiceImpl implements CategoryService{
     @Transactional
     public void addCategoryPick(Long toMemberId, Long category_id) {
 
-        // 예외처리?? categorㅛ
-        Category category = categoryRepository.findByCategoryId(category_id).get();
+        Category category = categoryRepository.findByCategoryId(category_id)
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
 
         CategoryPick init = CategoryMapper.INSTANCE.toPickEntity(toMemberId, category);
 

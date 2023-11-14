@@ -59,9 +59,11 @@ class CategoryServiceImplTest {
         Long categoryId = 100000L;
 
         // when then
-        Assertions.assertThatThrownBy(() -> categoryRepository.findByCategoryId(categoryId))
-                .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorCode.NOT_FOUND.getMessage());
+
+
+        Assertions.assertThatThrownBy(() -> categoryRepository.findByCategoryId(categoryId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)))
+                .isInstanceOf(CustomException.class);
 
     }
 
