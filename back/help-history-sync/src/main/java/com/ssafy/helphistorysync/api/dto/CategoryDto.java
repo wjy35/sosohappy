@@ -1,4 +1,4 @@
-package com.ssafy.helphistorysync.api.request;
+package com.ssafy.helphistorysync.api.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -8,9 +8,8 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-@ToString
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CategoryRequest {
+public class CategoryDto {
     private long categoryId;
     private String categoryName;
     private String categoryImage;
