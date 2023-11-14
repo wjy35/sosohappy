@@ -126,8 +126,8 @@ const BottomSheetStyle = StyleSheet.create({
     },
 
     connectButton:{
-        // width:"100%",
-        flex: 1,
+        width:"100%",
+        // flex: 1,
         height:42,
         borderRadius:10,
         backgroundColor:"#9D9AF9",

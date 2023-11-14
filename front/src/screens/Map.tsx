@@ -14,6 +14,9 @@ import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {ChatSocket, helpDetail, helpSocket} from "@/types";
 import useStore from "@/store/store";
 import { SvgXml } from "react-native-svg";
+import testImg from "@/assets/sosomon/type4/Whale.png"
+import memberApi from "@/apis/memberApi";
+import {type1, type2, type3, type4} from "@/assets/sosomon";
 
 interface propsType{
   location: any;
@@ -31,6 +34,7 @@ const Map = ({location, socket, chatSocket}: propsType) => {
   const [points, setPoints] = useState<any>();
   const [loading, setLoading] = useState(false);
   const {userInfo} = useStore();
+  const [src, setSrc] = useState();
 
   const updateBottomSheetStatus = (updateStatus: Boolean) => {
     setBottomSheetStatus(updateStatus);
@@ -76,6 +80,29 @@ const Map = ({location, socket, chatSocket}: propsType) => {
       .catch(err => console.error(err));
   }
 
+  const getSosomon = async () => {
+      try {
+          const res = await memberApi.getUserInfo({
+              memberId: socket.data.helpEntity.otherMemberId
+          })
+          if (res.status === 200){
+              const type = Math.floor((res.data.result.member.profileMonsterId-1)/10) + 1;
+              const level = (res.data.result.member.profileMonsterId % 10 === 0)?10:res.data.result.member.profileMonsterId%10;
+              if (type === 0){
+                  setSrc(type1[level-1])
+              } else if (type === 1){
+                  setSrc(type2[level-1])
+              } else if (type === 2){
+                  setSrc(type3[level-1])
+              } else {
+                  setSrc(type4[0])
+              }
+          }
+      } catch (err) {
+          console.log(err);
+      }
+  }
+
   useFocusEffect(
       React.useCallback(() => {
         const connect = () => {
@@ -93,12 +120,10 @@ const Map = ({location, socket, chatSocket}: propsType) => {
             setSelectedHelp(socket.data.helpEntity);
         } else if (socket.status === 'DEFAULT'){
             setPoints(null);
+        } else if (socket.status === 'WAIT_COMPLETE'){
+            getSosomon();
         }
     }, [socket.status]);
-
-  useEffect(()=>{
-      console.log(socket.otherMemberPoint)
-  }, [socket.otherMemberPoint])
 
   return (
       <>
@@ -120,15 +145,17 @@ const Map = ({location, socket, chatSocket}: propsType) => {
                   >
                       {
                           (socket.status==='WAIT_COMPLETE'&&socket.otherMemberPoint?.latitude)&&(
-                                  <Marker
-                                      description="helperPosition"
-                                      coordinate={{latitude: socket.otherMemberPoint?.latitude, longitude: socket.otherMemberPoint?.longitude}}
-                                  >
-                                      <Image
-                                          source={require("@/assets/sosomon/type4/Whale.png")}
-                                          style={{width: 100, height: 100, bottom: -20}}
-                                      />
-                                  </Marker>
+                              <Marker
+                                  description="helperPosition"
+                                  // coordinate={{longitude: socket.otherMemberPoint.latitude, latitude: socket.otherMemberPoint.longitude}}
+                                  coordinate={{latitude: socket.otherMemberPoint.latitude, longitude: socket.otherMemberPoint.longitude}}
+                                  // coordinate={{latitude: 127.0395789, longitude: 37.5014045}}
+                              >
+                                  <Image
+                                      source={src?src:testImg}
+                                      style={{width: 100, height: 100, bottom: -20}}
+                                  />
+                              </Marker>
                           )
                       }
                       {
