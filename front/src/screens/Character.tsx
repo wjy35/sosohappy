@@ -14,7 +14,7 @@ import { type1, type2, type3, type4 } from "@/assets/sosomon";
 
 import CharacterStyle from "@/styles/CharacterStyle";
 import { SvgXml } from "react-native-svg";
-import {helpSocket} from "@/types";
+import {ChatSocket, helpSocket} from "@/types";
 
 enum CategoryType{
     "army",
@@ -27,10 +27,11 @@ interface feedTypes{
 }
 
 interface propsType{
-    socket: helpSocket
+    socket: helpSocket;
+    chatSocket: ChatSocket
 }
 
-const Character = ({socket}: propsType) => {
+const Character = ({socket, chatSocket}: propsType) => {
     const [categoryType, setCategoryType] = useState<CategoryType>(CategoryType.army);
     const [myMonsters, setMyMonsters] = useState<any[] | null>(null);
     const loaderValue = useRef(new Animated.Value(0)).current;
