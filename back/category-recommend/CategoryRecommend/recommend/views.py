@@ -15,7 +15,7 @@ def custom_json_encoder(obj):
     raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
 
-def category_recommend(request):
+def category_recommend(request,param_member_id):
     category_list = Category.objects.all()
     pick_list = CategoryPick.objects.values('member_id','pick_count','category_id')
     pick_data = pd.DataFrame(pick_list)
@@ -35,7 +35,7 @@ def category_recommend(request):
     predictions = []
 
     for i in range(1, category_list.__len__()+1):
-        res = svd.predict(int(request.headers.get("memberId")), i)
+        res = svd.predict(param_member_id, i)
         predictions.append({
             'category_id': i,
             'predicted_rating': res.est
@@ -58,7 +58,7 @@ def category_recommend(request):
                 'category_image': category.category_image
             })
 
-    recent_list = CategoryPick.objects.filter(member_id=1).order_by('-pick_time')[:5]
+    recent_list = CategoryPick.objects.filter(member_id=param_member_id).order_by('-pick_time')[:5]
     # serialized_data = serializers.serialize('json', recent_list)
     # parsed_data = json.loads(serialized_data)
 
