@@ -42,12 +42,12 @@ def category_recommend(request):
         })
 
     sorted_predictions = sorted(predictions, key=lambda x: x['predicted_rating'], reverse=True)
-    top_5 = sorted_predictions[:5]
+    top_10 = sorted_predictions[:10]
 
     result_list = []
 
     # category_list에서 해당 ID의 객체 찾기
-    for item in top_5:
+    for item in top_10:
         category_id = item['category_id']
         category = category_list.get(category_id=category_id)  
         if category:
