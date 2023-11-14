@@ -1,7 +1,9 @@
 package com.ssafy.helphistoryquery.service.impl;
 
 import com.ssafy.helphistoryquery.api.mapper.HelpHistoryMapper;
+import com.ssafy.helphistoryquery.api.response.HelpCertificateResponse;
 import com.ssafy.helphistoryquery.api.response.HelpHistoryResponse;
+import com.ssafy.helphistoryquery.db.entity.HelpCertificateEntity;
 import com.ssafy.helphistoryquery.db.entity.HelpHistoryEntity;
 import com.ssafy.helphistoryquery.db.repository.HelpHistoryRepository;
 import com.ssafy.helphistoryquery.service.HelpHistoryService;
@@ -36,6 +38,18 @@ public class HelpHistoryServiceImpl implements HelpHistoryService {
         }
 
         return helpHistoryResponseList;
+    }
+
+    @Override
+    public List<HelpCertificateResponse> getHelpCertificate(Long memberId) {
+        List<HelpCertificateEntity> helpCertificateEntities = helpHistoryRepository.getHelpCertificateList(memberId);
+
+        List<HelpCertificateResponse> helpCertificateResponses = new ArrayList<>();
+
+        for(HelpCertificateEntity helpCertificateEntity : helpCertificateEntities){
+            helpCertificateResponses.add(helpHistoryMapper.entityToResponse(helpCertificateEntity));
+        }
+        return helpCertificateResponses;
     }
 
 }
