@@ -155,7 +155,7 @@ function useLocation({}: propsType) {
     }, []);
 
 
-    return {coordinate, setBackground, setForeground, status};
+    return {coordinate, setBackground, setForeground, status, stopWatchPosition};
 }
 
 export default useLocation;
