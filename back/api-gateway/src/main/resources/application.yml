@@ -5,7 +5,7 @@ spring:
         - id: member-query
           uri: lb://MEMBER-QUERY-SERVICE/
           predicates:
-            - Path=/member-query/availability/**
+            - Path=/member-query/availability/**,/member-query/public/**
           filters:
             - RewritePath=/member-query/(?<path>.*),/$\{path}
         - id: member-query-authorization
