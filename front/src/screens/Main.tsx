@@ -1,4 +1,4 @@
-import {View, Text, Image, TouchableOpacity} from "react-native";
+import {View, Text, Image, TouchableOpacity, Alert} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import MainImg from "@/assets/img/main-img.png"
 import HandShakeIcon from "@/assets/img/handshake-icon.png"
@@ -39,6 +39,19 @@ const Main = ({socket, chatSocket}: propsType) => {
     }
   }
 
+  const getFortuneList = async () => {
+    const fortuneList = await helpMatchApi.getFortuneList();
+    if(fortuneList.status === 200 && userInfo){
+      if(fortuneList.data.result.fortuneCookieList.length === 0){
+        Alert.alert("포츈쿠키 알림이 도착했어요.", "열어보지 않은 포츈쿠키가 있어요. 마이페이지로 이동하시겠어요?", [
+          {text: '취소', onPress: () => {}},
+          {text: '이동하기', onPress: () => navigation.navigate('MyPage')}
+        ]);
+      }
+    }
+
+  }
+
   useFocusEffect(
       React.useCallback(() => {
         if (userInfo){
@@ -52,6 +65,10 @@ const Main = ({socket, chatSocket}: propsType) => {
         return () => {};
       }, [socket.connected])
   )
+
+  useEffect(() => {
+    getFortuneList();
+  }, [])
 
   return (
     <CommonLayout footer={true} headerType={0} nowPage={'Main'}>
