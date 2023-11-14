@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react"
-import { View, Text, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { useState, useEffect, useCallback } from "react"
+import { View, Text, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native";
 
 import CommonLayout from "@/components/CommonLayout";
 import MyChat from "@/components/MyChat";
 import ChatDate from "@/components/ChatDate";
-import io from "socket.io-client"
+import chatApi from "@/apis/chatApi";
 
 import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 
@@ -22,30 +22,67 @@ interface propsType{
 }
 
 
+
 const Chat = ({helpSocket, chatSocket}: propsType) => {
   const socket = io('http://10.0.2.2:4002');
-  const [msg, setMsg] = useState<string>();
+  const [msg, setMsg] = useState<string>("");
   const [msgList, setMsgList] = useState<Object[]>([]);
-  const [roomNo, setroomNo] = useState<number>(1);
+  const [roomNo, setroomNo] = useState<number|null>(null);
+  const [myMemberId, setMyMemberId] = useState<string>("1");
+  const [yourMemberId, setYourMemberId] = useState<string>("2");
   const navigation = useNavigation();
 
-  const sendMsg = () => {
-    socket.emit('send message', {roomNo, msg});
-    setMsg('');
+  const sendMsg = async () => {
+    if(roomNo){
+      const sendChatRes = await chatApi.sendChat({roomNo: roomNo, sendMemberId: myMemberId, receiveMemberId:yourMemberId, content:msg});
+      if(sendChatRes.status === 200){
+        setMsg("");
+      }else{
+        Alert.alert("시스템 에러, 관리자에게 문의하세요.");
+      }
+    }
   }
 
-  socket.on('upload chat', (data:Object) => {
-    setMsgList([...msgList, data]);
-  });
+  const connectChatRoom = async () => {
+    const roomNoRes = await chatApi.makeChatRoom({senderMemberId:myMemberId, receiveMemberId:yourMemberId});
+    if(roomNoRes.data.status === "success"){
+      setroomNo(roomNoRes.data.result.chatRoomId);
+    }
+  }
 
-  useEffect(() => {
-    socket.emit('chat join', roomNo);
-  }, [])
+  const getChatListApi = async () => {
+    if(roomNo){
+      const chatListRes = await chatApi.getChatList({roomNo: roomNo});
+      if(chatListRes.status === 200){
+        setMsgList(chatListRes.data.result.chatResponseList);
+        console.log("chatList", chatListRes.data.result.chatResponseList);
+      }
+    }
+  }
 
   useFocusEffect(()=>{
     if (!helpSocket.connected) return;
     helpSocket.disConnect();
   })
+
+  useEffect(() => {
+    connectChatRoom();
+  },[])
+
+  useEffect(() => {
+    getChatListApi();
+  },[roomNo,msg]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const connect = () => {
+        if (helpSocket.connected) return;
+        helpSocket.connect();
+      }
+      connect();
+      return () => {};
+    }, [helpSocket.connected])
+  )
 
   return (
     <CommonLayout footer={false} headerType={1}>
@@ -75,24 +112,15 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
         <View style={ChatStyle.chatContentWrap}>
           <ScrollView>
             <ChatDate date="2023. 10. 15."/>
-
-            <MyChat content="네, 금방 갈게요 조금만 기다리세요."/>
-            <ChatDate date="2023. 10. 16."/>
-            <YourChat thumbnail={FishThumbnail} content="안녕하세요! 저는 7층에 있습니다.
-            건물에 들어오시면, 엘리베이터를 찾기가
-            어렵네요, 안쪽으로 들어오셔서 오른쪽에
-            있습니다."/>
-            <MyChat content="네, 금방 갈게요 조금만 기다리세요."/>
-
             {
               msgList.map((msg, index) => {
                 return(
                   <>
                     {
-                      msg.senderType === 'you' ?
-                      <YourChat thumbnail={FishThumbnail} content={msg.message} key={index}/>
+                      String(msg.memberId) === yourMemberId ?
+                      <YourChat thumbnail={FishThumbnail} content={msg.content} key={index}/>
                       :
-                      <MyChat content={msg.message} key={index}/>
+                      <MyChat content={msg.content} key={index}/>
                     }
                   </>
                 );

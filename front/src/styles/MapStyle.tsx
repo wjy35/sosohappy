@@ -1,5 +1,5 @@
 import {StyleSheet} from "react-native"
-import { responsiveWidth } from "react-native-responsive-dimensions";
+import { responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
 
 const MapStyle = StyleSheet.create({
     createHelpWrap:{
@@ -38,6 +38,13 @@ const MapStyle = StyleSheet.create({
         fontSize:12,
         fontWeight:"700",
         color:"#000000",
+    },
+    floatingIcon:{
+        width:40,
+        height:40,
+        position:"absolute",
+        top:responsiveHeight(92) - 80,
+        right:18,
     },
 })
 
