@@ -100,7 +100,6 @@ function useSocket(){
             (frame) => {
                 const body = JSON.parse(frame.body);
                 setOtherMemberPoint({
-                    ...otherMemberPoint,
                     latitude: body.latitude,
                     longitude: body.longitude,
                 });

@@ -15,10 +15,6 @@ interface props {
   children: React.ReactNode;
 }
 
-messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log('[Background Remote Message]', remoteMessage);
-});
-
 const CommonLayout = ({footer, headerType, nowPage, children} : props) => {
     const [isVisible, setIsVisible] = useState(false);
     const navigation = useNavigation();
@@ -38,14 +34,6 @@ const CommonLayout = ({footer, headerType, nowPage, children} : props) => {
         });
         return focusNav;
     }, [navigation]);
-
-    useEffect(() => {
-      const unsubscribe = messaging().onMessage(async remoteMessage => {
-        console.log('[Remote Message] ', JSON.stringify(remoteMessage));
-      });
-
-      return unsubscribe;
-    }, []);
 
     return(
         <>
