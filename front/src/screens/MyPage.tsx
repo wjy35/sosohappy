@@ -57,8 +57,8 @@ const MyPage = (({socket}: propsType) => {
   const [fortuneModalState, setFortuneModalState] = useState<Boolean>(false);
   const [myClover, setMyClover] = useState<any>(null);
   const loaderValue = useRef(new Animated.Value(0)).current;
-  const [profileMonsterType, setProfileMonsterType] = useState<number>(0);
-  const [profileMonsterLevel, setProfileMonsterLevel] = useState<number>(0);
+  const [profileMonsterType, setProfileMonsterType] = useState<number>(Math.floor((userInfo.profileMonsterId-1)/10) + 1);
+  const [profileMonsterLevel, setProfileMonsterLevel] = useState<number>((userInfo.profileMonsterId % 10 === 0)?10:(userInfo.profileMonsterId%10));
   const [isDialogState, setIsDialogState] = useState<Boolean>(false);
 
   const load = (initialWidth: number) => {
@@ -84,10 +84,6 @@ const MyPage = (({socket}: propsType) => {
       const res = await monsterApi.getMyDetail();
       if (res.status === 200){
         setDefaultSosomon(res.data.result.monster);
-        setMyProfile({
-          type: res.data.result.monster.typeId,
-          level: res.data.result.monster.level,
-        })
       }
     } catch (err) {
       console.log(err);
@@ -101,10 +97,8 @@ const MyPage = (({socket}: propsType) => {
         profileMonsterId: profileMonsterId,
       })
       if (res.status === 200){
-        setMyProfile({
-          type: profileType,
-          level: profileLevel,
-        })
+        setProfileMonsterType(profileType)
+        setProfileMonsterLevel(profileLevel)
       }
     } catch (err){
       console.log(err);
@@ -133,10 +127,14 @@ const MyPage = (({socket}: propsType) => {
 
   const whatIsMyThumbnail = () => {
     if(userInfo.profileMonsterId){
-      setProfileMonsterType(Math.floor((userInfo.profileMonsterId-1)/10));
-      setProfileMonsterLevel((userInfo.profileMonsterId % 10 === 0)?9:(userInfo.profileMonsterId%10)-1);
+      setProfileMonsterType(Math.floor((userInfo.profileMonsterId-1)/10) + 1);
+      setProfileMonsterLevel((userInfo.profileMonsterId % 10 === 0)?10:(userInfo.profileMonsterId%10));
     }
   }
+
+  useEffect(() => {
+    whatIsMyThumbnail();
+  }, [])
 
   const police = () => {
     setIsDialogState(true);
@@ -153,9 +151,7 @@ const MyPage = (({socket}: propsType) => {
     getMyCloverApi();
   }, [])
 
-  useEffect(() => {
-    whatIsMyThumbnail();
-  }, [])
+
 
   useFocusEffect(
       React.useCallback(() => {
@@ -173,30 +169,30 @@ const MyPage = (({socket}: propsType) => {
     <CommonLayout headerType={0} footer={true}>
       <View style={MyPageStyle.myProfileWrap}>
         {
-          profileMonsterType === 0 &&
-          <Image
-            source={type1[profileMonsterLevel]}
-            style={MyPageStyle.myProfileImg}
-          />
-        }
-        {
           profileMonsterType === 1 &&
           <Image
-            source={type2[profileMonsterLevel]}
+            source={type1[profileMonsterLevel-1]}
             style={MyPageStyle.myProfileImg}
           />
         }
         {
           profileMonsterType === 2 &&
           <Image
-            source={type3[profileMonsterLevel]}
+            source={type2[profileMonsterLevel-1]}
             style={MyPageStyle.myProfileImg}
           />
         }
         {
           profileMonsterType === 3 &&
           <Image
-            source={type4[profileMonsterLevel]}
+            source={type3[profileMonsterLevel-1]}
+            style={MyPageStyle.myProfileImg}
+          />
+        }
+        {
+          profileMonsterType === 4 &&
+          <Image
+            source={type4[profileMonsterLevel-1]}
             style={MyPageStyle.myProfileImg}
           />
         }
@@ -249,10 +245,12 @@ const MyPage = (({socket}: propsType) => {
 
       <View style={MyPageStyle.ThumbnailCharacterWrap}>
         {
-          myProfile && (
+            profileMonsterType && (
                 <WebView
-                    source={{uri: `http://sosohappy.co.kr:8888/sosomon/${myProfile.type}/${myProfile.level}`}}
+                    source={{uri: `http://sosohappy.co.kr:8888/sosomon/${profileMonsterType}/${profileMonsterLevel}`}}
+                    // source={{uri: `http://sosohappy.co.kr:8888/sosomon/2/5`}}
                     style={MyPageStyle.MySelectedCharImg}
+                    nestedScrollEnabled
                 />
             )
         }
