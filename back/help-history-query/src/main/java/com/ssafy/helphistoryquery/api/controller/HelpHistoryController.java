@@ -1,6 +1,7 @@
 package com.ssafy.helphistoryquery.api.controller;
 
 import com.ssafy.helphistoryquery.api.response.FormattedResponse;
+import com.ssafy.helphistoryquery.api.response.HelpCertificateResponse;
 import com.ssafy.helphistoryquery.api.response.HelpHistoryResponse;
 import com.ssafy.helphistoryquery.service.impl.HelpHistoryServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +40,20 @@ public class HelpHistoryController {
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/certificate")
+    public ResponseEntity<?> getCertificate (@RequestHeader("memberId") long memberId){
+
+        List<HelpCertificateResponse> helpCertificateResponseList = helpHistoryService.getHelpCertificate(memberId);
+
+        FormattedResponse response = FormattedResponse.builder()
+                .status("success")
+                .message("GET Help Given List")
+                .result("helpCertificateResponseList", helpCertificateResponseList)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 }
