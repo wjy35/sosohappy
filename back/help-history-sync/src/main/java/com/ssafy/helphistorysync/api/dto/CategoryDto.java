@@ -1,24 +1,16 @@
-package com.ssafy.helphistorysync.api.request;
+package com.ssafy.helphistorysync.api.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
-
-import java.sql.Timestamp;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class HelpHistoryRequest {
-    private long historyId;
-    private long toMemberId;
-    private long fromMemberId;
+public class CategoryDto {
     private long categoryId;
-    private String content;
-    private double x;
-    private double y;
-    private Timestamp createdAt;
+    private String categoryName;
+    private String categoryImage;
 }
-

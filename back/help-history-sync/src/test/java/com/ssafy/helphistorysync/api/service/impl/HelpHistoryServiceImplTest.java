@@ -3,7 +3,7 @@ package com.ssafy.helphistorysync.api.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.helphistorysync.api.request.CategoryRequest;
+import com.ssafy.helphistorysync.api.dto.CategoryDto;
 import com.ssafy.helphistorysync.api.request.HelpHistoryRequest;
 import com.ssafy.helphistorysync.api.service.HelpHistoryService;
 import com.ssafy.helphistorysync.cloud.feign.CategoryFeign;
@@ -99,7 +99,7 @@ class HelpHistoryServiceImplTest {
         String categoryName = jsonObject.getString("categoryName");
         String categoryImage = jsonObject.getString("categoryImage");
 
-        CategoryRequest categoryRequest = CategoryRequest.builder()
+        CategoryDto categoryDto = CategoryDto.builder()
                 .categoryId(categoryId)
                 .categoryName(categoryName)
                 .categoryImage(categoryImage)
@@ -107,7 +107,7 @@ class HelpHistoryServiceImplTest {
 
         // when / then
 
-        Assertions.assertThat(categoryRequest).
+        Assertions.assertThat(categoryDto).
                 extracting("categoryId","categoryName","categoryName")
                 .doesNotContainNull();
 
