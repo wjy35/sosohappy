@@ -8,4 +8,6 @@ import com.ssafy.member.util.AuthTokenDTO;
 public interface MemberSignService {
     AuthTokenDTO signIn(SignInRequest signInRequest);
     void singUp(MemberEntity memberEntity);
+
+    void signOut(Long memberId);
 }
