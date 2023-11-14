@@ -31,13 +31,11 @@ public class KafkaConsumer {
         notification(eventDTO.getMemberId(),fortuneCookieMessageList[random.nextInt(fortuneCookieMessageList.length)]);
     }
 
-    @KafkaListener(topics = "fortune-cookie.create")
+    @KafkaListener(topics = "help-match.push")
     public void consumeHelpMatchPushEvent(ConsumerRecord<?,?> consumerRecord){
         if(isEmptyEvent(consumerRecord)) return;
 
-        HelpMatchPushEventDTO eventDTO = kafkaEventMapper.toEvent(consumerRecord, HelpMatchPushEventDTO.class);
-
-        notification(eventDTO.getMemberId(),"새로운 도움 요청이 도착했어요!");
+        notification(Long.parseLong((String) consumerRecord.value()),"새로운 도움 요청이 도착했어요!");
     }
 
     private boolean isEmptyEvent(ConsumerRecord<?,?> consumerRecord){
