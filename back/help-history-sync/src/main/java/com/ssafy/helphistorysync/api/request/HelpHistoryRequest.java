@@ -10,7 +10,6 @@ import java.sql.Timestamp;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-@ToString
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class HelpHistoryRequest {
     private long historyId;
