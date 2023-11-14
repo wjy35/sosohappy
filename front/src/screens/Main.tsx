@@ -13,6 +13,7 @@ import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
 import {ChatSocket, helpSocket} from "@/types";
 import helpMatchApi from "@/apis/helpMatchApi";
+import memberApi from "@/apis/memberApi";
 
 interface propsType{
   socket: helpSocket,
@@ -45,11 +46,32 @@ const Main = ({socket, chatSocket}: propsType) => {
       if(fortuneList.data.result.fortuneCookieList.length === 0){
         Alert.alert("포츈쿠키 알림이 도착했어요.", "열어보지 않은 포츈쿠키가 있어요. 마이페이지로 이동하시겠어요?", [
           {text: '취소', onPress: () => {}},
-          {text: '이동하기', onPress: () => navigation.navigate('MyPage')}
+          {text: '이동하기', onPress: () => navigation.navigate("MyPage")}
         ]);
       }
     }
+  }
 
+  const getMatchingStatus = async () => {
+    
+    const matchingStatus = await helpMatchApi.getHelpStatus();
+    // TODO 추후 WAIT로 변경
+    if(matchingStatus.data.result.matchStatus.helpMatchStatus === "WAIT"){
+      Alert.alert("도움요청 알림", "진행되었으나 완료되지 않은 도움요청이 있어요. 완료하시겠습니까?",[
+        {text: '완료하기', onPress: () => completeHelp()}
+      ])
+
+    }
+  }
+
+  const completeHelp = async () => {
+    const getMyInfo = await memberApi.getMember();
+    if(getMyInfo.status === 200){
+      const myMemberId = getMyInfo.data.result.member.memberId;
+      
+      const completeRes = await helpMatchApi.helpComplete({memberId: myMemberId});
+      console.log("completeRes", completeRes);
+    }
   }
 
   useFocusEffect(
@@ -68,6 +90,10 @@ const Main = ({socket, chatSocket}: propsType) => {
 
   useEffect(() => {
     getFortuneList();
+
+    if(userInfo){
+      getMatchingStatus();
+    }
   }, [])
 
   return (
