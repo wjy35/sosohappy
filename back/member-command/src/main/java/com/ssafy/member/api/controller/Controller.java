@@ -60,4 +60,16 @@ public class Controller {
         return new ResponseEntity<>(formattedResponse, HttpStatus.OK);
     }
 
+    @DeleteMapping("/")
+    ResponseEntity<FormattedResponse> signOut(@RequestHeader Long memberId){
+        memberSignService.signOut(memberId);
+
+        FormattedResponse formattedResponse = FormattedResponse
+                .builder()
+                .status("success")
+                .message("OK")
+                .build();
+
+        return new ResponseEntity<>(formattedResponse, HttpStatus.OK);
+    }
 }
