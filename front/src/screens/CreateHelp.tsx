@@ -1,6 +1,6 @@
 import CommonLayout from "@/components/CommonLayout";
 import CreateHelpSelectCategory from "@/components/CreateHelpSelectCategory";
-import {Text, TouchableOpacity, View} from "react-native";
+import {Text, TouchableOpacity, View, Alert} from "react-native";
 import CreateHelpStyle from "@/styles/CreateHelpStyle";
 import AllCategoryWrap from "@/components/AllCategoryWrap";
 import PlainInput from "@/components/PlainInput";
@@ -61,6 +61,20 @@ const CreateHelp = (({location, socket, chatSocket}: propsType) => {
     });
 
     const sendHelp = () => {
+        Alert.alert("개인정보 제3자 제공 동의", '"소소행"앱이 사용자의 위치를 사용하도록 허용하시겠습니까?',
+        [
+            {text: '취소', onPress: () => {}},
+            {
+                text: '확인',
+                onPress: () => {
+                    startPayload();
+                }
+            }
+        ]);
+        
+    }
+
+    const startPayload = () => {
         const payload = {
             memberId: userInfo.memberId,
             nickname: userInfo.nickname,
