@@ -131,11 +131,24 @@ const MyPageStyle = StyleSheet.create({
         color:"#AFB4B7",
         marginTop:2,
     },
+    moveFeedText:{
+        fontSize:12,
+        fontWeight:"600",
+        textDecorationLine:"underline",
+    },
     grayMoreIcon:{
         width:16,
         height:16,
+        marginRight:6,
     },
-
+    feedFlexBox:{
+        display:"flex",
+        flexDirection:"row",
+        justifyContent:"flex-start",
+        alignItems:"center",
+        marginBottom:6,
+    },
+    
     statusWrap:{
         padding:20,
         paddingTop:0,
