@@ -54,13 +54,17 @@ const Main = ({socket, chatSocket}: propsType) => {
 
   const getMatchingStatus = async () => {
     
-    const matchingStatus = await helpMatchApi.getHelpStatus();
+    const matchingStatusRes = await helpMatchApi.getHelpStatus();
+    const matchingStatus = matchingStatusRes.data.result.matchStatus.helpMatchStatus
     // TODO 추후 WAIT로 변경
-    if(matchingStatus.data.result.matchStatus.helpMatchStatus === "WAIT"){
+    if(matchingStatus === "WAIT"){
       Alert.alert("도움요청 알림", "진행되었으나 완료되지 않은 도움요청이 있어요. 완료하시겠습니까?",[
         {text: '완료하기', onPress: () => completeHelp()}
       ])
-
+    }else if(matchingStatus === "ON_MOVE"){
+      Alert.alert("도움요청 알림", "도움요청 진행중입니다. 지도화면으로 이동합니다.", [
+        {text: '이동하기', onPress: () => navigation.navigate('Map')}
+      ]);
     }
   }
 
