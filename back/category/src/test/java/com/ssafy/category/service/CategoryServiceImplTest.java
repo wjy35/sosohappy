@@ -4,6 +4,7 @@ import com.ssafy.category.common.exception.CustomException;
 import com.ssafy.category.common.exception.ErrorCode;
 import com.ssafy.category.domain.entity.Category;
 import com.ssafy.category.domain.entity.CategoryPick;
+import com.ssafy.category.domain.res.CategoryRes;
 import com.ssafy.category.repository.CategoryRepository;
 import com.ssafy.category.repository.PickRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -59,7 +62,6 @@ class CategoryServiceImplTest {
         Long categoryId = 100000L;
 
         // when then
-
 
         Assertions.assertThatThrownBy(() -> categoryRepository.findByCategoryId(categoryId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)))
