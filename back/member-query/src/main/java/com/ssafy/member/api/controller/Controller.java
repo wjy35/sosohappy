@@ -3,6 +3,7 @@ package com.ssafy.member.api.controller;
 import com.ssafy.member.api.mapper.MemberMapper;
 import com.ssafy.member.api.response.FormattedResponse;
 import com.ssafy.member.api.response.MemberInformationResponse;
+import com.ssafy.member.api.response.MemberPublicInformationResponse;
 import com.ssafy.member.api.service.MemberInformationService;
 import com.ssafy.member.db.entity.MemberEntity;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,25 @@ public class Controller {
                 .status("success")
                 .message("GET MEMBER INFORMATION OK")
                 .result("member",memberInformationResponse)
+                .build();
+
+        return new ResponseEntity<>(formattedResponse,HttpStatus.OK);
+    }
+
+    @GetMapping("/public/{memberId}")
+    ResponseEntity<FormattedResponse> getPublicMemberInformation(@PathVariable Long memberId){
+        MemberEntity memberEntity = Optional
+                .ofNullable(memberInformationService.getInformationByMemberId(memberId))
+                .orElseThrow();
+
+        MemberPublicInformationResponse response
+                = MemberMapper.INSTANCE.toPublicResponse(memberEntity);
+
+        FormattedResponse formattedResponse = FormattedResponse
+                .builder()
+                .status("success")
+                .message("GET MEMBER INFORMATION OK")
+                .result("member",response)
                 .build();
 
         return new ResponseEntity<>(formattedResponse,HttpStatus.OK);
