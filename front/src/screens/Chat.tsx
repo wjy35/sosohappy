@@ -75,13 +75,24 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
 
   useFocusEffect(
     useCallback(() => {
-      const connect = () => {
-        if (helpSocket.connected) return;
-        helpSocket.connect();
+      const disConnect = () => {
+        if (!helpSocket.connected) return;
+        helpSocket.disConnect();
       }
-      connect();
+      disConnect();
       return () => {};
     }, [helpSocket.connected])
+  )
+
+  useFocusEffect(
+      useCallback(() => {
+        const connect = () => {
+          if (chatSocket.connected) return;
+          chatSocket.connect();
+        }
+        connect();
+        return () => {};
+      }, [chatSocket.connected])
   )
 
   return (
