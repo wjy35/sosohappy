@@ -13,6 +13,7 @@ interface props {
   documentNumber?: number;
   profileMonsterId?: number;
   profileBackgroundId?: number;
+  memberId?: number;
 }
 
 const memberApi = {
@@ -93,7 +94,19 @@ const memberApi = {
             `${queryDomain}/availability/memberSignId/${memberSignId}/`
         );
         return res;
-    }
+    },
+    getUserInfo: async ({memberId}: props) => {
+        const res = PublicInstance.get(
+            `${queryDomain}/public/${memberId}`,
+        )
+        return res;
+    },
+    publicMemberShow: async (memberId: number) => {
+      const res = PublicInstance.get(
+        `${queryDomain}/public/${memberId}`
+      )
+      return res;
+    },
 
 };
 

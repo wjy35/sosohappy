@@ -1,6 +1,14 @@
 import CommonLayout from "@/components/CommonLayout";
+import {ChatSocket, helpSocket} from "@/types";
+import {WebView} from "react-native-webview";
+import CertificateStyle from "@/styles/CertificateStyle";
 
-const Certificate = () => {
+interface propsType{
+    socket: helpSocket;
+    chatSocket: ChatSocket
+}
+
+const Certificate = ({socket, chatSocket}: propsType) => {
     return(
         <CommonLayout headerType={0} footer={true}>
             <WebView

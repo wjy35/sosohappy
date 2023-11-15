@@ -131,11 +131,24 @@ const MyPageStyle = StyleSheet.create({
         color:"#AFB4B7",
         marginTop:2,
     },
+    moveFeedText:{
+        fontSize:12,
+        fontWeight:"600",
+        textDecorationLine:"underline",
+    },
     grayMoreIcon:{
         width:16,
         height:16,
+        marginRight:6,
     },
-
+    feedFlexBox:{
+        display:"flex",
+        flexDirection:"row",
+        justifyContent:"flex-start",
+        alignItems:"center",
+        paddingBottom:14,
+    },
+    
     statusWrap:{
         padding:20,
         paddingTop:0,
@@ -176,24 +189,6 @@ const MyPageStyle = StyleSheet.create({
         fontWeight:"700",
         color:"#78797B",
         marginHorizontal:responsiveWidth(4),
-    },
-    moreButton:{
-        width:responsiveWidth(30),
-        height:32,
-        backgroundColor:"#ECEEED",
-        borderRadius:8,
-        display:"flex",
-        justifyContent:"center",
-        alignItems:"center",
-        marginTop:29,
-        marginBottom:53,
-        position:"relative",
-        left:responsiveWidth(35) - 16,
-    },
-    moreButtonText:{
-        fontSize:14,
-        fontWeight:"700",
-        color:"#767C7A",
     },
 })
 

@@ -1,4 +1,4 @@
-import {useState} from "react"
+import {useEffect, useState} from "react"
 import { View, Text, Image, TouchableOpacity } from "react-native"
 import Modal from "react-native-modal"
 
@@ -10,6 +10,8 @@ import { useNavigation } from "@react-navigation/native";
 import helpMatchApi from "@/apis/helpMatchApi";
 import {helpDetail} from "@/types";
 import useStore from "@/store/store";
+import memberApi from "@/apis/memberApi";
+import {type1, type2, type3, type4} from "@/assets/sosomon";
 
 interface propsType{
     updateBottomSheetStatus: Function,
@@ -20,7 +22,52 @@ interface propsType{
 const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType) => {
     const navigation = useNavigation();
     const {userInfo} = useStore();
+    const [helpUserInfo, setHelpUserInfo] = useState<any|null>(null);
+    const [src, setSrc] = useState();
 
+    useEffect(() => {
+        if (status === 'WAIT_COMPLETE'){
+            setHelpUserInfo(userInfo);
+            const type = Math.floor((userInfo.profileMonsterId-1)/10) + 1;
+            const level = (userInfo.profileMonsterId % 10 === 0)?10:userInfo.profileMonsterId%10;
+            if (type === 1){
+                setSrc(type1[level-1])
+            } else if (type === 2){
+                setSrc(type2[level-1])
+            } else if (type === 3){
+                setSrc(type3[level-1])
+            } else {
+                setSrc(type4[0])
+            }
+        } else {
+            getUserInfo();
+        }
+    }, []);
+
+    const getUserInfo = async () => {
+        try {
+            const res = await memberApi.getUserInfo({
+                memberId: status==='DEFAULT'?selectedHelp.memberId:selectedHelp.otherMemberId
+            })
+            if (res.status === 200) {
+                setHelpUserInfo(res.data.result.member);
+                const type = Math.floor((res.data.result.member.profileMonsterId-1)/10) + 1;
+                const level = (res.data.result.member.profileMonsterId % 10 === 0)?10:res.data.result.member.profileMonsterId%10;
+                if (type === 1){
+                    setSrc(type1[level-1])
+                } else if (type === 2){
+                    setSrc(type2[level-1])
+                } else if (type === 3){
+                    setSrc(type3[level-1])
+                } else {
+                    setSrc(type4[0])
+                }
+            }
+        } catch (err) {
+            console.log(err)
+        }
+
+    }
 
     const acceptHelp = async () => {
         try {
@@ -49,6 +96,32 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
         }
     }
 
+    const arriveHelp = async () => {
+        try {
+            const res = await helpMatchApi.helpArrive({
+                memberId: userInfo.memberId,
+            })
+            if (res.status === 200) {
+                updateBottomSheetStatus(false);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const completeHelp = async () => {
+        try {
+            const res = await helpMatchApi.helpComplete({
+                memberId: userInfo.memberId
+            })
+            if (res.status === 200) {
+                updateBottomSheetStatus(false);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     return(
         <>
             {
@@ -70,7 +143,9 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
                                             status === 'ON_MOVE' ?
                                                 <Text style={BottomSheetStyle.modalTitleCategoryText}>매칭완료</Text>
                                                 :
-                                                <></>
+                                                status === 'WAIT_COMPLETE' ?
+                                                    <Text style={BottomSheetStyle.modalTitleCategoryText}>행운 나눔 중</Text>
+                                                    : <></>
                                     }
 
                                 </View>
@@ -81,7 +156,9 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
                                         status === 'ON_MOVE' ?
                                             <Text style={BottomSheetStyle.modalTitleContent}>컨택 진행중입니다.</Text>
                                             :
-                                            <></>
+                                            status === 'WAIT_COMPLETE' ?
+                                                <Text style={BottomSheetStyle.modalTitleContent}>도움이 완료되면 완료를 눌러주세요</Text>
+                                                : <></>
                                 }
                                 {
                                     status === 'DEFAULT' ?
@@ -97,10 +174,10 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
                                     <View style={BottomSheetStyle.userInfoContentWrap}>
                                         <View style={BottomSheetStyle.userInfoContentFlexWrap}>
                                             <Image
-                                                source={FishThumbnail}
+                                                source={src?src:FishThumbnail}
                                                 style={BottomSheetStyle.userThumbnail}
                                             />
-                                            <Text style={BottomSheetStyle.userInfoName}>{selectedHelp.nickname}</Text>
+                                            <Text style={BottomSheetStyle.userInfoName}>{helpUserInfo?.nickname?helpUserInfo.nickname:''}</Text>
                                         </View>
                                     </View>
                                 </View>
@@ -121,18 +198,57 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
                             </View>
 
                             {
-                                status === 'DEFAULT' ?
-                                    <TouchableOpacity activeOpacity={0.7} onPress={acceptHelp}>
-                                        <View style={BottomSheetStyle.connectButton}>
-                                            <Text style={BottomSheetStyle.connectButtonText}>연결하기</Text>
+                                status === 'DEFAULT' ? (
+                                    <View>
+                                        <TouchableOpacity activeOpacity={0.7} onPress={acceptHelp}>
+                                            <View style={BottomSheetStyle.connectButton}>
+                                                <Text style={BottomSheetStyle.connectButtonText}>연결하기</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                                :
+                                status === 'ON_MOVE' ? (
+                                    <View style={{flexDirection: 'row'}}>
+                                        <View style={{flex: 6}}>
+                                            <TouchableOpacity activeOpacity={0.7} onPress={arriveHelp}>
+                                                <View style={BottomSheetStyle.connectButton}>
+                                                    <Text style={BottomSheetStyle.connectButtonText}>도착완료</Text>
+                                                </View>
+                                            </TouchableOpacity>
                                         </View>
-                                    </TouchableOpacity>
-                                    :
-                                    <TouchableOpacity activeOpacity={0.7} onPress={cancelHelp}>
-                                        <View style={BottomSheetStyle.connectButton}>
-                                            <Text style={BottomSheetStyle.connectButtonText}>취소하기</Text>
+                                        <View style={{flex: 1}}></View>
+                                        <View style={{flex: 6}}>
+                                            <TouchableOpacity activeOpacity={0.7} onPress={cancelHelp}>
+                                                <View style={BottomSheetStyle.cancelButton}>
+                                                    <Text style={BottomSheetStyle.connectButtonText}>취소하기</Text>
+                                                </View>
+                                            </TouchableOpacity>
                                         </View>
-                                    </TouchableOpacity>
+                                    </View>
+                                )
+                                :
+                                status === 'WAIT_COMPLETE' ? (
+                                    <View style={{flexDirection: 'row'}}>
+                                        <View style={{flex: 6}}>
+                                            <TouchableOpacity activeOpacity={0.7} onPress={completeHelp}>
+                                                <View style={BottomSheetStyle.connectButton}>
+                                                    <Text style={BottomSheetStyle.connectButtonText}>도움완료</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <View style={{flex: 1}}></View>
+                                        <View style={{flex: 6}}>
+                                            <TouchableOpacity activeOpacity={0.7} onPress={cancelHelp}>
+                                                <View style={BottomSheetStyle.cancelButton}>
+                                                    <Text style={BottomSheetStyle.connectButtonText}>취소하기</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                )
+                                : <></>
+
                             }
                         </View>
                     </Modal>

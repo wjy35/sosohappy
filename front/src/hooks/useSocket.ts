@@ -6,7 +6,7 @@ import useStore from "@/store/store";
 
 function useSocket(){
     const [client, setClient] = useState(null);
-    const [memberId, setMemberId] = useState(2);
+    const [memberId, setMemberId] = useState<number|null>(null);
     const [status, setStatus] = useState<string>('');
     const [helpList, setHelpList] = useState([]);
     const [subscribe, setSubscribe] = useState('');
@@ -55,6 +55,7 @@ function useSocket(){
     }
 
     function disConnect() {
+        if (!client) return;
         setConnected(false);
         setStatus('');
         setSubscribe('');
@@ -69,8 +70,8 @@ function useSocket(){
                 if (body.matchListCommand === 'PUSH'){
                     setHelpList([...helpList, ...body.receiveMatchList])
                 } else if (body.matchListCommand === 'POP') {
-
-
+                    const _matchList = helpList.filter(el => !body.memberIdList.includes(el.memberId))
+                    setHelpList(_matchList);
                 }
                 console.log(body);
             },
@@ -99,7 +100,6 @@ function useSocket(){
             (frame) => {
                 const body = JSON.parse(frame.body);
                 setOtherMemberPoint({
-                    ...otherMemberPoint,
                     latitude: body.latitude,
                     longitude: body.longitude,
                 });
@@ -141,10 +141,10 @@ function useSocket(){
             setIsSearching(true);
             getProgress();
         } else if (status === 'ON_MOVE'){
-            setHelpList([]);
+            // setHelpList([]);
         } else if (status === 'WAIT_COMPLETE'){
             setIsSearching(false);
-            setHelpList([]);
+            // setHelpList([]);
             getOtherPoint();
         }
     }, [status]);

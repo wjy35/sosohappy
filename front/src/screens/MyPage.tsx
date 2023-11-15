@@ -1,14 +1,16 @@
 import React, {useEffect, useState, useRef} from "react"
-import {View, Text, Image, TouchableOpacity, Animated} from "react-native";
+import {View, Text, Image, TouchableOpacity, Animated, Alert} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import History from "@/components/History";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import FortuneModal from "@/components/FortuneModal";
+import DialogInput from "react-native-dialog-input"
 
 import GearIcon from "@/assets/img/gear-icon.png"
 import BellIcon from "@/assets/img/bell-icon.png"
 import BookIcon from "@/assets/img/book-icon.png"
 import GrayMoreIcon from "@/assets/img/gray-more-icon.png"
+import { siren } from "@/assets/icons/icons";
 
 import MyPageStyle from "@/styles/MyPageStyle";
 
@@ -18,33 +20,17 @@ import useStore from "@/store/store";
 import monsterApi from "@/apis/monsterApi";
 import memberApi from "@/apis/memberApi";
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
+import { SvgXml } from "react-native-svg";
+import { createUser } from "@/collections/users";
+import {ChatSocket, helpSocket} from "@/types";
+import memberReportApi from "@/apis/memberReportApi";
 
 interface propsType{
-  socket: {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-  };
+  socket: helpSocket;
+  chatSocket: ChatSocket
 }
 
-interface helpDetail {
-  memberId: number;
-  nickname: string;
-  category: {
-    categoryId: number,
-    categoryName: string,
-    categoryImage: string,
-  };
-  longitude: number;
-  latitude: number;
-  content: string;
-  place: string;
-}
-
-const MyPage = (({socket}: propsType) => {
+const MyPage = ({socket, chatSocket}: propsType) => {
   const navigation = useNavigation();
   const [modalState, setModalState] = useState<Boolean>(false);
   const {userInfo} = useStore();
@@ -53,8 +39,9 @@ const MyPage = (({socket}: propsType) => {
   const [fortuneModalState, setFortuneModalState] = useState<Boolean>(false);
   const [myClover, setMyClover] = useState<any>(null);
   const loaderValue = useRef(new Animated.Value(0)).current;
-  const [profileMonsterType, setProfileMonsterType] = useState<number>(0);
-  const [profileMonsterLevel, setProfileMonsterLevel] = useState<number>(0);
+  const [profileMonsterType, setProfileMonsterType] = useState<number>(Math.floor((userInfo.profileMonsterId-1)/10) + 1);
+  const [profileMonsterLevel, setProfileMonsterLevel] = useState<number>((userInfo.profileMonsterId % 10 === 0)?10:(userInfo.profileMonsterId%10));
+  const [isDialogState, setIsDialogState] = useState<Boolean>(false);
 
   const load = (initialWidth: number) => {
     Animated.timing(loaderValue, {
@@ -79,10 +66,6 @@ const MyPage = (({socket}: propsType) => {
       const res = await monsterApi.getMyDetail();
       if (res.status === 200){
         setDefaultSosomon(res.data.result.monster);
-        setMyProfile({
-          type: res.data.result.monster.typeId,
-          level: res.data.result.monster.level,
-        })
       }
     } catch (err) {
       console.log(err);
@@ -91,20 +74,36 @@ const MyPage = (({socket}: propsType) => {
 
   const changeProfileMonster = async (profileType: number, profileLevel: number) => {
     const profileMonsterId = (profileType-1)*10 + profileLevel;
-    console.log(profileMonsterId);
     try {
       const res = await memberApi.updateMember({
         profileMonsterId: profileMonsterId,
       })
       if (res.status === 200){
-        setMyProfile({
-          type: profileType,
-          level: profileLevel,
-        })
+        setProfileMonsterType(profileType)
+        setProfileMonsterLevel(profileLevel)
       }
     } catch (err){
       console.log(err);
     }
+  }
+
+  const sendPoliceReport = async (inputText:string) => {
+    if(inputText == ""){
+      Alert.alert("사용자의 이름을 입력해주세요.");
+      return;
+    }
+
+    const myInfoRes = await memberApi.getMember();
+    if(myInfoRes.status === 200){
+      const myMemberId = myInfoRes.data.result.member.memberId;
+
+      const sirenRes = await memberReportApi.siren({reportingMemberId: myMemberId, reportedMemberId:28});
+      if(sirenRes.status === 200){
+        Alert.alert("신고 접수가 성공적으로 처리되었습니다.");
+      }
+    }
+
+    setIsDialogState(false);
   }
 
   const updateFortuneModalState = (status: Boolean) => {
@@ -118,14 +117,22 @@ const MyPage = (({socket}: propsType) => {
 
   const whatIsMyThumbnail = () => {
     if(userInfo.profileMonsterId){
-      setProfileMonsterType(Math.floor((userInfo.profileMonsterId-1)/10));
-      setProfileMonsterLevel((userInfo.profileMonsterId % 10 === 0)?9:(userInfo.profileMonsterId%10)-1);
+      setProfileMonsterType(Math.floor((userInfo.profileMonsterId-1)/10) + 1);
+      setProfileMonsterLevel((userInfo.profileMonsterId % 10 === 0)?10:(userInfo.profileMonsterId%10));
     }
   }
 
   useEffect(() => {
-    if(defaultSosomon?.currentPoint){
-      load(defaultSosomon.currentPoint);
+    whatIsMyThumbnail();
+  }, [])
+
+  const police = () => {
+    setIsDialogState(true);
+  }
+
+  useEffect(() => {
+    if(defaultSosomon?.levelInfo?.currentClover){
+      load((defaultSosomon?.levelInfo?.currentClover/defaultSosomon?.levelInfo.requiredClover));
     }
   }, [defaultSosomon]);
 
@@ -134,9 +141,7 @@ const MyPage = (({socket}: propsType) => {
     getMyCloverApi();
   }, [])
 
-  useEffect(() => {
-    whatIsMyThumbnail();
-  }, [])
+
 
   useFocusEffect(
       React.useCallback(() => {
@@ -154,30 +159,30 @@ const MyPage = (({socket}: propsType) => {
     <CommonLayout headerType={0} footer={true}>
       <View style={MyPageStyle.myProfileWrap}>
         {
-          profileMonsterType === 0 &&
-          <Image
-            source={type1[profileMonsterLevel]}
-            style={MyPageStyle.myProfileImg}
-          />
-        }
-        {
           profileMonsterType === 1 &&
           <Image
-            source={type2[profileMonsterLevel]}
+            source={type1[profileMonsterLevel-1]}
             style={MyPageStyle.myProfileImg}
           />
         }
         {
           profileMonsterType === 2 &&
           <Image
-            source={type3[profileMonsterLevel]}
+            source={type2[profileMonsterLevel-1]}
             style={MyPageStyle.myProfileImg}
           />
         }
         {
           profileMonsterType === 3 &&
           <Image
-            source={type4[profileMonsterLevel]}
+            source={type3[profileMonsterLevel-1]}
+            style={MyPageStyle.myProfileImg}
+          />
+        }
+        {
+          profileMonsterType === 4 &&
+          <Image
+            source={type4[profileMonsterLevel-1]}
             style={MyPageStyle.myProfileImg}
           />
         }
@@ -197,10 +202,10 @@ const MyPage = (({socket}: propsType) => {
           }
         </View>
         <View style={MyPageStyle.myProfileIconWrap}>
-          <TouchableOpacity activeOpacity={0.7}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => police()}>
             <View>
-              <Image
-                source={GearIcon}
+              <SvgXml
+                xml={siren}
                 style={MyPageStyle.myProfileGearIcon}
               />
             </View>
@@ -230,10 +235,12 @@ const MyPage = (({socket}: propsType) => {
 
       <View style={MyPageStyle.ThumbnailCharacterWrap}>
         {
-          myProfile && (
+            profileMonsterType && (
                 <WebView
-                    source={{uri: `http://sosohappy.co.kr:8888/sosomon/${myProfile.type}/${myProfile.level}`}}
+                    source={{uri: `http://sosohappy.co.kr:8888/sosomon/${profileMonsterType}/${profileMonsterLevel}`}}
+                    // source={{uri: `http://sosohappy.co.kr:8888/sosomon/2/5`}}
                     style={MyPageStyle.MySelectedCharImg}
+                    nestedScrollEnabled
                 />
             )
         }
@@ -258,18 +265,19 @@ const MyPage = (({socket}: propsType) => {
               }
             <Text style={MyPageStyle.expSubTitle}>당신의 선행력을 수치로 보여드려요</Text>
           </View>
-          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Character')}>
-            <Image
-              source={GrayMoreIcon}
-              style={MyPageStyle.grayMoreIcon}
-            />
+          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Character')} style={MyPageStyle.feedFlexBox}>
+              <Image
+                source={GrayMoreIcon}
+                style={MyPageStyle.grayMoreIcon}
+              />
+              <Text style={MyPageStyle.moveFeedText}>먹이주러가기</Text>
           </TouchableOpacity>
         </View>
 
         <View style={MyPageStyle.statusWrap}>
           {
             defaultSosomon &&
-            <Text style={MyPageStyle.statusPercent}>{defaultSosomon.currentPoint*100 + "%"}</Text>
+            <Text style={MyPageStyle.statusPercent}>{defaultSosomon.levelInfo.currentClover + " Clover / " + defaultSosomon.levelInfo.requiredClover + " Clover"}</Text>
           }
           <View style={MyPageStyle.expBarWrap}>
             <View style={MyPageStyle.expBarBg}></View>
@@ -300,19 +308,24 @@ const MyPage = (({socket}: propsType) => {
       <View style={MyPageStyle.historyTitleWrap}>
         <Text style={MyPageStyle.historyTitle}>나의 최근 행운</Text>
         <History updateFortuneModalState={updateFortuneModalState}/>
-        {/*<TouchableOpacity activeOpacity={0.7}>*/}
-        {/*    <View style={MyPageStyle.moreButton}>*/}
-        {/*        <Text style={MyPageStyle.moreButtonText}>더보기</Text>*/}
-        {/*    </View>*/}
-        {/*</TouchableOpacity>*/}
       </View>
     </CommonLayout>
     {
       fortuneModalState &&
       <FortuneModal updateFortuneModalState={updateFortuneModalState}/>
     }
+    {
+      isDialogState &&
+      <DialogInput isDialogVisible={isDialogState}
+        title={"신고하기"}
+        message={"어떤 사용자를 신고하시겠습니까?"}
+        hintInput ={"이름을 입력해주세요."}
+        submitInput={ (inputText: string) => sendPoliceReport(inputText) }
+        closeDialog={ () => setIsDialogState(false) }>
+      </DialogInput>
+    }
     </>
   );
-});
+};
 
 export default MyPage;

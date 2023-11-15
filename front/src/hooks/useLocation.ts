@@ -2,6 +2,7 @@ import Geolocation from "@react-native-community/geolocation";
 import ReactNativeForegroundService from '@supersami/rn-foreground-service';
 import {useEffect, useState} from "react";
 import helpMatchApi from "@/apis/helpMatchApi";
+import useStore from "@/store/store";
 
 interface propsType {
 
@@ -12,6 +13,7 @@ function useLocation({}: propsType) {
     // let watchId:number;
     const [watchId, setWatchId] = useState<number|undefined>();
     const [status, setStatus] = useState(0);
+    const {userInfo} = useStore();
 
     Geolocation.setRNConfiguration({
         authorizationLevel: 'auto',
@@ -155,7 +157,7 @@ function useLocation({}: propsType) {
     }, []);
 
 
-    return {coordinate, setBackground, setForeground, status};
+    return {coordinate, setBackground, setForeground, status, stopWatchPosition};
 }
 
 export default useLocation;

@@ -1,0 +1,97 @@
+@import "./function.scss";
+
+.section-flex-wrap{
+    @include setSize(800px, 500px);
+    @include flex(flex, flex-start, center);
+    .section-left{
+        @include setSize(260px, 100%);
+        background-color: #FFFFFF;
+        .logo-wrap{
+            @include setSize(100%, null, center);
+            margin-top: 23px;
+            .logo-flex-wrap{
+                @include flex(flex, center, center);
+                .logo-img{
+                    @include setSize(40px, 40px);
+                }
+                .logo-text{
+                    @include font(14px, 700, #4E4B52);
+                    margin-left: 16px;
+                }
+            }
+        }
+        .nav{
+            .nav-ul{
+                .nav-li{
+                    @include setSize(190px, 50px);
+                    @include flex(flex,flex-start,center);
+                    margin-left: 25px;
+                    margin-right: 25px;
+                    margin-top: 10px;
+                    @include font(14px, 700, #A4A8A7);
+                    border-radius: 50px;
+                    padding:24px;
+                    box-sizing: border-box;
+                    &:first-child{
+                        margin-top: 26px;
+                    }
+                }
+                .nav-li-active{
+                    background-color: #F5C10D;
+                    @include font(14px, 700, #FFFFFF);
+                }
+            }
+        }
+    }
+    
+    .section-right{
+        @include setSize(540px, 100%);
+        background: #F0F4F7;
+        .section-padding-wrap{
+            padding-left: 44px;
+            .siren-title{
+                padding-top: 33px;
+                @include font(14px, 700, #4E5255);
+            }
+            .siren-content{
+                @include setSize(300px);
+                background-color: #FFF;
+                border-radius: 10px;
+                padding: 17px;
+                box-sizing: border-box;
+                margin-top:11px;
+                .order-nav{
+                    .order-recent-button{
+                        @include setSize(80px, 20px);
+                        background-color: #FFBA10;
+                        @include font(12px, 400, #000000);
+                        border-radius: 6px;
+                        @include flex(flex, center, center);
+                        cursor:pointer;
+                    }
+                }
+                .siren-item-list{
+                    .siren-item-li{
+                        border-bottom: 1px solid #FBEDFE;
+                        .siren-item{
+                            @include setSize(100%, 40px);
+                            @include flex(flex, space-between, center);
+                            box-sizing: border-box;
+                            padding-left:20px;
+                            padding-right:20px;
+                            &:first-child{
+                                margin-top: 22px;
+                            }
+                            .siren-item-img{
+                                @include setSize(26px, 26px);
+                            }
+                            .siren-item-name{
+    
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

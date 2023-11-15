@@ -2,6 +2,9 @@ import { StyleSheet } from "react-native";
 import { responsiveWidth } from "react-native-responsive-dimensions";
 
 const SignUpAuthStyle = StyleSheet.create({
+    inputNameWrap:{
+        marginTop:8,
+    },
     uploadWrap:{
         width:responsiveWidth(92),
         height:132,
@@ -9,9 +12,10 @@ const SignUpAuthStyle = StyleSheet.create({
         borderColor:"#E5E5E5",
         marginHorizontal:responsiveWidth(4),
         display:"flex",
-        justifyContent:"center",
+        justifyContent:"space-around",
         alignItems:"center",
-        marginTop:27,
+        marginTop:20,
+        flexDirection: 'row'
     },
     uploadImageWrap:{
         borderWidth:2,
@@ -33,9 +37,25 @@ const SignUpAuthStyle = StyleSheet.create({
         marginTop:6,
     },
     uploadImage: {
-        width:"100%",
-        height: 160,
-    }
+        width: '100%',
+        resizeMode: 'cover',
+    },
+    nameWrap: {
+        marginHorizontal:responsiveWidth(4),
+    },
+    rotateAlertWrap:{
+        display:"flex",
+        flexDirection:"row",
+        justifyContent:"center",
+        alignItems:"center",
+    },
+    rotateAlertImg:{
+        width:80,
+        height:80,
+    },
+    rotateAlertText:{
+
+    },
 })
 
 export default SignUpAuthStyle;
