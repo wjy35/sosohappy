@@ -23,6 +23,7 @@ import { type1, type2, type3, type4 } from "@/assets/sosomon";
 import { SvgXml } from "react-native-svg";
 import { createUser } from "@/collections/users";
 import {ChatSocket, helpSocket} from "@/types";
+import memberReportApi from "@/apis/memberReportApi";
 
 interface propsType{
   socket: helpSocket;
@@ -86,13 +87,21 @@ const MyPage = ({socket, chatSocket}: propsType) => {
     }
   }
 
-  const sendPoliceReport = (inputText:string) => {
+  const sendPoliceReport = async (inputText:string) => {
     if(inputText == ""){
       Alert.alert("사용자의 이름을 입력해주세요.");
       return;
     }
 
-    createUser({"id": "siren","name": inputText});
+    const myInfoRes = await memberApi.getMember();
+    if(myInfoRes.status === 200){
+      const myMemberId = myInfoRes.data.result.member.memberId;
+
+      const sirenRes = await memberReportApi.siren({reportingMemberId: myMemberId, reportedMemberId:28});
+      if(sirenRes.status === 200){
+        Alert.alert("신고 접수가 성공적으로 처리되었습니다.");
+      }
+    }
 
     setIsDialogState(false);
   }

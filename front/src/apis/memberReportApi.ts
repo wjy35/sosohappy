@@ -9,7 +9,7 @@ interface sirenProps{
 
 const memberReportApi = {
   siren: async ({reportingMemberId, reportedMemberId}: sirenProps) => {
-    const res = await PublicInstance.post(
+    const res = await PrivateInstance.post(
         `${domain}/report/`,{
             reportingMemberId: reportingMemberId,
             reportedMemberId: reportedMemberId,
