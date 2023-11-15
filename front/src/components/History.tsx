@@ -43,10 +43,11 @@ const History = ({updateFortuneModalState}: propsType) => {
                 {
                     fortuneCookieList.map((el, idx)=>{
                         const date = new Date(el.timestamp);
+                        let formatingDate = date.getFullYear() + "." + date.getMonth() + "." + date.getDate();
                         if(idx < maxPage){
                             return (
                                 <View style={HistoryStyle.historyWrap} key={`helpHistory${idx}`}>
-                                    <HistoryItem thumbnail="" content={el.content} createdDate={String(date)} openCookie={openCookie} updateFortuneModalState={updateFortuneModalState} fortuneCookieId={el.fortuneCookieId}/>
+                                    <HistoryItem thumbnail="" content={el.content} createdDate={String(formatingDate)} openCookie={openCookie} updateFortuneModalState={updateFortuneModalState} fortuneCookieId={el.fortuneCookieId}/>
                                 </View>
                             )
                         }
