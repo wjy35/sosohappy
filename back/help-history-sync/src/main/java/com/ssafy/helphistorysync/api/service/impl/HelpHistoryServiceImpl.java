@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.helphistorysync.api.mapper.HelpHistoryMapper;
-import com.ssafy.helphistorysync.api.request.CategoryRequest;
+import com.ssafy.helphistorysync.api.dto.CategoryDto;
 import com.ssafy.helphistorysync.api.request.HelpHistoryRequest;
 import com.ssafy.helphistorysync.api.service.HelpHistoryService;
 import com.ssafy.helphistorysync.cloud.feign.CategoryFeign;
@@ -27,16 +27,20 @@ public class HelpHistoryServiceImpl implements HelpHistoryService {
 
     private final CategoryFeign categoryFeign;
 
+
     @Override
     public void addHelpHistory(ConsumerRecord<String, String> message) throws JsonProcessingException {
 
         HelpHistoryRequest helpHistoryRequest = getAfter(message);
 
-        CategoryRequest categoryRequest = getCategory(helpHistoryRequest);
+        if(helpHistoryRequest == null) return;
 
-        HelpHistoryEntity helpHistoryEntity = helpHistoryMapper.requestToEntity(helpHistoryRequest, categoryRequest);
+        CategoryDto categoryDto = getCategory(helpHistoryRequest);
+
+        HelpHistoryEntity helpHistoryEntity = helpHistoryMapper.requestToEntity(helpHistoryRequest, categoryDto);
 
         helpHistoryRepository.addHelpHistory(helpHistoryEntity);
+
     }
 
     @Override
@@ -46,8 +50,7 @@ public class HelpHistoryServiceImpl implements HelpHistoryService {
     }
 
     @Override
-    public CategoryRequest getCategory(HelpHistoryRequest helpHistoryRequest) throws JsonProcessingException {
-
+    public CategoryDto getCategory(HelpHistoryRequest helpHistoryRequest) {
         String jsonString = categoryFeign.getCategoryDetail(helpHistoryRequest.getCategoryId());
 
         JSONObject jsonObject = new JSONObject(jsonString).getJSONObject("result").getJSONObject("category");
@@ -56,7 +59,7 @@ public class HelpHistoryServiceImpl implements HelpHistoryService {
         String categoryName = jsonObject.getString("categoryName");
         String categoryImage = jsonObject.getString("categoryImage");
 
-        return CategoryRequest.builder()
+        return CategoryDto.builder()
                 .categoryId(categoryId)
                 .categoryName(categoryName)
                 .categoryImage(categoryImage).build();
