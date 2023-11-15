@@ -123,7 +123,7 @@ const MyPage = ({socket, chatSocket}: propsType) => {
 
   useEffect(() => {
     if(defaultSosomon?.levelInfo?.currentClover){
-      load((defaultSosomon?.levelInfo?.currentClover/defaultSosomon?.levelInfo.requiredClover)/10);
+      load((defaultSosomon?.levelInfo?.currentClover/defaultSosomon?.levelInfo.requiredClover));
     }
   }, [defaultSosomon]);
 
