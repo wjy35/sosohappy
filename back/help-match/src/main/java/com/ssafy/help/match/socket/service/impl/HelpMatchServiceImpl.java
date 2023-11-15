@@ -75,12 +75,15 @@ public class HelpMatchServiceImpl implements HelpMatchService {
 
         if (helpMatchStatus.equals(HelpMatchStatus.WAIT_COMPLETE)||helpMatchStatus.equals(HelpMatchStatus.ON_MOVE)){
             helpEntity = helpEntityRepository.findByMemberId(memberId);
-            Point point = memberPointRepository.find(memberId);
-            otherMemberPoint = OtherMemberPoint
-                    .builder()
-                    .longitude(point.getX())
-                    .latitude(point.getY())
-                    .build();
+
+            if(memberSessionEntityRepository.isOnMove(helpEntity.getOtherMemberId())){
+                Point point = memberPointRepository.find(helpEntity.getOtherMemberId());
+                otherMemberPoint = OtherMemberPoint
+                        .builder()
+                        .longitude(point.getX())
+                        .latitude(point.getY())
+                        .build();
+            }
         }
 
         MatchStatusResponse response = MatchStatusResponse
