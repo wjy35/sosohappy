@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react"
-import { View, Text, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native";
+import React, { useState, useEffect, useCallback } from "react"
+import {View, Text, TouchableOpacity, TextInput, ScrollView, Alert, FlatList} from "react-native";
 
 import CommonLayout from "@/components/CommonLayout";
 import MyChat from "@/components/MyChat";
@@ -51,6 +51,11 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
     if(roomNo){
       const sendChatRes = await chatApi.sendChat({roomNo: roomNo, sendMemberId: userInfo.memberId, receiveMemberId:otherMemberId, content:msg});
       if(sendChatRes.status === 200){
+        chatSocket.addMsg({
+          content: msg,
+          memberId: userInfo.memberId,
+          timestamp: new Date(),
+        })
         setMsg("");
       }else{
         Alert.alert("시스템 에러, 관리자에게 문의하세요.");
@@ -70,7 +75,8 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
       const chatListRes = await chatApi.getChatList({roomNo: roomNo});
       if(chatListRes.status === 200){
         setMsgList(chatListRes.data.result.chatResponseList);
-        console.log("chatList", chatListRes.data.result.chatResponseList);
+        chatSocket.getMsgList(chatListRes.data.result.chatResponseList);
+        chatSocket.getDetail(roomNo);
       }
     }
   }
