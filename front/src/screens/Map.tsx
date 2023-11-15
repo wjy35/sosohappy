@@ -88,11 +88,11 @@ const Map = ({location, socket, chatSocket}: propsType) => {
           if (res.status === 200){
               const type = Math.floor((res.data.result.member.profileMonsterId-1)/10) + 1;
               const level = (res.data.result.member.profileMonsterId % 10 === 0)?10:res.data.result.member.profileMonsterId%10;
-              if (type === 0){
+              if (type === 1){
                   setSrc(type1[level-1])
-              } else if (type === 1){
-                  setSrc(type2[level-1])
               } else if (type === 2){
+                  setSrc(type2[level-1])
+              } else if (type === 3){
                   setSrc(type3[level-1])
               } else {
                   setSrc(type4[0])
@@ -125,7 +125,14 @@ const Map = ({location, socket, chatSocket}: propsType) => {
         }
     }, [socket.status]);
 
-  return (
+    useEffect(() => {
+        if (socket.status === 'WAIT_COMPLETE'){
+            pressAroundMarker(socket.data?.helpEntity);
+        }
+    }, []);
+
+
+    return (
       <>
           <CommonLayout footer={true} headerType={0}>
               <View style={MapStyle.mapContainer}>
@@ -163,7 +170,18 @@ const Map = ({location, socket, chatSocket}: propsType) => {
                               <Marker
                                   description="helperStartPosition"
                                   coordinate={{latitude: socket.data.otherMemberPoint?.latitude, longitude: socket.data.otherMemberPoint?.longitude}}
+                                  pinColor="#807CFC"
+                                  onPress={() => pressAroundMarker(socket.data?.helpEntity)}
+                              />
+                          )
+                      }
+                      {
+                          (socket.status==='WAIT_COMPLETE'&&socket.data.helpEntity?.latitude)&&(
+                              <Marker
+                                  description="waithelpTargetLocation"
+                                  coordinate={{latitude: socket.data?.helpEntity?.latitude, longitude: socket.data?.helpEntity?.longitude}}
                                   pinColor="#E9747A"
+                                  onPress={() => pressAroundMarker(socket.data?.helpEntity)}
                               />
                           )
                       }
@@ -244,7 +262,7 @@ const Map = ({location, socket, chatSocket}: propsType) => {
               <SvgXml
                 xml={chatIcon}
                 style={MapStyle.floatingIcon}
-                onPress={() => navigation.navigate('Chat')}
+                onPress={() => navigation.navigate('Chat', {otherMemberId: socket.data.helpEntity?.otherMemberId})}
               />
           </CommonLayout>
       </>
