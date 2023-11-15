@@ -262,7 +262,7 @@ const Map = ({location, socket, chatSocket}: propsType) => {
               <SvgXml
                 xml={chatIcon}
                 style={MapStyle.floatingIcon}
-                onPress={() => navigation.navigate('Chat')}
+                onPress={() => navigation.navigate('Chat', {otherMemberId: socket.data.helpEntity?.otherMemberId})}
               />
           </CommonLayout>
       </>
