@@ -2,6 +2,10 @@ import {PrivateInstance, PublicInstance} from "@/apis/AXIOSUTILS";
 
 const domain = 'category';
 
+interface recommendProps{
+  memberId: number,
+}
+
 const helpCategoryApi = {
   default: async () => {
     const res = PublicInstance.get(
@@ -12,12 +16,6 @@ const helpCategoryApi = {
   recent: async () => {
     const res = PrivateInstance.get(
       `${domain}/recent`,
-    );
-    return res;
-  },
-  recommend: async () => {
-    const res = PrivateInstance.get(
-      `${domain}/recommend`,
     );
     return res;
   },
