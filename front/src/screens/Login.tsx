@@ -117,7 +117,7 @@ const Login = ({socket, chatSocket}: propsType) => {
             }
           </View>
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.7}>
+        <TouchableOpacity activeOpacity={0.7} onPress={()=>navigation.navigate("SignUpSeparate")}>
           <Text style={LoginStyle.authText}>회원이 아니신가요?</Text>
         </TouchableOpacity>
       </View>
