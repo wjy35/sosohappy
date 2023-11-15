@@ -170,7 +170,18 @@ const Map = ({location, socket, chatSocket}: propsType) => {
                               <Marker
                                   description="helperStartPosition"
                                   coordinate={{latitude: socket.data.otherMemberPoint?.latitude, longitude: socket.data.otherMemberPoint?.longitude}}
+                                  pinColor="#807CFC"
+                                  onPress={() => pressAroundMarker(socket.data?.helpEntity)}
+                              />
+                          )
+                      }
+                      {
+                          (socket.status==='WAIT_COMPLETE'&&socket.data.helpEntity?.latitude)&&(
+                              <Marker
+                                  description="waithelpTargetLocation"
+                                  coordinate={{latitude: socket.data?.helpEntity?.latitude, longitude: socket.data?.helpEntity?.longitude}}
                                   pinColor="#E9747A"
+                                  onPress={() => pressAroundMarker(socket.data?.helpEntity)}
                               />
                           )
                       }
