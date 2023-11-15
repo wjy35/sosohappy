@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import {Alert} from "react-native";
-import {baseURL} from "@/apis/BASEURL";
+import {baseURL, recommendURL} from "@/apis/BASEURL";
 import RNSecureStorage, {ACCESSIBLE} from "rn-secure-storage";
 
 const CONTENT_TYPE = "application/json; charset=utf-8";
@@ -13,6 +13,11 @@ export const PublicInstance = axios.create({
 
 export const PrivateInstance = axios.create({
     baseURL: baseURL,
+    timeout: TIMEOUT,
+})
+
+export const recommendInstance = axios.create({
+    baseURL: recommendURL,
     timeout: TIMEOUT,
 })
 
@@ -111,6 +116,8 @@ const handleRequestError = (error: AxiosError) => {
 };
 
 PrivateInstance.interceptors.request.use(setPrivateHeaders, handleRequestError);
+recommendInstance.interceptors.request.use(setPrivateHeaders, handleRequestError)
 PublicInstance.interceptors.request.use(setPublicHeaders, handleRequestError);
 PrivateInstance.interceptors.response.use(handleResponseSuccess, handleResponseError);
+recommendInstance.interceptors.response.use(handleResponseSuccess, handleResponseError)
 PublicInstance.interceptors.response.use(handleResponseSuccess, handleResponseError);
