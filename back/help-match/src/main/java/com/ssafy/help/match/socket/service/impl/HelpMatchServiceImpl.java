@@ -3,6 +3,7 @@ package com.ssafy.help.match.socket.service.impl;
 import com.ssafy.help.match.db.entity.HelpEntity;
 import com.ssafy.help.match.db.entity.HelpMatchStatus;
 import com.ssafy.help.match.db.entity.HelpMatchType;
+import com.ssafy.help.match.db.entity.SendMatchEntity;
 import com.ssafy.help.match.db.repository.*;
 import com.ssafy.help.match.event.dto.HelperSearchEventDTO;
 import com.ssafy.help.match.event.emitter.EventEmitter;
@@ -116,18 +117,19 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     }
 
     @Override
-    public void match(HelpMatchRequest helpMatchRequest) {
+    public void match(Long memberId) {
         // ToDo 장애 여부 체크
-        saveAndChangeStatus(helpMatchRequest);
+//        saveAndChangeStatus(helpMatchRequest);
+        SendMatchEntity sendMatchEntity = sendMatchEntityRepository.findByMemberId(memberId);
 
         Set<Long> receiveMemberIdSet = new HashSet<>();
-        Point centerPoint = new Point(helpMatchRequest.getLongitude(),helpMatchRequest.getLatitude());
+        Point centerPoint = new Point(sendMatchEntity.getLongitude(),sendMatchEntity.getLatitude());
 
         for(double maxDistance:maxDistanceList){
-            matchInRange(helpMatchRequest.getMemberId(), centerPoint, maxDistance, receiveMemberIdSet);
+            matchInRange(sendMatchEntity.getMemberId(), centerPoint, maxDistance, receiveMemberIdSet);
         }
 
-        sendMatchEntityRepository.saveReceiveMemberIdSet(helpMatchRequest.getMemberId(), receiveMemberIdSet);
+        sendMatchEntityRepository.saveReceiveMemberIdSet(sendMatchEntity.getMemberId(), receiveMemberIdSet);
     }
 
     @Override
@@ -135,7 +137,8 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         return memberSessionEntityRepository.getMatchStatus(memberId);
     }
 
-    private void saveAndChangeStatus(HelpMatchRequest helpMatchRequest) {
+    @Override
+    public void saveAndChangeStatus(HelpMatchRequest helpMatchRequest) {
         StatusChangeEventDTO statusChangeEventDTO = StatusChangeEventDTO
                 .builder()
                 .memberId(helpMatchRequest.getMemberId())

@@ -49,9 +49,14 @@ public class HelpMatchSocketController{
         simpMessageSendingOperations.convertAndSend("/topic/match/list/"+memberId, objectSerializer.serialize(response));
     }
 
+    @SubscribeMapping("/topic/match/progress/{memberId}")
+    void progress(@DestinationVariable Long memberId){
+        helpMatchService.match(memberId);
+    }
+
     @MessageMapping("/match")
     void match(@Payload HelpMatchRequest helpMatchRequest){
-        helpMatchService.match(helpMatchRequest);
+        helpMatchService.saveAndChangeStatus(helpMatchRequest);
     }
 
     @PostMapping("/cancel/match")
