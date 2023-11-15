@@ -45,7 +45,7 @@ const History = ({updateFortuneModalState}: propsType) => {
                         if(idx < maxPage){
                             return (
                                 <View style={HistoryStyle.historyWrap} key={`helpHistory${idx}`}>
-                                    <HistoryItem thumbnail={el.categoryImage} content={el.content} createdDate={el.createdAt} openCookie={openCookie} updateFortuneModalState={updateFortuneModalState}/>
+                                    <HistoryItem thumbnail={el.categoryImage} content={el.content} createdDate={el.createdAt.split("T")[0]} openCookie={openCookie} updateFortuneModalState={updateFortuneModalState} historyId={el.historyId}/>
                                 </View>
                             )
                         }
