@@ -66,10 +66,27 @@ const ChatList = ({socket, chatSocket}: propsType) => {
     }
   }
 
-  useFocusEffect(()=>{
-    if (!socket.connected) return;
-    socket.disConnect();
-  })
+  useFocusEffect(
+      useCallback(() => {
+        const disConnect = () => {
+          if (!socket.connected) return;
+          socket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [socket.connected])
+  )
+
+  useFocusEffect(
+      useCallback(() => {
+        const connect = () => {
+          if (chatSocket.connected) return;
+          chatSocket.connect();
+        }
+        connect();
+        return () => {};
+      }, [chatSocket.connected])
+  )
 
   useEffect(() => {
     getChatRoomList();
