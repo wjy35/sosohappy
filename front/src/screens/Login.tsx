@@ -61,12 +61,11 @@ const Login = ({socket, chatSocket}: propsType) => {
         await RNSecureStorage.set("accessToken", res.data.result.authorization.accessToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
         await RNSecureStorage.set("refreshToken", res.data.result.authorization.refreshToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
 
-        const userInfo = await memberApi.getMember();
+        const userRes = await memberApi.getMember();
 
-        if (userInfo.status === 200){
+        if (userRes.status === 200){
           setIsLoading(false);
-          login(userInfo.data.result.member);
-          socket.getMemberId(userInfo.data.result.member.memberId);
+          login(userRes.data.result.member);
           navigation.replace('Main');
         }
         const fcmToken = await getFcmToken();
