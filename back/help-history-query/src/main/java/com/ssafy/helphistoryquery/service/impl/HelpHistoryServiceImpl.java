@@ -3,8 +3,9 @@ package com.ssafy.helphistoryquery.service.impl;
 import com.ssafy.helphistoryquery.api.mapper.HelpHistoryMapper;
 import com.ssafy.helphistoryquery.api.response.HelpCertificateResponse;
 import com.ssafy.helphistoryquery.api.response.HelpHistoryResponse;
-import com.ssafy.helphistoryquery.db.entity.HelpCertificateEntity;
+import com.ssafy.helphistoryquery.db.entity.CertificateEntity;
 import com.ssafy.helphistoryquery.db.entity.HelpHistoryEntity;
+import com.ssafy.helphistoryquery.db.repository.CertificateRepository;
 import com.ssafy.helphistoryquery.db.repository.HelpHistoryRepository;
 import com.ssafy.helphistoryquery.service.HelpHistoryService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,8 @@ public class HelpHistoryServiceImpl implements HelpHistoryService {
     private final HelpHistoryMapper helpHistoryMapper;
 
     private final HelpHistoryRepository helpHistoryRepository;
+
+    private final CertificateRepository certificateRepository;
 
     @Override
     public Integer getHelpCount(Long memberId){
@@ -42,12 +45,12 @@ public class HelpHistoryServiceImpl implements HelpHistoryService {
 
     @Override
     public List<HelpCertificateResponse> getHelpCertificate(Long memberId) {
-        List<HelpCertificateEntity> helpCertificateEntities = helpHistoryRepository.getHelpCertificateList(memberId);
+        List<CertificateEntity> certificateEntityList = certificateRepository.findAllByMemberId(memberId);
 
         List<HelpCertificateResponse> helpCertificateResponses = new ArrayList<>();
 
-        for(HelpCertificateEntity helpCertificateEntity : helpCertificateEntities){
-            helpCertificateResponses.add(helpHistoryMapper.entityToResponse(helpCertificateEntity));
+        for(CertificateEntity certificateEntity : certificateEntityList){
+            helpCertificateResponses.add(helpHistoryMapper.entityToResponse(certificateEntity));
         }
         return helpCertificateResponses;
     }
