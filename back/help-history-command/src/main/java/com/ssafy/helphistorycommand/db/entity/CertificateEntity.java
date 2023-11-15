@@ -17,6 +17,9 @@ public class CertificateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long certificateId;
 
+    @Column(name = "member_id", nullable = false)
+    long memberId;
+
     @Column(name = "nickname", nullable = false)
     String nickname;
 
