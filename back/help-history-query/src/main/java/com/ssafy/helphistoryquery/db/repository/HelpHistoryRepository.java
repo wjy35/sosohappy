@@ -12,4 +12,5 @@ public interface HelpHistoryRepository {
     List<HelpHistoryEntity> getHelpHistoryEntityList(List<Object> objectList);
 
     HelpHistoryEntity parseJsonToEntity(Object json);
+
 }

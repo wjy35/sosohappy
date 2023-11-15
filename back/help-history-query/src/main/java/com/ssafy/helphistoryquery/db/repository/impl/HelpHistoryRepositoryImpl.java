@@ -53,4 +53,5 @@ public class HelpHistoryRepositoryImpl implements HelpHistoryRepository {
             throw new CustomException(ErrorCode.JSON_PARSE_ERROR);
         }
     }
+
 }
