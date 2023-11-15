@@ -10,7 +10,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableEurekaClient
 @EnableFeignClients
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 public class HelpHistoryQueryApplication {
 
 	public static void main(String[] args) {
