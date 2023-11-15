@@ -71,7 +71,7 @@ const CreateHelp = (({location, socket, chatSocket}: propsType) => {
                 }
             }
         ]);
-        
+
     }
 
     const startPayload = () => {
@@ -155,7 +155,7 @@ const CreateHelp = (({location, socket, chatSocket}: propsType) => {
                                     <View style={CreateHelpStyle.recommendTitlewrap}>
                                         <Text style={CreateHelpStyle.recommendTitle}>이런 카테고리는 <Text style={CreateHelpStyle.recommendPointText}>어떠세요?</Text></Text>
                                     </View>
-                                    <RecommendCategoryWrap/>
+                                    <RecommendCategoryWrap selectCategory={selectCategory}/>
                                 </View>
 
                                 <View style={CreateHelpStyle.recommendWrap}>
