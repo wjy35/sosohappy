@@ -101,4 +101,10 @@ spring:
             - Path=/chat/**
           filters:
             - RewritePath=/chat/(?<path>.*),/$\{path}
+        - id: member-report
+          uri: lb://MEMBER-REPORT-SERVICE/
+          predicates:
+            - Path=/member-report/**
+          filters:
+            - RewritePath=/member-report/(?<path>.*),/$\{path}
         
