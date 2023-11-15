@@ -130,6 +130,9 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         }
 
         sendMatchEntityRepository.saveReceiveMemberIdSet(sendMatchEntity.getMemberId(), receiveMemberIdSet);
+        if(receiveMemberIdSet.isEmpty()){
+            eventEmitter.emit(EventTopicPrefix.HELPER_SEARCH, HelperSearchEventDTO.builder().memberId(memberId).metric(-1d).build());
+        }
     }
 
     @Override
