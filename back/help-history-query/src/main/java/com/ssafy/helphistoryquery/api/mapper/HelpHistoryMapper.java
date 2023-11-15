@@ -2,7 +2,7 @@ package com.ssafy.helphistoryquery.api.mapper;
 
 import com.ssafy.helphistoryquery.api.response.HelpCertificateResponse;
 import com.ssafy.helphistoryquery.api.response.HelpHistoryResponse;
-import com.ssafy.helphistoryquery.db.entity.HelpCertificateEntity;
+import com.ssafy.helphistoryquery.db.entity.CertificateEntity;
 import com.ssafy.helphistoryquery.db.entity.HelpHistoryEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,8 +20,8 @@ public interface HelpHistoryMapper {
     HelpHistoryResponse entityToResponse(HelpHistoryEntity helpHistory);
 
 
-    @Mapping(target = "nickName", source = "helpCertificateEntity.nickName")
-    @Mapping(target = "categoryName", source = "helpCertificateEntity.categoryName")
-    @Mapping(target = "createdAt", source = "helpCertificateEntity.createdAt")
-    HelpCertificateResponse entityToResponse(HelpCertificateEntity helpCertificateEntity);
+    @Mapping(target = "nickName", source = "certificateEntity.nickname")
+    @Mapping(target = "categoryName", source = "certificateEntity.categoryName")
+    @Mapping(target = "createdAt", source = "certificateEntity.createdAt")
+    HelpCertificateResponse entityToResponse(CertificateEntity certificateEntity);
 }
