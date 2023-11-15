@@ -2,7 +2,6 @@ package com.ssafy.helphistorysync.db.repository.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.helphistorysync.db.entity.HelpCertificateEntity;
 import com.ssafy.helphistorysync.db.entity.HelpHistoryEntity;
 import com.ssafy.helphistorysync.db.repository.HelpHistoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +25,4 @@ public class HelpHistoryRepositoryImpl implements HelpHistoryRepository {
         listOperations.rightPush("histories:fromMemberId:" + helpHistoryEntity.getFromMemberId(), json);
     }
 
-    @Override
-    public void addHelpCertificate(HelpCertificateEntity helpCertificateEntity, long memberId) throws JsonProcessingException {
-        String json = objectMapper.writeValueAsString(objectMapper.convertValue(helpCertificateEntity, Map.class));
-        listOperations.rightPush("certificate:memberId:"+memberId,json);
-    }
 }
