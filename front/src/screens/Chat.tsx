@@ -35,6 +35,16 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
   const [myMemberId, setMyMemberId] = useState<string>("1");
   const [yourMemberId, setYourMemberId] = useState<string>("2");
   const navigation = useNavigation();
+  const [isVisible, setIsVisible] = useState(false);
+
+  const openSide = () => {
+    setIsVisible(true);
+  }
+
+  const closeSide = () => {
+    setIsVisible(false);
+  };
+
 
   const sendMsg = async () => {
     if(roomNo){
