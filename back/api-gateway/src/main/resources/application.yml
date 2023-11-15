@@ -107,4 +107,6 @@ spring:
             - Path=/member-report/**
           filters:
             - RewritePath=/member-report/(?<path>.*),/$\{path}
+            - AuthorizationHeaderFilter
+
         
