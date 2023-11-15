@@ -49,7 +49,7 @@ function useSocket(){
                 );
             },
             (error) => {
-                console.log(error)
+                connect();
             },
         );
     }
