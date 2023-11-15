@@ -5,7 +5,7 @@ spring:
         - id: member-query
           uri: lb://MEMBER-QUERY-SERVICE/
           predicates:
-            - Path=/member-query/availability/**
+            - Path=/member-query/availability/**,/member-query/public/**
           filters:
             - RewritePath=/member-query/(?<path>.*),/$\{path}
         - id: member-query-authorization
@@ -95,4 +95,18 @@ spring:
             - Path=/ocr/**
           filters:
             - RewritePath=/ocr/(?<path>.*),/$\{path}
+        - id: chat
+          uri: lb:ws://CHAT-SERVICE/
+          predicates:
+            - Path=/chat/**
+          filters:
+            - RewritePath=/chat/(?<path>.*),/$\{path}
+        - id: member-report
+          uri: lb://MEMBER-REPORT-SERVICE/
+          predicates:
+            - Path=/member-report/**
+          filters:
+            - RewritePath=/member-report/(?<path>.*),/$\{path}
+            - AuthorizationHeaderFilter
+
         
