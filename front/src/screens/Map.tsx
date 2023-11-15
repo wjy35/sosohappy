@@ -259,11 +259,15 @@ const Map = ({location, socket, chatSocket}: propsType) => {
                       :
                       <></>
               }
-              <SvgXml
-                xml={chatIcon}
-                style={MapStyle.floatingIcon}
-                onPress={() => navigation.navigate('Chat', {otherMemberId: socket.data.helpEntity?.otherMemberId})}
-              />
+              {
+                  socket.status!=='DEFAULT'&&(
+                      <SvgXml
+                          xml={chatIcon}
+                          style={MapStyle.floatingIcon}
+                          onPress={() => navigation.navigate('Chat', {otherMemberId: socket.data.helpEntity?.otherMemberId})}
+                      />
+                  )
+              }
           </CommonLayout>
       </>
   );
