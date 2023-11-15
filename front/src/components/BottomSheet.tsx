@@ -53,11 +53,11 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
                 setHelpUserInfo(res.data.result.member);
                 const type = Math.floor((res.data.result.member.profileMonsterId-1)/10) + 1;
                 const level = (res.data.result.member.profileMonsterId % 10 === 0)?10:res.data.result.member.profileMonsterId%10;
-                if (type === 0){
+                if (type === 1){
                     setSrc(type1[level-1])
-                } else if (type === 1){
-                    setSrc(type2[level-1])
                 } else if (type === 2){
+                    setSrc(type2[level-1])
+                } else if (type === 3){
                     setSrc(type3[level-1])
                 } else {
                     setSrc(type4[0])
