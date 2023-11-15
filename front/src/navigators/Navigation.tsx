@@ -15,7 +15,7 @@ import Character from '@/screens/Character';
 import useStore from "@/store/store";
 import Certificate from '@/screens/Certificate';
 import useSocket from "@/hooks/useSocket";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import useLocation from "@/hooks/useLocation";
 import {AppState} from "react-native";
 import messaging from "@react-native-firebase/messaging";
@@ -37,19 +37,28 @@ const Navigation = ({}: propsType) => {
   const socket = useSocket();
   const location = useLocation({});
   const chatSocket = useChatSocket();
+  const [member, setMember] = useState({
+    memberId: null
+  });
 
   useEffect(() => {
     const appState = AppState.addEventListener('change', () => {
+      console.log(AppState.currentState);
       if (AppState.currentState === 'active') {
         userInfo && location.setForeground(userInfo.memberId, socket.otherMember);
-      } else if (AppState.currentState === 'background' && userInfo) {
-        location.setBackground(userInfo.memberId, socket.otherMember);
+      } else if (AppState.currentState === 'background'&&member.memberId) {
+        location.setBackground(member.memberId, socket.otherMember);
       }
     });
     return () => {
       appState.remove();
     }
   }, []);
+
+  useEffect(() => {
+    member.memberId = userInfo?.memberId;
+    userInfo?.memberId&&socket.getMemberId(userInfo?.memberId);
+  }, [userInfo])
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {

@@ -5,6 +5,7 @@ import RNSecureStorage, {ACCESSIBLE} from "rn-secure-storage";
 
 const CONTENT_TYPE = "application/json; charset=utf-8";
 const TIMEOUT = 1000;
+const Multipart = 'multipart/form-data'
 
 export const PublicInstance = axios.create({
     baseURL: baseURL,
@@ -14,7 +15,12 @@ export const PublicInstance = axios.create({
 export const PrivateInstance = axios.create({
     baseURL: baseURL,
     timeout: TIMEOUT,
-})
+});
+
+export const PublicMultipartInstance = axios.create({
+    baseURL: baseURL,
+    timeout: TIMEOUT,
+});
 
 export const recommendInstance = axios.create({
     baseURL: recommendURL,
@@ -32,6 +38,12 @@ const getAuthorizationHeader = async (tokenKey: string) => {
 const setPublicHeaders = async (config: any) => {
     // default header 설정
     config.headers["Content-Type"] = CONTENT_TYPE;
+    return config;
+};
+
+const setPublicMultipartHeaders = async (config: any) => {
+    // default header 설정
+    config.headers["Content-Type"] = Multipart;
     return config;
 };
 
@@ -121,3 +133,6 @@ PublicInstance.interceptors.request.use(setPublicHeaders, handleRequestError);
 PrivateInstance.interceptors.response.use(handleResponseSuccess, handleResponseError);
 recommendInstance.interceptors.response.use(handleResponseSuccess, handleResponseError)
 PublicInstance.interceptors.response.use(handleResponseSuccess, handleResponseError);
+
+PublicMultipartInstance.interceptors.request.use(setPublicMultipartHeaders, handleRequestError);
+PublicMultipartInstance.interceptors.response.use(handleResponseSuccess, handleResponseError);

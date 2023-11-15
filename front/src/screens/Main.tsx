@@ -53,7 +53,7 @@ const Main = ({socket, chatSocket}: propsType) => {
   }
 
   const getMatchingStatus = async () => {
-    
+
     const matchingStatusRes = await helpMatchApi.getHelpStatus();
     const matchingStatus = matchingStatusRes.data.result.matchStatus.helpMatchStatus
     // TODO 추후 WAIT로 변경
@@ -72,7 +72,7 @@ const Main = ({socket, chatSocket}: propsType) => {
     const getMyInfo = await memberApi.getMember();
     if(getMyInfo.status === 200){
       const myMemberId = getMyInfo.data.result.member.memberId;
-      
+
       const completeRes = await helpMatchApi.helpComplete({memberId: myMemberId});
       console.log("completeRes", completeRes);
     }
@@ -104,17 +104,16 @@ const Main = ({socket, chatSocket}: propsType) => {
     <CommonLayout footer={true} headerType={0} nowPage={'Main'}>
       <View style={MainStyle.mainWrap}>
         <Text style={MainStyle.mainTitle}>
-          소소한 선행을{"\n"}
-          베풀고,{"\n"}
-          <Text style={MainStyle.pointBlue}>여러분의 행운력{"\n"}
-          을</Text> 올리세요
+          <Text style={MainStyle.pointBlue}>소소한 선행</Text>을 베풀고,{"\n"}
+          <Text style={MainStyle.pointBlue}>클로버</Text>를 모아,{"\n"}
+          여러분의 <Text style={MainStyle.pointBlue}>행운력</Text>을{"\n"}올리세요
         </Text>
         <Text style={MainStyle.mainDescription}>주변의 소소한 도움이 필요하신가요?</Text>
         <Image
           source={MainImg}
           style={MainStyle.mainImg}
         />
-        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Map')}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Map')}>
           <View style={MainStyle.helpButton}>
             <Text style={MainStyle.helpButtonText}>도움 찾아가기</Text>
           </View>
@@ -137,7 +136,7 @@ const Main = ({socket, chatSocket}: propsType) => {
           <Text style={MainStyle.boxSubTitle}>소소한 행복이 행운을 가져다줘요</Text>
         </View>
         <View style={MainStyle.boxFlexWrap}>
-          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('CreateHelp')}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => goto('CreateHelp')}>
             <View style={MainStyle.boxContentWrap}>
               <Text style={MainStyle.boxContentTitle}>
                 도움이{"\n"}
@@ -151,7 +150,7 @@ const Main = ({socket, chatSocket}: propsType) => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Map')}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Map')}>
             <View style={MainStyle.boxContentWrap}>
               <Text style={MainStyle.boxContentTitle}>
                 소소한 행복을{"\n"}
@@ -189,7 +188,7 @@ const Main = ({socket, chatSocket}: propsType) => {
           }
 
 
-        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('MyPage')}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => goto('MyPage')}>
           <View style={MainStyle.moveMypageButton}>
             <Image
               source={CloverIcon}
