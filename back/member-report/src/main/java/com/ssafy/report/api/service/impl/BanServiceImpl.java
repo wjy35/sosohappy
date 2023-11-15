@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,11 @@ public class BanServiceImpl implements BanService {
 
         if(bannedMemberEntity.getEndTimestamp().before(now)) bannedMemberEntity.setEndTimestamp(now);
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(bannedMemberEntity.getEndTimestamp().getTime());
+        calendar.add(Calendar.DATE,day);
+
+        bannedMemberEntity.setEndTimestamp(new Timestamp(calendar.getTime().getTime()));
         bannedMemberEntityRepository.save(bannedMemberEntity);
     }
 
