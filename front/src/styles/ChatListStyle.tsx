@@ -10,7 +10,7 @@ const ChatListStyle = StyleSheet.create({
         marginHorizontal:responsiveWidth(2),
         display:"flex",
         flexDirection:"row",
-        justifyContent:"space-between",
+        justifyContent:"center",
         alignItems:"center",
     },
     preArrowIcon:{
