@@ -116,6 +116,7 @@ public class HelpServiceImpl implements HelpService {
                 .builder()
                 .otherMemberId(memberId)
                 .content(helpEntity.getContent())
+                .categoryId(helpEntity.getCategory().getCategoryId())
                 .build();
 
         fortuneCookieEntityRepository.save(otherMemberId,fortuneCookieEntity);

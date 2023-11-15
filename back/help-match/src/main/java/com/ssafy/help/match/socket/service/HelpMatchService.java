@@ -9,7 +9,8 @@ import java.util.List;
 public interface HelpMatchService {
     MatchStatusResponse getStatus(Long memberId);
     HelpMatchStatus getSimpStatus(Long memberId);
-    void match(HelpMatchRequest helpMatchRequest);
+    void match(Long memberId);
+    void saveAndChangeStatus(HelpMatchRequest helpMatchRequest);
     List<PushMatchItem> list(Long memberId);
     void cancel(Long memberId);
 }
