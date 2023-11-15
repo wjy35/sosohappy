@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from "react"
-import {View, Text, Image, ScrollView} from "react-native"
+import {View, Text, ScrollView} from "react-native"
 import recommendApi from "@/apis/recommendApi";
 import memberApi from "@/apis/memberApi";
 
