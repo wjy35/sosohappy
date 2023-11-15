@@ -4,6 +4,7 @@ import HistoryItemStyle from "@/styles/HistoryItemStyle"
 import {lock, fortuneCookie, clover} from "@/assets/icons/icons";
 import {SvgXml} from "react-native-svg";
 import {useState} from "react";
+import helpMatchApi from "@/apis/helpMatchApi";
 
 interface propsType{
     thumbnail: string,
@@ -11,9 +12,10 @@ interface propsType{
     createdDate: string,
     openCookie: Function,
     updateFortuneModalState: Function,
+    fortuneCookieId: number,
 }
 
-const HistoryItem = ({thumbnail, content, createdDate, openCookie, updateFortuneModalState} : propsType) => {
+const HistoryItem = ({thumbnail, content, createdDate, openCookie, updateFortuneModalState, fortuneCookieId} : propsType) => {
     const [cookie, setCookie] = useState(true);
 
     const clickOpenCookie = () => {
@@ -21,9 +23,21 @@ const HistoryItem = ({thumbnail, content, createdDate, openCookie, updateFortune
         openCookie();
     }
 
+    const openFortuneCookie = async () => {
+        
+        const deleteFortuneCookie = await helpMatchApi.openFortuneCookie({fortuneCookieId: fortuneCookieId});
+        
+        if(deleteFortuneCookie.status === 200){
+            updateFortuneModalState(true);
+            console.log("deleteFortuneCookie", deleteFortuneCookie);
+            setCookie(false);
+        }
+
+    }
+
     return(
         <>
-            <TouchableOpacity activeOpacity={0.7} onPress={() => updateFortuneModalState(true)}>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => openFortuneCookie()}>
                 <View style={HistoryItemStyle.historyItemWrap}>
                     <View style={HistoryItemStyle.historyItemProfileBg}>
                         <SvgXml

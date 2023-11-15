@@ -42,7 +42,6 @@ const Main = ({socket, chatSocket}: propsType) => {
 
   const getFortuneList = async () => {
     const fortuneList = await helpMatchApi.getFortuneList();
-    console.log(fortuneList.data.result.fortuneCookieList.length)
     if(fortuneList.status === 200 && userInfo){
       if(fortuneList.data.result.fortuneCookieList.length > 0){
         Alert.alert("포츈쿠키 알림이 도착했어요.", "열어보지 않은 포츈쿠키가 있어요. 마이페이지로 이동하시겠어요?", [

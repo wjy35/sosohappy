@@ -45,7 +45,6 @@ const ChatList = ({socket, chatSocket}: propsType) => {
     if(chatList){
       for(let i=0; i<chatList.length; i++){
         const userInfo = await memberApi.publicMemberShow(chatList[i].memberList[1]);
-        
         if(userInfo.status === 200){
           const userName = userInfo.data.result.member.nickname;
           const userRank = userInfo.data.result.member.disabled;
