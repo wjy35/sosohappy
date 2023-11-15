@@ -16,4 +16,5 @@ public class FortuneCookieItem {
     Long otherMemberId;
     String content;
     Timestamp timestamp;
+    Integer categoryId;
 }
