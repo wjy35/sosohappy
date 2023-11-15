@@ -5,26 +5,23 @@ import memberApi from "@/apis/memberApi";
 
 import SimilarRecommendCategoryWrapStyle from "@/styles/SimilarRecommendCategoryWrapStyle";
 import { SvgXml } from "react-native-svg";
+import useStore from "@/store/store";
 
 const LikeRecommendWrap = () => {
     const [recommendList, setRecommendList] = useState<any>([]);
+    const {userInfo} = useStore();
+
 
     const getSimilarCategoryApi = async () => {
       try{
-        const userRes = await memberApi.getMember();
-        if(userRes.status === 200){
-          const myMemberId = userRes.data.result.member.memberId;
-
-          const res = await recommendApi.recommend({memberId: myMemberId});
-
+          const res = await recommendApi.recommend({memberId: userInfo.memberId});
           if(res.status === 200){
-            setRecommendList(res.data.result.recommendCategoryList);
+              setRecommendList(res.data.result.recommendCategoryList);
           }
-        }
       }catch(err){
         console.error(err);
       }
-      
+
     }
 
     useEffect(() => {
@@ -41,7 +38,7 @@ const LikeRecommendWrap = () => {
                     <View style={SimilarRecommendCategoryWrapStyle.likeRecommendContentWrap}>
                       <View>
                         <Text style={SimilarRecommendCategoryWrapStyle.likeRecommendContentMainTitle}>{recommend.category_name}</Text>
-                        <Text style={SimilarRecommendCategoryWrapStyle.likeRecommendContentSubTitle}>최근에 내가 가장 많이 올린 카테고리는?</Text>
+                        {/*<Text style={SimilarRecommendCategoryWrapStyle.likeRecommendContentSubTitle}>최근에 내가 가장 많이 올린 카테고리는?</Text>*/}
                       </View>
                       <SvgXml
                         xml={recommend.category_image}
