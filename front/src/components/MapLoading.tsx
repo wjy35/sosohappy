@@ -31,14 +31,14 @@ const MapLoading = ({socket}: propsType) => {
     }
 
     useEffect(() => {
-        const type = Math.floor((userInfo.profileMonsterId-1)/10);
+        const type = Math.floor((userInfo.profileMonsterId-1)/10) + 1;
         const level = (userInfo.profileMonsterId % 10 === 0)?10:userInfo.profileMonsterId%10;
         // console.log(type, level)
-        if (type === 0){
+        if (type === 1){
             setSrc(type1[level-1])
-        } else if (type === 1){
-            setSrc(type2[level-1])
         } else if (type === 2){
+            setSrc(type2[level-1])
+        } else if (type === 3){
             setSrc(type3[level-1])
         } else {
             setSrc(type4[0])

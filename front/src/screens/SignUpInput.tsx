@@ -13,33 +13,14 @@ import DropDownPicker from "react-native-dropdown-picker";
 import InputStyle from "@/styles/InputStyle";
 import {SvgXml} from "react-native-svg";
 import {backIcon, check} from "@/assets/icons/icons";
+import {ChatSocket, helpSocket} from "@/types";
 
 interface propsType{
-  socket: {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-  };
+  socket: helpSocket;
+  chatSocket: ChatSocket;
 }
 
-interface helpDetail {
-  memberId: number;
-  nickname: string;
-  category: {
-    categoryId: number,
-    categoryName: string,
-    categoryImage: string,
-  };
-  longitude: number;
-  latitude: number;
-  content: string;
-  place: string;
-}
-
-const SignUpInput = ({socket}: propsType) => {
+const SignUpInput = ({socket, chatSocket}: propsType) => {
   const route = useRoute();
   const [isActive, setIsActive] = useState(false);
   const [selectedGender, setSelectedGender] = useState(2);
@@ -112,8 +93,9 @@ const SignUpInput = ({socket}: propsType) => {
   const memberName = useInput({
     placeholder: '이름을 입력해 주세요',
     title: '이름을 입력해 주세요',
-    initialIsValid: false,
+    initialIsValid: route.params?.name?true:false,
     onChange: checkMemberName,
+    initialState: route.params?.name?route.params.name:'',
   });
 
   const memberNickname = useInput({
@@ -168,7 +150,7 @@ const SignUpInput = ({socket}: propsType) => {
         <PlainInput {...memberId}/>
         <PlainInput {...memberPassword} secureTextEntry={true}/>
         <PlainInput {...memberCheckPassword} secureTextEntry={true}/>
-        <PlainInput {...memberName}/>
+        <PlainInput {...memberName} editable={route.params?.name?false:true}/>
         <PlainInput {...memberNickname}/>
         <PlainInput {...memberType} editable={false}/>
         <Text style={SignUpInputStyle.signUpInputText}>성별을 입력해주세요.</Text>

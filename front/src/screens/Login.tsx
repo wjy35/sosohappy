@@ -11,13 +11,14 @@ import messaging from '@react-native-firebase/messaging'
 import useStore from "@/store/store";
 import {useState} from "react";
 import {useEffect} from "react";
-import { helpSocket} from "@/types";
+import {ChatSocket, helpSocket} from "@/types";
 
 interface propsType{
   socket: helpSocket,
+  chatSocket: ChatSocket
 }
 
-const Login = ({socket}: propsType) => {
+const Login = ({socket, chatSocket}: propsType) => {
   const navigation = useNavigation();
   const {userInfo, login} = useStore();
   const [isFail, setIsFail] = useState(false);
@@ -60,12 +61,11 @@ const Login = ({socket}: propsType) => {
         await RNSecureStorage.set("accessToken", res.data.result.authorization.accessToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
         await RNSecureStorage.set("refreshToken", res.data.result.authorization.refreshToken, {accessible: ACCESSIBLE.WHEN_UNLOCKED});
 
-        const userInfo = await memberApi.getMember();
+        const userRes = await memberApi.getMember();
 
-        if (userInfo.status === 200){
+        if (userRes.status === 200){
           setIsLoading(false);
-          login(userInfo.data.result.member);
-          socket.getMemberId(userInfo.data.result.member.memberId);
+          login(userRes.data.result.member);
           navigation.replace('Main');
         }
         const fcmToken = await getFcmToken();
@@ -116,7 +116,7 @@ const Login = ({socket}: propsType) => {
             }
           </View>
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.7}>
+        <TouchableOpacity activeOpacity={0.7} onPress={()=>navigation.navigate("SignUpSeparate")}>
           <Text style={LoginStyle.authText}>회원이 아니신가요?</Text>
         </TouchableOpacity>
       </View>
