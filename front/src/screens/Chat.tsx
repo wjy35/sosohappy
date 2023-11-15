@@ -13,8 +13,13 @@ import {exit, people, send2, hamburgerMenu, backIcon} from "@/assets/icons/icons
 
 import ChatStyle from "@/styles/ChatStyle";
 import YourChat from "@/components/YourCaht";
-import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {useFocusEffect, useNavigation, useRoute} from "@react-navigation/native";
 import {helpSocket, ChatSocket} from "@/types";
+import useStore from "@/store/store";
+import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
+import Header from "@/components/Header";
+import SideMenu from "@/components/SideMenu";
+import Footer from "@/components/Footer";
 
 interface propsType{
   helpSocket: helpSocket;
@@ -24,7 +29,6 @@ interface propsType{
 
 
 const Chat = ({helpSocket, chatSocket}: propsType) => {
-  const socket = io('http://10.0.2.2:4002');
   const [msg, setMsg] = useState<string>("");
   const [msgList, setMsgList] = useState<Object[]>([]);
   const [roomNo, setroomNo] = useState<number|null>(null);
