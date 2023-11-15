@@ -7,6 +7,7 @@ import memberApi from "@/apis/memberApi";
 import Modal from "react-native-modal";
 import useStore from "@/store/store";
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
+import RNSecureStorage from "rn-secure-storage";
 
 interface props {
     closeSide: Function;
@@ -19,8 +20,9 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
     const {userInfo, logout} = useStore();
 
     const userLogout = async () => {
-        navigation.navigate('Main');
         await logout();
+        await RNSecureStorage.remove("accessToken");
+        navigation.navigate('Main');
     };
 
     const goto = (next: string) => {
