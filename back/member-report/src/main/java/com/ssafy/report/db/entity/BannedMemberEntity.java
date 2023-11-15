@@ -19,4 +19,8 @@ public class BannedMemberEntity {
 
     @Column(name = "end_timestamp")
     Timestamp endTimestamp;
+
+    public void setEndTimestamp(Timestamp endTimestamp) {
+        this.endTimestamp = endTimestamp;
+    }
 }
