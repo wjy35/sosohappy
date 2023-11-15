@@ -181,20 +181,15 @@ public class MonsterServiceImpl implements MonsterService{
 
     @Override
     @Transactional
-    public void updateClover(Long fromMemberId, Long toMemberId, int clover) {
+    public void updateClover(Long fromMemberId, int clover) {
 
         MemberMonsterProfile fromProfile = profileRepository.findByMemberId(fromMemberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-        MemberMonsterProfile toProfile = profileRepository.findByMemberId(toMemberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         fromProfile.addMemberClover(clover);
         fromProfile.addMemberAccruedClover(clover);
-        toProfile.addMemberClover(clover);
-        toProfile.addMemberAccruedClover(clover);
 
         profileRepository.save(fromProfile);
-        profileRepository.save(toProfile);
 
     }
 
