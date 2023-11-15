@@ -32,8 +32,9 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
   const [msg, setMsg] = useState<string>("");
   const [msgList, setMsgList] = useState<Object[]>([]);
   const [roomNo, setroomNo] = useState<number|null>(null);
-  const [myMemberId, setMyMemberId] = useState<string>("1");
-  const [yourMemberId, setYourMemberId] = useState<string>("2");
+  const route = useRoute();
+  const [otherMemberId, setOtherMemberId] = useState<string>(route.params?.otherMemberId);
+  const {userInfo} = useStore();
   const navigation = useNavigation();
   const [isVisible, setIsVisible] = useState(false);
 
@@ -48,7 +49,7 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
 
   const sendMsg = async () => {
     if(roomNo){
-      const sendChatRes = await chatApi.sendChat({roomNo: roomNo, sendMemberId: myMemberId, receiveMemberId:yourMemberId, content:msg});
+      const sendChatRes = await chatApi.sendChat({roomNo: roomNo, sendMemberId: userInfo.memberId, receiveMemberId:otherMemberId, content:msg});
       if(sendChatRes.status === 200){
         setMsg("");
       }else{
@@ -58,7 +59,7 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
   }
 
   const connectChatRoom = async () => {
-    const roomNoRes = await chatApi.makeChatRoom({senderMemberId:myMemberId, receiveMemberId:yourMemberId});
+    const roomNoRes = await chatApi.makeChatRoom({senderMemberId:userInfo.memberId, receiveMemberId:otherMemberId});
     if(roomNoRes.data.status === "success"){
       setroomNo(roomNoRes.data.result.chatRoomId);
     }
