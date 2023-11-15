@@ -122,8 +122,8 @@ const MyPage = ({socket, chatSocket}: propsType) => {
   }
 
   useEffect(() => {
-    if(defaultSosomon?.levelInfo?.currentLevel){
-      load(defaultSosomon?.levelInfo?.currentLevel/10);
+    if(defaultSosomon?.levelInfo?.currentClover){
+      load((defaultSosomon?.levelInfo?.currentClover/defaultSosomon?.levelInfo.requiredClover)/10);
     }
   }, [defaultSosomon]);
 
@@ -268,7 +268,7 @@ const MyPage = ({socket, chatSocket}: propsType) => {
         <View style={MyPageStyle.statusWrap}>
           {
             defaultSosomon &&
-            <Text style={MyPageStyle.statusPercent}>{defaultSosomon.levelInfo.currentLevel + " Clover / " + defaultSosomon.levelInfo.requiredClover + " Clover"}</Text>
+            <Text style={MyPageStyle.statusPercent}>{defaultSosomon.levelInfo.currentClover + " Clover / " + defaultSosomon.levelInfo.requiredClover + " Clover"}</Text>
           }
           <View style={MyPageStyle.expBarWrap}>
             <View style={MyPageStyle.expBarBg}></View>

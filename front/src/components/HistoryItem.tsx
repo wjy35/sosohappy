@@ -12,10 +12,10 @@ interface propsType{
     createdDate: string,
     openCookie: Function,
     updateFortuneModalState: Function,
-    historyId: number,
+    fortuneCookieId: number,
 }
 
-const HistoryItem = ({thumbnail, content, createdDate, openCookie, updateFortuneModalState, historyId} : propsType) => {
+const HistoryItem = ({thumbnail, content, createdDate, openCookie, updateFortuneModalState, fortuneCookieId} : propsType) => {
     const [cookie, setCookie] = useState(true);
 
     const clickOpenCookie = () => {
@@ -25,7 +25,7 @@ const HistoryItem = ({thumbnail, content, createdDate, openCookie, updateFortune
 
     const openFortuneCookie = async () => {
         
-        const deleteFortuneCookie = await helpMatchApi.openFortuneCookie({fortuneCookieId: historyId});
+        const deleteFortuneCookie = await helpMatchApi.openFortuneCookie({fortuneCookieId: fortuneCookieId});
         
         if(deleteFortuneCookie.status === 200){
             updateFortuneModalState(true);
