@@ -3,10 +3,13 @@ package com.ssafy.help.match.socket.service.impl;
 import com.ssafy.help.match.db.entity.HelpEntity;
 import com.ssafy.help.match.db.entity.HelpMatchStatus;
 import com.ssafy.help.match.db.entity.HelpMatchType;
+import com.ssafy.help.match.db.entity.SendMatchEntity;
 import com.ssafy.help.match.db.repository.*;
 import com.ssafy.help.match.event.dto.HelperSearchEventDTO;
 import com.ssafy.help.match.event.emitter.EventEmitter;
 import com.ssafy.help.match.event.emitter.EventTopicPrefix;
+import com.ssafy.help.match.event.producer.KafkaEventProducer;
+import com.ssafy.help.match.event.producer.KafkaEventTopic;
 import com.ssafy.help.match.socket.dto.MatchPopEventDTO;
 import com.ssafy.help.match.socket.dto.MatchPushEventDTO;
 import com.ssafy.help.match.socket.dto.StatusChangeEventDTO;
@@ -49,6 +52,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     private final double[] maxDistanceList = {500d,1000d,1500d};
     private final HelpEntityRepository helpEntityRepository;
     private final EventEmitter eventEmitter;
+    private final KafkaEventProducer kafkaEventProducer;
 
     @Override
     public void cancel(Long memberId) {
@@ -72,12 +76,15 @@ public class HelpMatchServiceImpl implements HelpMatchService {
 
         if (helpMatchStatus.equals(HelpMatchStatus.WAIT_COMPLETE)||helpMatchStatus.equals(HelpMatchStatus.ON_MOVE)){
             helpEntity = helpEntityRepository.findByMemberId(memberId);
-            Point point = memberPointRepository.find(memberId);
-            otherMemberPoint = OtherMemberPoint
-                    .builder()
-                    .longitude(point.getX())
-                    .latitude(point.getY())
-                    .build();
+
+            if(memberSessionEntityRepository.isOnMove(helpEntity.getOtherMemberId())){
+                Point point = memberPointRepository.find(helpEntity.getOtherMemberId());
+                otherMemberPoint = OtherMemberPoint
+                        .builder()
+                        .longitude(point.getX())
+                        .latitude(point.getY())
+                        .build();
+            }
         }
 
         MatchStatusResponse response = MatchStatusResponse
@@ -110,18 +117,22 @@ public class HelpMatchServiceImpl implements HelpMatchService {
     }
 
     @Override
-    public void match(HelpMatchRequest helpMatchRequest) {
+    public void match(Long memberId) {
         // ToDo 장애 여부 체크
-        saveAndChangeStatus(helpMatchRequest);
+//        saveAndChangeStatus(helpMatchRequest);
+        SendMatchEntity sendMatchEntity = sendMatchEntityRepository.findByMemberId(memberId);
 
         Set<Long> receiveMemberIdSet = new HashSet<>();
-        Point centerPoint = new Point(helpMatchRequest.getLongitude(),helpMatchRequest.getLatitude());
+        Point centerPoint = new Point(sendMatchEntity.getLongitude(),sendMatchEntity.getLatitude());
 
         for(double maxDistance:maxDistanceList){
-            matchInRange(helpMatchRequest.getMemberId(), centerPoint, maxDistance, receiveMemberIdSet);
+            matchInRange(sendMatchEntity.getMemberId(), centerPoint, maxDistance, receiveMemberIdSet);
         }
 
-        sendMatchEntityRepository.saveReceiveMemberIdSet(helpMatchRequest.getMemberId(), receiveMemberIdSet);
+        sendMatchEntityRepository.saveReceiveMemberIdSet(sendMatchEntity.getMemberId(), receiveMemberIdSet);
+        if(receiveMemberIdSet.isEmpty()){
+            eventEmitter.emit(EventTopicPrefix.HELPER_SEARCH, HelperSearchEventDTO.builder().memberId(memberId).metric(-1d).build());
+        }
     }
 
     @Override
@@ -129,7 +140,8 @@ public class HelpMatchServiceImpl implements HelpMatchService {
         return memberSessionEntityRepository.getMatchStatus(memberId);
     }
 
-    private void saveAndChangeStatus(HelpMatchRequest helpMatchRequest) {
+    @Override
+    public void saveAndChangeStatus(HelpMatchRequest helpMatchRequest) {
         StatusChangeEventDTO statusChangeEventDTO = StatusChangeEventDTO
                 .builder()
                 .memberId(helpMatchRequest.getMemberId())
@@ -210,7 +222,7 @@ public class HelpMatchServiceImpl implements HelpMatchService {
 
             redisTemplate.convertAndSend(MATCH_PUSH_EVENT_TOPIC_PREFIX +uuid, objectSerializer.serialize(matchPushEventDTO));
         }else{
-            // ToDo Notification Event
+            kafkaEventProducer.produce(KafkaEventTopic.HELP_MATCH_PUSH,searchedMemberId.toString());
         }
     }
 

@@ -116,9 +116,11 @@ public class HelpServiceImpl implements HelpService {
                 .builder()
                 .otherMemberId(memberId)
                 .content(helpEntity.getContent())
+                .categoryId(helpEntity.getCategory().getCategoryId())
                 .build();
 
         fortuneCookieEntityRepository.save(otherMemberId,fortuneCookieEntity);
+        kafkaEventProducer.produce(KafkaEventTopic.FORTUNE_COOKIE_CREATE,otherMemberId.toString());
     }
 
     @Override
