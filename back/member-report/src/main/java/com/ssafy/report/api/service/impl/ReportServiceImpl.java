@@ -27,9 +27,10 @@ public class ReportServiceImpl implements ReportService {
         return memberReportEntityRepository.findAll()
                 .stream()
                 .map((memberReportEntity)-> ReportedMemberResponse.builder()
-                                .reportedNickname(memberOpenFeign.getMemberDto(memberReportEntity.getReportedMemberId()).getNickname())
-                                .reportingNickname(memberOpenFeign.getMemberDto(memberReportEntity.getReportingMemberId()).getNickname())
-                                .build())
+                        .reportedMemberId(memberReportEntity.getReportedMemberId())
+                        .reportedNickname(memberOpenFeign.getMemberDto(memberReportEntity.getReportedMemberId()).getNickname())
+                        .reportingNickname(memberOpenFeign.getMemberDto(memberReportEntity.getReportingMemberId()).getNickname())
+                        .build())
                 .collect(Collectors.toList());
     }
 }

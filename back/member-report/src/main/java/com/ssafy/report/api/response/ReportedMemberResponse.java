@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class ReportedMemberResponse {
     String reportingNickname;
     String reportedNickname;
+    Long reportedMemberId;
 }
