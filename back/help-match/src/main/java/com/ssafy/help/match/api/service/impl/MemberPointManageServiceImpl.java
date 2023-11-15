@@ -31,8 +31,8 @@ public class MemberPointManageServiceImpl implements MemberPointManageService {
         PointChangeEventDTO pointChangeEvent =PointChangeEventDTO
                 .builder()
                 .receiveMemberId(otherMemberId)
-                .longitude(point.getY())
-                .latitude(point.getX())
+                .longitude(point.getX())
+                .latitude(point.getY())
                 .build();
 
         eventEmitter.emit(EventTopicPrefix.POINT_CHANGE,pointChangeEvent);
