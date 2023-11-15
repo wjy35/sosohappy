@@ -125,7 +125,14 @@ const Map = ({location, socket, chatSocket}: propsType) => {
         }
     }, [socket.status]);
 
-  return (
+    useEffect(() => {
+        if (socket.status === 'WAIT_COMPLETE'){
+            pressAroundMarker(socket.data?.helpEntity);
+        }
+    }, []);
+
+
+    return (
       <>
           <CommonLayout footer={true} headerType={0}>
               <View style={MapStyle.mapContainer}>
