@@ -29,7 +29,6 @@ const HistoryItem = ({thumbnail, content, createdDate, openCookie, updateFortune
         
         if(deleteFortuneCookie.status === 200){
             updateFortuneModalState(true);
-            console.log("deleteFortuneCookie", deleteFortuneCookie);
             setCookie(false);
         }
 
