@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
 public class KafkaConsumer {
 
     private final HelpHistoryService helpHistoryService;
-    @KafkaListener(topics = "help-history-command-mysql.help_history.help_history")
+    @KafkaListener(topics = "help.history.create")
     public void consume(ConsumerRecord<String,String> message) {
         helpHistoryService.addHelpHistory(message);
         System.out.println("message = " + message.value());

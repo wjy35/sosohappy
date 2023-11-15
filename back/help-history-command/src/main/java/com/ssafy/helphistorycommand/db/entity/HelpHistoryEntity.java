@@ -36,5 +36,6 @@ public class HelpHistoryEntity {
     double y;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
-    Timestamp createdAt;
+    @Builder.Default
+    Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 }
