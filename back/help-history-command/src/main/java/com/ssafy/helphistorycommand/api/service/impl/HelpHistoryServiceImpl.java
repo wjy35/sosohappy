@@ -55,6 +55,7 @@ public class HelpHistoryServiceImpl implements HelpHistoryService {
 
         CertificateEntity certificateEntity = CertificateEntity.builder()
                 .createdAt(helpHistory.getCreatedAt())
+                .memberId(helpHistory.getFromMemberId())
                 .nickname(memberDto.getNickName())
                 .categoryName(categoryDto.getCategoryName())
                 .build();
