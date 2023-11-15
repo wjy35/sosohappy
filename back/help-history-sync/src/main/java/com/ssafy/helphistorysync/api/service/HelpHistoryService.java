@@ -13,6 +13,4 @@ public interface HelpHistoryService {
     HelpHistoryRequest getAfter(ConsumerRecord<String,String> message) throws JsonProcessingException;
 
     CategoryDto getCategory(HelpHistoryRequest helpHistoryRequest) throws JsonProcessingException;
-
-    MemberDto getMember(long memberId) throws JsonProcessingException;
 }
