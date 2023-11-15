@@ -60,18 +60,13 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
     }
   }
 
-  useFocusEffect(()=>{
-    if (!helpSocket.connected) return;
-    helpSocket.disConnect();
-  })
-
   useEffect(() => {
     connectChatRoom();
   },[])
 
   useEffect(() => {
     getChatListApi();
-  },[roomNo,msg]);
+  },[roomNo]);
 
   useFocusEffect(
     useCallback(() => {
