@@ -2,6 +2,7 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import AuthTitle from "@/components/AuthTitle";
 import AuthButton from "@/components/AuthButton";
+import CameraAnimation from "@/assets/animation/camera-gif.gif";
 
 import {SvgXml} from "react-native-svg";
 import {addPlus, camera, gallery} from "@/assets/icons/icons";
@@ -149,7 +150,7 @@ const SignUpAuth = ({socket, chatSocket}: propsType) => {
     return (
         <CommonLayout headerType={0} footer={true}>
             <AuthTitle level="2" title="증명서를 인증해주세요. " description="사진 한 장으로 나를 증명할 수 있어요"/>
-            <View>
+            <View style={SignUpAuthStyle.inputNameWrap}>
                 <View style={SignUpAuthStyle.nameWrap}>
                     <PlainInput {...memberName}/>
                 </View>
@@ -186,6 +187,13 @@ const SignUpAuth = ({socket, chatSocket}: propsType) => {
                         </View>
                     )
                 }
+            </View>
+            <View style={SignUpAuthStyle.rotateAlertWrap}>
+                <Image
+                    source={CameraAnimation}
+                    style={SignUpAuthStyle.rotateAlertImg}
+                />
+                <Text style={SignUpAuthStyle.rotateAlertText}>증명서를 세로방향으로 촬영해주세요.</Text>
             </View>
             <AuthButton
                 isActive={isActive}
