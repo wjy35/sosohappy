@@ -4,7 +4,7 @@ const domain = "member-report";
 
 const recommendApi = {
     recommend: async ({memberId}) => {
-        const res = await recommendInstance.post(
+        const res = await recommendInstance.get(
             `recommend/${memberId}`
         )
         return res;
