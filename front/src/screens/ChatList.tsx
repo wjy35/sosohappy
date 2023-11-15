@@ -26,44 +26,14 @@ const ChatList = ({socket, chatSocket}: propsType) => {
   const [noneCheckedState, setNoneCheckedState] = useState<Boolean>(true);
   const [allMsgState, setAllMsgState] = useState<Boolean>(false);
   const navigation = useNavigation();
+  const {userInfo} = useStore();
 
 
 
   const getChatRoomList = async () => {
-    const chatListApi =  await chatApi.getChatRoomList("1");
-    setChatList(chatListApi.data.result.chatRoomList);
-
-    if(chatList){
-      for(let i=0; i<chatList.length; i++){
-        const userInfo = await memberApi.publicMemberShow(chatList[i].memberList[1]);
-        if(userInfo.status === 200){
-          const userName = userInfo.data.result.member.nickname;
-          const userRank = userInfo.data.result.member.disabled;
-          setUserNameList(prev => ([
-            ...prev,
-            userName,
-          ]));
-          if(userRank === false){
-            setUserRankList(prev => ([
-              ...prev,
-              "모음이",
-            ]))
-          }else if(userRank === true){
-            setUserRankList(prev => ([
-              ...prev,
-              "나눔이",
-            ]))
-          }
-        }
-      }
-    }
-  }
-
-  const findRoomUserName = async (userNo: number) => {
-    const memberRes = await memberApi.publicMemberShow(userNo);
-    if(memberRes.status === 200){
-      return String(memberRes.data.result.member.nickname);
-    }
+    const chatListApi = await chatApi.getChatRoomList(userInfo.memberId);
+    chatSocket.getHelpChatList(chatListApi.data.result.chatRoomList);
+    chatSocket.getList();
   }
 
   useFocusEffect(
@@ -90,10 +60,10 @@ const ChatList = ({socket, chatSocket}: propsType) => {
 
   useEffect(() => {
     getChatRoomList();
-  },[userNameList, userRankList]);
+  },[]);
 
   return (
-    <CommonLayout>
+    <CommonLayout footer={true} headerType={0}>
       <View style={ChatListStyle.chatListBg}>
         <View style={ChatListStyle.chatListHeaderWrap}>
           <View>
@@ -122,12 +92,9 @@ const ChatList = ({socket, chatSocket}: propsType) => {
 
         <View style={ChatListStyle.chatListItemWrap}>
           {
-            chatList &&
-            chatList.map((chatListItem: any, index: number) => {
+            chatSocket.helpChatList.map((chatListItem: any, index: number) => {
               return(
-                <>
-                  <ChatListItem thumbnail={FishThumbnail} name={userNameList[index]} rank={userRankList[index]} recentMessage={chatListItem.currentChat.content} key={index}/>
-                </>
+                  <ChatListItem chatInfo={chatListItem} key={`chatlist${index}`}/>
               );
             })
           }
