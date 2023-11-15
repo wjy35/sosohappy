@@ -1,8 +1,6 @@
 import {useEffect, useState} from "react"
 import { Text, View, Image} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import AuthTitle from "@/components/AuthTitle";
 import AuthButton from "@/components/AuthButton";
 
