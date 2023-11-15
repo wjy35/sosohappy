@@ -5,4 +5,5 @@ import com.ssafy.helphistorysync.db.entity.HelpHistoryEntity;
 
 public interface HelpHistoryRepository {
     void addHelpHistory(HelpHistoryEntity helpHistoryEntity) throws JsonProcessingException;
+
 }

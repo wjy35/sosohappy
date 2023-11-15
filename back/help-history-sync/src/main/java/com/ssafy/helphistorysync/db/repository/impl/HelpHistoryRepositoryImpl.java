@@ -24,4 +24,5 @@ public class HelpHistoryRepositoryImpl implements HelpHistoryRepository {
         listOperations.rightPush("histories:toMemberId:" + helpHistoryEntity.getToMemberId(), json);
         listOperations.rightPush("histories:fromMemberId:" + helpHistoryEntity.getFromMemberId(), json);
     }
+
 }
