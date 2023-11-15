@@ -1,11 +1,10 @@
 package com.ssafy.report.api.service;
 
-import com.ssafy.report.db.entity.BannedMemberEntity;
-
+import com.ssafy.report.api.response.BannedMemberParam;
 import java.util.List;
 
 public interface BanService {
     void ban(Long bannedMemberId,Integer day);
-    List<BannedMemberEntity> getBannedMemberList();
+    List<BannedMemberParam> getBannedMemberList();
     void cancel(Long memberId);
 }
