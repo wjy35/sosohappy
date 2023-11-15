@@ -17,15 +17,13 @@ public class CertificateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long certificateId;
 
-    @Column(name = "member_id", nullable = false)
-    long memberId;
+    @Column(name = "nickname", nullable = false)
+    String nickname;
 
-    @Column(name = "certificate_num", nullable = false)
-    String certificateNum;
+    @Column(name = "category_name", nullable = false)
+    String categoryName;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
     Timestamp createdAt;
 
-    @Column(name = "exported_at")
-    Timestamp exportedAt;
 }
