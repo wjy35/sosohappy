@@ -43,7 +43,12 @@ public class MemberSignServiceImpl implements MemberSignService {
         return jwtUtil.generateAuthToken(memberId);
     }
 
-    private void verifyPassword(String inputPassword,String storedPassword) {
+    @Override
+    public void signOut(Long memberId) {
+        memberEntityRepository.deleteById(memberId);
+    }
+
+    private void verifyPassword(String inputPassword, String storedPassword) {
         if(storedPassword.equals(hashUtil.hash(inputPassword))) return;
 
         throw new CustomException(ErrorCode.WRONG_PASSWORD);
