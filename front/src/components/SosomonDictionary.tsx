@@ -37,7 +37,7 @@ const SosomonDictionary = ({updateModalState, changeProfileMonster}: propsType) 
             if (res.status === 200){
                 let newDict = {}
                 res.data.result.monsterList.forEach((el, idx)=>{
-                    newDict[el.typeId] = el.level
+                    newDict[el.typeId] = el.levelInfo.currentLevel
                 })
                 setDict(newDict);
             }

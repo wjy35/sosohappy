@@ -5,21 +5,26 @@ import BottomSheet from "@/components/BottomSheet";
 import MapLoading from "@/components/MapLoading";
 import MapView, {PROVIDER_GOOGLE, Marker, Polyline} from "react-native-maps";
 import {MAP_LINE_API_KEY} from "@env"
-import {clover} from "@/assets/icons/icons";
+import {clover, chatIcon} from "@/assets/icons/icons";
 
 import ColorMegaphoneIcon from "@/assets/img/color-megaphone-icon.png"
 
 import MapStyle from "@/styles/MapStyle";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import {helpDetail, helpSocket} from "@/types";
+import {ChatSocket, helpDetail, helpSocket} from "@/types";
 import useStore from "@/store/store";
+import { SvgXml } from "react-native-svg";
+import testImg from "@/assets/sosomon/type4/Whale.png"
+import memberApi from "@/apis/memberApi";
+import {type1, type2, type3, type4} from "@/assets/sosomon";
 
 interface propsType{
   location: any;
   socket: helpSocket;
+  chatSocket: ChatSocket
 }
 
-const Map = ({location, socket}: propsType) => {
+const Map = ({location, socket, chatSocket}: propsType) => {
   const mapWidth = Dimensions.get("window").width;
   const mapHeight = Dimensions.get("window").height;
   const [bottomSheetStatus, setBottomSheetStatus] = useState<Boolean>(false);
@@ -29,6 +34,7 @@ const Map = ({location, socket}: propsType) => {
   const [points, setPoints] = useState<any>();
   const [loading, setLoading] = useState(false);
   const {userInfo} = useStore();
+  const [src, setSrc] = useState();
 
   const updateBottomSheetStatus = (updateStatus: Boolean) => {
     setBottomSheetStatus(updateStatus);
@@ -74,6 +80,29 @@ const Map = ({location, socket}: propsType) => {
       .catch(err => console.error(err));
   }
 
+  const getSosomon = async () => {
+      try {
+          const res = await memberApi.getUserInfo({
+              memberId: socket.data.helpEntity.otherMemberId
+          })
+          if (res.status === 200){
+              const type = Math.floor((res.data.result.member.profileMonsterId-1)/10) + 1;
+              const level = (res.data.result.member.profileMonsterId % 10 === 0)?10:res.data.result.member.profileMonsterId%10;
+              if (type === 1){
+                  setSrc(type1[level-1])
+              } else if (type === 2){
+                  setSrc(type2[level-1])
+              } else if (type === 3){
+                  setSrc(type3[level-1])
+              } else {
+                  setSrc(type4[0])
+              }
+          }
+      } catch (err) {
+          console.log(err);
+      }
+  }
+
   useFocusEffect(
       React.useCallback(() => {
         const connect = () => {
@@ -91,14 +120,19 @@ const Map = ({location, socket}: propsType) => {
             setSelectedHelp(socket.data.helpEntity);
         } else if (socket.status === 'DEFAULT'){
             setPoints(null);
+        } else if (socket.status === 'WAIT_COMPLETE'){
+            getSosomon();
         }
     }, [socket.status]);
 
-  useEffect(()=>{
-      console.log(socket.otherMemberPoint)
-  }, [socket.otherMemberPoint])
+    useEffect(() => {
+        if (socket.status === 'WAIT_COMPLETE'){
+            pressAroundMarker(socket.data?.helpEntity);
+        }
+    }, []);
 
-  return (
+
+    return (
       <>
           <CommonLayout footer={true} headerType={0}>
               <View style={MapStyle.mapContainer}>
@@ -118,15 +152,17 @@ const Map = ({location, socket}: propsType) => {
                   >
                       {
                           (socket.status==='WAIT_COMPLETE'&&socket.otherMemberPoint?.latitude)&&(
-                                  <Marker
-                                      description="helperPosition"
-                                      coordinate={{latitude: socket.otherMemberPoint?.latitude, longitude: socket.otherMemberPoint?.longitude}}
-                                  >
-                                      <Image
-                                          source={require("@/assets/sosomon/type4/Whale.png")}
-                                          style={{width: 100, height: 100, bottom: -20}}
-                                      />
-                                  </Marker>
+                              <Marker
+                                  description="helperPosition"
+                                  // coordinate={{longitude: socket.otherMemberPoint.latitude, latitude: socket.otherMemberPoint.longitude}}
+                                  coordinate={{latitude: socket.otherMemberPoint.latitude, longitude: socket.otherMemberPoint.longitude}}
+                                  // coordinate={{latitude: 127.0395789, longitude: 37.5014045}}
+                              >
+                                  <Image
+                                      source={src?src:testImg}
+                                      style={{width: 100, height: 100, bottom: -20}}
+                                  />
+                              </Marker>
                           )
                       }
                       {
@@ -134,7 +170,18 @@ const Map = ({location, socket}: propsType) => {
                               <Marker
                                   description="helperStartPosition"
                                   coordinate={{latitude: socket.data.otherMemberPoint?.latitude, longitude: socket.data.otherMemberPoint?.longitude}}
+                                  pinColor="#807CFC"
+                                  onPress={() => pressAroundMarker(socket.data?.helpEntity)}
+                              />
+                          )
+                      }
+                      {
+                          (socket.status==='WAIT_COMPLETE'&&socket.data.helpEntity?.latitude)&&(
+                              <Marker
+                                  description="waithelpTargetLocation"
+                                  coordinate={{latitude: socket.data?.helpEntity?.latitude, longitude: socket.data?.helpEntity?.longitude}}
                                   pinColor="#E9747A"
+                                  onPress={() => pressAroundMarker(socket.data?.helpEntity)}
                               />
                           )
                       }
@@ -212,6 +259,11 @@ const Map = ({location, socket}: propsType) => {
                       :
                       <></>
               }
+              <SvgXml
+                xml={chatIcon}
+                style={MapStyle.floatingIcon}
+                onPress={() => navigation.navigate('Chat', {otherMemberId: socket.data.helpEntity?.otherMemberId})}
+              />
           </CommonLayout>
       </>
   );

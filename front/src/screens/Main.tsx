@@ -1,4 +1,4 @@
-import {View, Text, Image, TouchableOpacity} from "react-native";
+import {View, Text, Image, TouchableOpacity, Alert} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import MainImg from "@/assets/img/main-img.png"
 import HandShakeIcon from "@/assets/img/handshake-icon.png"
@@ -11,14 +11,16 @@ import MainStyle from "@/styles/MainStyle";
 import useStore from "@/store/store"
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import React, {useEffect, useState} from "react";
-import {helpSocket} from "@/types";
+import {ChatSocket, helpSocket} from "@/types";
 import helpMatchApi from "@/apis/helpMatchApi";
+import memberApi from "@/apis/memberApi";
 
 interface propsType{
   socket: helpSocket,
+  chatSocket: ChatSocket
 }
 
-const Main = ({socket}: propsType) => {
+const Main = ({socket, chatSocket}: propsType) => {
   const {userInfo, login, logout} = useStore();
   const navigation =  useNavigation();
   const [helpStatus, setHelpStatus] = useState('');
@@ -38,6 +40,44 @@ const Main = ({socket}: propsType) => {
     }
   }
 
+  const getFortuneList = async () => {
+    const fortuneList = await helpMatchApi.getFortuneList();
+    if(fortuneList.status === 200 && userInfo){
+      if(fortuneList.data.result.fortuneCookieList.length > 0){
+        Alert.alert("포츈쿠키 알림이 도착했어요.", "열어보지 않은 포츈쿠키가 있어요. 마이페이지로 이동하시겠어요?", [
+          {text: '취소', onPress: () => {}},
+          {text: '이동하기', onPress: () => navigation.navigate("MyPage")}
+        ]);
+      }
+    }
+  }
+
+  const getMatchingStatus = async () => {
+
+    const matchingStatusRes = await helpMatchApi.getHelpStatus();
+    const matchingStatus = matchingStatusRes.data.result.matchStatus.helpMatchStatus
+    // TODO 추후 WAIT로 변경
+    if(matchingStatus === "WAIT"){
+      Alert.alert("도움요청 알림", "진행되었으나 완료되지 않은 도움요청이 있어요. 완료하시겠습니까?",[
+        {text: '완료하기', onPress: () => completeHelp()}
+      ])
+    }else if(matchingStatus === "ON_MOVE"){
+      Alert.alert("도움요청 알림", "도움요청 진행중입니다. 지도화면으로 이동합니다.", [
+        {text: '이동하기', onPress: () => navigation.navigate('Map')}
+      ]);
+    }
+  }
+
+  const completeHelp = async () => {
+    const getMyInfo = await memberApi.getMember();
+    if(getMyInfo.status === 200){
+      const myMemberId = getMyInfo.data.result.member.memberId;
+
+      const completeRes = await helpMatchApi.helpComplete({memberId: myMemberId});
+      console.log("completeRes", completeRes);
+    }
+  }
+
   useFocusEffect(
       React.useCallback(() => {
         if (userInfo){
@@ -52,21 +92,28 @@ const Main = ({socket}: propsType) => {
       }, [socket.connected])
   )
 
+  useEffect(() => {
+    getFortuneList();
+
+    if(userInfo){
+      getMatchingStatus();
+    }
+  }, [])
+
   return (
     <CommonLayout footer={true} headerType={0} nowPage={'Main'}>
       <View style={MainStyle.mainWrap}>
         <Text style={MainStyle.mainTitle}>
-          소소한 선행을{"\n"}
-          베풀고,{"\n"}
-          <Text style={MainStyle.pointBlue}>여러분의 행운력{"\n"}
-          을</Text> 올리세요
+          <Text style={MainStyle.pointBlue}>소소한 선행</Text>을 베풀고,{"\n"}
+          <Text style={MainStyle.pointBlue}>클로버</Text>를 모아,{"\n"}
+          여러분의 <Text style={MainStyle.pointBlue}>행운력</Text>을{"\n"}올리세요
         </Text>
         <Text style={MainStyle.mainDescription}>주변의 소소한 도움이 필요하신가요?</Text>
         <Image
           source={MainImg}
           style={MainStyle.mainImg}
         />
-        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Map')}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Map')}>
           <View style={MainStyle.helpButton}>
             <Text style={MainStyle.helpButtonText}>도움 찾아가기</Text>
           </View>
@@ -89,7 +136,7 @@ const Main = ({socket}: propsType) => {
           <Text style={MainStyle.boxSubTitle}>소소한 행복이 행운을 가져다줘요</Text>
         </View>
         <View style={MainStyle.boxFlexWrap}>
-          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Map')}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => goto('CreateHelp')}>
             <View style={MainStyle.boxContentWrap}>
               <Text style={MainStyle.boxContentTitle}>
                 도움이{"\n"}
@@ -103,7 +150,7 @@ const Main = ({socket}: propsType) => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('CreateHelp')}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Map')}>
             <View style={MainStyle.boxContentWrap}>
               <Text style={MainStyle.boxContentTitle}>
                 소소한 행복을{"\n"}
@@ -141,7 +188,7 @@ const Main = ({socket}: propsType) => {
           }
 
 
-        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('MyPage')}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => goto('MyPage')}>
           <View style={MainStyle.moveMypageButton}>
             <Image
               source={CloverIcon}
