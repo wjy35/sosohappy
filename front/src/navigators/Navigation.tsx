@@ -15,9 +15,11 @@ import Character from '@/screens/Character';
 import useStore from "@/store/store";
 import Certificate from '@/screens/Certificate';
 import useSocket from "@/hooks/useSocket";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import useLocation from "@/hooks/useLocation";
 import {AppState} from "react-native";
+import messaging from "@react-native-firebase/messaging";
+import useChatSocket from "@/hooks/useChatSocket";
 
 
 const Stack = createStackNavigator();
@@ -26,17 +28,26 @@ interface propsType{
   // location: any;
 }
 
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('[Background Remote Message]', remoteMessage);
+});
+
 const Navigation = ({}: propsType) => {
   const {userInfo} = useStore();
   const socket = useSocket();
   const location = useLocation({});
+  const chatSocket = useChatSocket();
+  const [member, setMember] = useState({
+    memberId: null
+  });
 
   useEffect(() => {
     const appState = AppState.addEventListener('change', () => {
+      console.log(AppState.currentState);
       if (AppState.currentState === 'active') {
         userInfo && location.setForeground(userInfo.memberId, socket.otherMember);
-      } else if (AppState.currentState === 'background' && userInfo) {
-        location.setBackground(userInfo.memberId, socket.otherMember);
+      } else if (AppState.currentState === 'background'&&member.memberId) {
+        location.setBackground(member.memberId, socket.otherMember);
       }
     });
     return () => {
@@ -45,7 +56,25 @@ const Navigation = ({}: propsType) => {
   }, []);
 
   useEffect(() => {
-    userInfo&&location.setForeground(userInfo.memberId, socket.otherMember);
+    member.memberId = userInfo?.memberId;
+    userInfo?.memberId&&socket.getMemberId(userInfo?.memberId);
+  }, [userInfo])
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('[Remote Message] ', JSON.stringify(remoteMessage));
+    });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    if (userInfo) {
+      location.setForeground(userInfo.memberId, socket.otherMember);
+    } else {
+      location.stopWatchPosition();
+      socket.disConnect();
+    }
   }, [userInfo, socket.otherMember])
 
   return (
@@ -55,84 +84,84 @@ const Navigation = ({}: propsType) => {
         <Stack.Screen name="Chat">
           {
             props => (
-                <Chat helpSocket={socket}/>
+                <Chat helpSocket={socket} chatSocket={chatSocket}/>
             )
           }
         </Stack.Screen>
         <Stack.Screen name="ChatList">
           {
             props => (
-                <ChatList socket={socket}/>
+                <ChatList socket={socket} chatSocket={chatSocket}/>
             )
           }
         </Stack.Screen>
         <Stack.Screen name="CreateHelp">
           {
             props => (
-                <CreateHelp location={location.coordinate} socket={socket}/>
+                <CreateHelp location={location.coordinate} socket={socket} chatSocket={chatSocket}/>
             )
           }
         </Stack.Screen>
         <Stack.Screen name="Login">
           {
             props => (
-                <Login socket={socket}/>
+                <Login socket={socket} chatSocket={chatSocket}/>
             )
           }
         </Stack.Screen>
         <Stack.Screen name="Main">
           {
             props => (
-                <Main socket={socket}/>
+                <Main socket={socket} chatSocket={chatSocket}/>
             )
           }
         </Stack.Screen>
         <Stack.Screen name="Map">
           {
             props => (
-                <Map location={location.coordinate} socket={socket}/>
+                <Map location={location.coordinate} socket={socket} chatSocket={chatSocket}/>
             )
           }
         </Stack.Screen>
         <Stack.Screen name="MyPage">
           {
             props => (
-                <MyPage socket={socket}/>
+                <MyPage socket={socket} chatSocket={chatSocket}/>
             )
           }
         </Stack.Screen>
         <Stack.Screen name="SignUpAuth">
           {
             props => (
-                <SignUpAuth socket={socket}/>
+                <SignUpAuth socket={socket} chatSocket={chatSocket}/>
             )
           }
         </Stack.Screen>
         <Stack.Screen name="SignUpInput">
           {
             props => (
-                <SignUpInput socket={socket}/>
+                <SignUpInput socket={socket} chatSocket={chatSocket}/>
             )
           }
         </Stack.Screen>
         <Stack.Screen name="SignUpSeparate">
           {
             props => (
-                <SignUpSeparate socket={socket}/>
+                <SignUpSeparate socket={socket} chatSocket={chatSocket}/>
             )
           }
         </Stack.Screen>
         <Stack.Screen name="Character">
           {
             props => (
-                <Character socket={socket}/>
+                <Character socket={socket} chatSocket={chatSocket}/>
             )
           }
         </Stack.Screen>
         <Stack.Screen name="Certificate">
           {
               props => (
-                  <Certificate socket={socket}/>
+                  <Certificate socket={socket} chatSocket={chatSocket}/>
               )
           }
         </Stack.Screen>

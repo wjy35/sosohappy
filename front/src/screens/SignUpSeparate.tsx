@@ -1,8 +1,6 @@
 import {useEffect, useState} from "react"
 import { Text, View, Image} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import AuthTitle from "@/components/AuthTitle";
 import AuthButton from "@/components/AuthButton";
 
@@ -12,33 +10,15 @@ import MoeumImg from "@/assets/img/moeum-img.png"
 import SignUpSeparateStyle from "@/styles/SignUpSeparateStyle";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {ChatSocket, helpSocket} from "@/types";
 
 interface propsType{
-  socket: {
-    connect: Function,
-    send: Function,
-    status: String,
-    helpList: helpDetail[],
-    connected: boolean,
-    disConnect: Function,
-  };
+  socket: helpSocket;
+  chatSocket: ChatSocket;
 }
 
-interface helpDetail {
-  memberId: number;
-  nickname: string;
-  category: {
-    categoryId: number,
-    categoryName: string,
-    categoryImage: string,
-  };
-  longitude: number;
-  latitude: number;
-  content: string;
-  place: string;
-}
 
-const SignUpSeparate = ({socket}: propsType) => {
+const SignUpSeparate = ({socket, chatSocket}: propsType) => {
   const [selectedType, setSelectedType] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const navigation = useNavigation();

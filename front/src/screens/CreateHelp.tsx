@@ -1,6 +1,6 @@
 import CommonLayout from "@/components/CommonLayout";
 import CreateHelpSelectCategory from "@/components/CreateHelpSelectCategory";
-import {Text, TouchableOpacity, View} from "react-native";
+import {Text, TouchableOpacity, View, Alert} from "react-native";
 import CreateHelpStyle from "@/styles/CreateHelpStyle";
 import AllCategoryWrap from "@/components/AllCategoryWrap";
 import PlainInput from "@/components/PlainInput";
@@ -12,15 +12,16 @@ import React, {useEffect, useState} from "react";
 import useStore from "@/store/store";
 import useInput from "@/hooks/useInput";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import {helpSocket, point} from "@/types";
+import {ChatSocket, helpSocket, point} from "@/types";
 import MapLoading from "@/components/MapLoading";
 
 interface propsType{
     location: point;
     socket: helpSocket,
+    chatSocket: ChatSocket
 }
 
-const CreateHelp = (({location, socket}: propsType) => {
+const CreateHelp = (({location, socket, chatSocket}: propsType) => {
     const [category, setCategory] = useState<any>(null);
     const {userInfo} = useStore();
     const navigation = useNavigation();
@@ -60,6 +61,20 @@ const CreateHelp = (({location, socket}: propsType) => {
     });
 
     const sendHelp = () => {
+        Alert.alert("개인정보 제3자 제공 동의", '"소소행"앱이 사용자의 위치를 사용하도록 허용하시겠습니까?',
+        [
+            {text: '취소', onPress: () => {}},
+            {
+                text: '확인',
+                onPress: () => {
+                    startPayload();
+                }
+            }
+        ]);
+
+    }
+
+    const startPayload = () => {
         const payload = {
             memberId: userInfo.memberId,
             nickname: userInfo.nickname,
@@ -140,7 +155,7 @@ const CreateHelp = (({location, socket}: propsType) => {
                                     <View style={CreateHelpStyle.recommendTitlewrap}>
                                         <Text style={CreateHelpStyle.recommendTitle}>이런 카테고리는 <Text style={CreateHelpStyle.recommendPointText}>어떠세요?</Text></Text>
                                     </View>
-                                    <RecommendCategoryWrap/>
+                                    <RecommendCategoryWrap selectCategory={selectCategory}/>
                                 </View>
 
                                 <View style={CreateHelpStyle.recommendWrap}>

@@ -7,26 +7,38 @@ import useStore from "@/store/store";
 import {Provider} from "mobx-react";
 import * as Sentry from "@sentry/react-native";
 import {SENTRY_DSN} from "@env"
+import usePermissions from "@/hooks/usePermissions";
+import {useFocusEffect} from "@react-navigation/native";
+import RNSecureStorage from "rn-secure-storage";
+import memberApi from "@/apis/memberApi";
 
 function App(): JSX.Element {
+    const {login} = useStore();
+
+
     Sentry.init({
       dsn: SENTRY_DSN,
       tracesSampleRate: 1.0,
     })
-    // const location = useLocation({});
-    //
-    // useEffect(() => {
-    //     const appState = AppState.addEventListener('change', ()=>{
-    //         if (AppState.currentState === 'active'){
-    //             location.setForeground();
-    //         } else if (AppState.currentState === 'background'){
-    //             location.setBackground();
-    //         }
-    //     });
-    //     return () => {
-    //         appState.remove();
-    //     }
-    // }, []);
+    usePermissions();
+
+    const autologin = async () => {
+        const token = await RNSecureStorage.get("accessToken");
+        if (token){
+            try {
+                const userRes = await memberApi.getMember();
+                if (userRes.status === 200){
+                    login(userRes.data.result.member);
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    }
+
+    useEffect(() => {
+        autologin();
+    }, []);
 
     return (
       <>
