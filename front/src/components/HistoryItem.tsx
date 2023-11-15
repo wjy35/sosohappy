@@ -40,12 +40,12 @@ const HistoryItem = ({thumbnail, content, createdDate, openCookie, updateFortune
             <TouchableOpacity activeOpacity={0.7} onPress={() => openFortuneCookie()}>
                 <View style={HistoryItemStyle.historyItemWrap}>
                     <View style={HistoryItemStyle.historyItemProfileBg}>
-                        <SvgXml
+                        {/* <SvgXml
                             xml={thumbnail}
                             style={HistoryItemStyle.historyItemProfileImg}
                             width={40}
                             height={40}
-                        />
+                        /> */}
                     </View>
                     <View style={HistoryItemStyle.historyItemInfo}>
                         <Text style={HistoryItemStyle.historyItemContent}>{content}</Text>
