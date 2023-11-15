@@ -14,6 +14,7 @@ public class FortuneCookieEntity {
     String fortuneCookieId;
     Long otherMemberId;
     String content;
+    Integer categoryId;
 
     @Builder.Default
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
