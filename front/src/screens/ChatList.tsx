@@ -15,6 +15,7 @@ import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import chatApi from "@/apis/chatApi";
 import memberApi from "@/apis/memberApi";
 import {ChatSocket, helpSocket} from "@/types";
+import useStore from "@/store/store";
 
 interface propsType{
   socket: helpSocket;
@@ -24,19 +25,9 @@ interface propsType{
 const ChatList = ({socket, chatSocket}: propsType) => {
   const [noneCheckedState, setNoneCheckedState] = useState<Boolean>(true);
   const [allMsgState, setAllMsgState] = useState<Boolean>(false);
-  const [chatList, setChatList] = useState<Object[] | null>(null);
-  const [userNameList, setUserNameList] = useState<any[]>([]);
-  const [userRankList, setUserRankList] = useState<any[]>([]);
   const navigation = useNavigation();
 
-  const updateNoneCheckedState = () => {
-    setNoneCheckedState(true);
-    setAllMsgState(false);
-  }
-  const updateAllMsgState = () => {
-    setAllMsgState(true);
-    setNoneCheckedState(false);
-  }
+
 
   const getChatRoomList = async () => {
     const chatListApi =  await chatApi.getChatRoomList("1");
