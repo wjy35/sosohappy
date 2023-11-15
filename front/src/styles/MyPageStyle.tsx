@@ -146,7 +146,7 @@ const MyPageStyle = StyleSheet.create({
         flexDirection:"row",
         justifyContent:"flex-start",
         alignItems:"center",
-        marginBottom:6,
+        paddingBottom:14,
     },
     
     statusWrap:{
