@@ -24,7 +24,7 @@ public class HelpController {
         try{
             helpService.accept(helpAcceptRequest);
         }catch (UnAcceptableException e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
