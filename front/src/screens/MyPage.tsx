@@ -61,17 +61,6 @@ const MyPage = ({socket, chatSocket}: propsType) => {
     setModalState(status);
   }
 
-  const getProfileMonster = async () => {
-    try {
-      const res = await monsterApi.getMyDetail();
-      if (res.status === 200){
-        setDefaultSosomon(res.data.result.monster);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
   const changeProfileMonster = async (profileType: number, profileLevel: number) => {
     const profileMonsterId = (profileType-1)*10 + profileLevel;
     try {
@@ -137,11 +126,8 @@ const MyPage = ({socket, chatSocket}: propsType) => {
   }, [defaultSosomon]);
 
   useEffect(()=>{
-    getProfileMonster();
     getMyCloverApi();
   }, [])
-
-
 
   useFocusEffect(
       React.useCallback(() => {
@@ -238,7 +224,6 @@ const MyPage = ({socket, chatSocket}: propsType) => {
             profileMonsterType && (
                 <WebView
                     source={{uri: `http://sosohappy.co.kr:8888/sosomon/${profileMonsterType}/${profileMonsterLevel}`}}
-                    // source={{uri: `http://sosohappy.co.kr:8888/sosomon/2/5`}}
                     style={MyPageStyle.MySelectedCharImg}
                     nestedScrollEnabled
                 />
