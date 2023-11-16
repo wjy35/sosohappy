@@ -74,13 +74,19 @@ const ChatList = ({socket, chatSocket}: propsType) => {
         {/*</View>*/}
 
         <View style={ChatListStyle.chatListItemWrap}>
-          {
-            chatSocket.helpChatList.map((chatListItem: any, index: number) => {
-              return(
-                  <ChatListItem chatInfo={chatListItem} key={`chatlist${index}`}/>
-              );
-            })
-          }
+            {
+                chatSocket.helpChatList.length > 0 ? (
+                    chatSocket.helpChatList.map((chatListItem: any, index: number) => {
+                        return(
+                            <ChatListItem chatInfo={chatListItem} key={`chatlist${index}`}/>
+                        );
+                    })
+                ):(
+                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                        <Text>생성된 채팅방이 없습니다.</Text>
+                    </View>
+                )
+            }
         </View>
       </View>
     </CommonLayout>
