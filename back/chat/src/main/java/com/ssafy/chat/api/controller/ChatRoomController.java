@@ -34,7 +34,7 @@ public class ChatRoomController {
     }
 
     @SubscribeMapping("/topic/{memberId}")
-    public void subscribeChatRoomList(@DestinationVariable("memberId") long memberId) throws JsonProcessingException {
+    public void subscribeChatRoomList(@DestinationVariable("memberId") long memberId){
         List<ChatRoomList> chatRoomLists;
         try {
             chatRoomLists = chatRoomService.getChatRoomListParams(memberId);
