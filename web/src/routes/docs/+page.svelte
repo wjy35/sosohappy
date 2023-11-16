@@ -1,5 +1,26 @@
 <script>
- 
+    import axios from "axios";
+
+    let inputId = '';
+    let inputPassword = '';
+
+    const login = async () => {
+        const loginRes = await axios.post("https://sosohappy.co.kr/member-command/sign-in",{
+            id:inputId,
+            password:inputPassword,
+        },
+        {
+            headers:{
+                'Content-Type': 'application/json',
+            },
+        })
+
+        if(loginRes.status === 200){
+            console.log("loginRes", loginRes.data.result.authorization.accessToken);
+            location.href = "/docs/certificate"
+        }
+    }
+
 </script>
 
 <div class="login-container">
@@ -12,9 +33,9 @@
         </p>
     </div>
     <div class="login-input-wrap">
-        <input type="text" class="input-id" placeholder="아이디를 입력해주세요."/>
-        <input type="password" class="input-password" placeholder="비밀번호를 입력해주세요."/>
-        <button class="login-button">로그인</button>
+        <input type="text" class="input-id" placeholder="아이디를 입력해주세요." bind:value={inputId}/>
+        <input type="password" class="input-password" placeholder="비밀번호를 입력해주세요." bind:value={inputPassword}/>
+        <button class="login-button" on:click={() => login()}>로그인</button>
         <span class="user-auth-text">회원가입은 ‘소소행’에서 진행해주세요.</span>
     </div>
 </div>
