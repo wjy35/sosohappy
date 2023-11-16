@@ -9,7 +9,9 @@ import com.ssafy.chat.db.entity.ChatEntity;
 import com.ssafy.chat.db.entity.ChatRoomEntity;
 import com.ssafy.chat.db.repository.ChatRepository;
 import com.ssafy.chat.db.repository.ChatRoomRepository;
+import com.ssafy.chat.util.ObjectSerializer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,6 +27,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     private final ChatRepository chatRepository;
 
     private final ChatRoomMapper chatRoomMapper;
+
+    private final SimpMessageSendingOperations simpMessageSendingOperations;
+
+    private final ObjectSerializer objectSerializer;
+
     @Override
     public Integer creatChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) {
         Optional<ChatRoomEntity> chatRoomEntityOption = chatRoomRepository.findByChatRoomByUserIds(chatRoomCreateRequest.getSenderMemberId(), chatRoomCreateRequest.getReceiverMemberId());
@@ -82,5 +89,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         return chatRoomRepository.findByReceiverMemberIdOrSenderMemberId(memberId, memberId);
     }
 
+    public void sendChatRoomList(List<ChatRoomList>chatRoomLists, long memberId){
+        simpMessageSendingOperations.convertAndSend(
+                "/topic/"+memberId,
+                objectSerializer.serialize(chatRoomLists)
+        );
+    }
 
 }

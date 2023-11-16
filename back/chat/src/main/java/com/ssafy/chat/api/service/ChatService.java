@@ -9,6 +9,8 @@ import java.util.List;
 public interface ChatService {
     void sendForDetail(ChatPublish chatPublish);
     void sendForList(ChatPublish chatPublish);
+    void sendForSelf(ChatPublish chatPublish);
     void saveChat(ChatEntity chatEntity, int roomId);
     List<ChatResponse> getChatList(int chatRoomId);
+    void sendChatList(List<ChatResponse> chatResponseList, long memberId, int chatRoomId);
 }
