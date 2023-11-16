@@ -42,6 +42,7 @@ const MyPage = ({socket, chatSocket}: propsType) => {
   const [profileMonsterType, setProfileMonsterType] = useState<number>(Math.floor((userInfo.profileMonsterId-1)/10) + 1);
   const [profileMonsterLevel, setProfileMonsterLevel] = useState<number>((userInfo.profileMonsterId % 10 === 0)?10:(userInfo.profileMonsterId%10));
   const [isDialogState, setIsDialogState] = useState<Boolean>(false);
+  const [src, setSrc] = useState();
 
   const load = (initialWidth: number) => {
     Animated.timing(loaderValue, {
@@ -144,35 +145,10 @@ const MyPage = ({socket, chatSocket}: propsType) => {
     <>
     <CommonLayout headerType={0} footer={true}>
       <View style={MyPageStyle.myProfileWrap}>
-        {
-          profileMonsterType === 1 &&
-          <Image
-            source={type1[profileMonsterLevel-1]}
+        <Image
+            source={src?src:type4[0]}
             style={MyPageStyle.myProfileImg}
-          />
-        }
-        {
-          profileMonsterType === 2 &&
-          <Image
-            source={type2[profileMonsterLevel-1]}
-            style={MyPageStyle.myProfileImg}
-          />
-        }
-        {
-          profileMonsterType === 3 &&
-          <Image
-            source={type3[profileMonsterLevel-1]}
-            style={MyPageStyle.myProfileImg}
-          />
-        }
-        {
-          profileMonsterType === 4 &&
-          <Image
-            source={type4[profileMonsterLevel-1]}
-            style={MyPageStyle.myProfileImg}
-          />
-        }
-
+        />
         <View style={MyPageStyle.myProfileInfo}>
           {
             userInfo &&
