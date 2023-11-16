@@ -180,7 +180,7 @@ const MyPage = ({socket, chatSocket}: propsType) => {
             </>
           }
         </View>
-        <View style={MyPageStyle.myProfileIconWrap}>
+        {/* <View style={MyPageStyle.myProfileIconWrap}>
           <TouchableOpacity activeOpacity={0.7} onPress={() => police()}>
             <View>
               <SvgXml
@@ -197,7 +197,7 @@ const MyPage = ({socket, chatSocket}: propsType) => {
               />
             </View>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
 
       <View style={MyPageStyle.myPointInfo}>

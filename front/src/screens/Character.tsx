@@ -390,6 +390,7 @@ const Character = ({socket, chatSocket}: propsType) => {
                     hintInput ={"clover 개수 입력"}
                     submitText={'먹이주기'}
                     cancelText={'돌아가기'}
+                    textInputProps={{keyboardType:'numeric'}}
                     submitInput={ (inputText: string) => feedManyCloversApi(inputText) }
                     closeDialog={ () => setIsDialogState(false) }>
                 </DialogInput>
