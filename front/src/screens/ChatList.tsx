@@ -34,7 +34,10 @@ const ChatList = ({socket, chatSocket}: propsType) => {
   useFocusEffect(
       useCallback(() => {
         const connect = () => {
-          if (chatSocket.connected) return;
+          if (chatSocket.connected) {
+              chatSocket.getList();
+              return;
+          }
           chatSocket.connect();
         }
         connect();
