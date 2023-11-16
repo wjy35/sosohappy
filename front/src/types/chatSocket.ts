@@ -4,11 +4,8 @@ export interface ChatSocket {
     disConnect: Function;
     getList: Function;
     getDetail: Function;
-    getHelpChatList: Function;
     helpChatList: SingleChatInfo[];
-    getMsgList: Function;
     msgList: any[];
-    addMsg: Function;
 }
 
 export interface SingleChatInfo {

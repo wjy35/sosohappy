@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react"
-import { View, Text, Image, TouchableOpacity } from "react-native"
+import { View, Text, Image, TouchableOpacity, Alert } from "react-native"
 import Modal from "react-native-modal"
 
 import FishThumbnail from "@/assets/img/fish-thumbnail.png"
@@ -11,6 +11,7 @@ import helpMatchApi from "@/apis/helpMatchApi";
 import {helpDetail} from "@/types";
 import useStore from "@/store/store";
 import memberApi from "@/apis/memberApi";
+import memberReportApi from "@/apis/memberReportApi";
 import {type1, type2, type3, type4} from "@/assets/sosomon";
 
 interface propsType{
@@ -122,6 +123,23 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
         }
     }
 
+    const sirenCall = () => {
+        Alert.alert("신고접수", "해당 사용자를 신고접수하시겠습니까?",[
+            {text:'취소하기', onPress:() => {}},
+            {text:'신고하기', onPress:async () => {
+                const myInfoRes = await memberApi.getMember();
+                if(myInfoRes.status === 200){
+                const myMemberId = myInfoRes.data.result.member.memberId;
+        
+                const sirenRes = await memberReportApi.siren({reportingMemberId: myMemberId, reportedMemberId:selectedHelp.data.helpEntity.otherMemberId});
+                    if(sirenRes.status === 200){
+                        Alert.alert("신고 접수가 성공적으로 처리되었습니다.");
+                    }
+                }
+            }}
+        ])
+    }
+
     return(
         <>
             {
@@ -195,6 +213,11 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
                             <View style={BottomSheetStyle.matchingWrap}>
                                 <View style={BottomSheetStyle.styleCircle}></View>
                                 <Text style={BottomSheetStyle.matchingText}>매칭된 나눔이/모음이를 곧 만날 수 있어요.</Text>
+                                <TouchableOpacity activeOpacity={0.7} style={BottomSheetStyle.sirenWrap} onPress={() => sirenCall()}>
+                                    <View style={BottomSheetStyle.sirenButton}>
+                                        <Text style={BottomSheetStyle.sirenText}>신고하기</Text>
+                                    </View>
+                                </TouchableOpacity>
                             </View>
 
                             {

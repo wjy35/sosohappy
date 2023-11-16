@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, {useState, useEffect, useCallback} from "react"
 import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import BottomSheet from "@/components/BottomSheet";
@@ -103,7 +103,7 @@ const Map = ({location, socket, chatSocket}: propsType) => {
       }
   }
 
-  useFocusEffect(
+    useFocusEffect(
       React.useCallback(() => {
         const connect = () => {
           if (socket.connected) return;
@@ -112,7 +112,18 @@ const Map = ({location, socket, chatSocket}: propsType) => {
         connect();
         return () => {};
       }, [socket.connected])
-  )
+    )
+
+    useFocusEffect(
+        useCallback(() => {
+            const disConnect = () => {
+                if (!chatSocket.connected) return;
+                chatSocket.disConnect();
+            }
+            disConnect();
+            return () => {};
+        }, [chatSocket.connected])
+    )
 
     useEffect(() => {
         if (socket.status === 'ON_MOVE'){
@@ -259,11 +270,15 @@ const Map = ({location, socket, chatSocket}: propsType) => {
                       :
                       <></>
               }
-              <SvgXml
-                xml={chatIcon}
-                style={MapStyle.floatingIcon}
-                onPress={() => navigation.navigate('Chat', {otherMemberId: socket.data.helpEntity?.otherMemberId})}
-              />
+              {
+                  socket.status!=='DEFAULT'&&(
+                      <SvgXml
+                          xml={chatIcon}
+                          style={MapStyle.floatingIcon}
+                          onPress={() => navigation.navigate('Chat', {otherMemberId: socket.data.helpEntity?.otherMemberId})}
+                      />
+                  )
+              }
           </CommonLayout>
       </>
   );
