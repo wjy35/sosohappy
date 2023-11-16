@@ -1,6 +1,23 @@
 spring:
   cloud:
     gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/member-command/sign-in]':
+            allowedOrigins: '*'
+            allowedHeaders: '*'
+            allowedMethods: 
+              - POST
+              - OPTIONS
+          '[/help-history-query/certificate]':
+            allowedOrigins: '*'
+            allowedHeaders: '*'
+            allowedMethods: 
+              - GET
+              - OPTIONS
       routes:
         - id: member-query
           uri: lb://MEMBER-QUERY-SERVICE/
