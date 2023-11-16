@@ -27,8 +27,15 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
         navigation.navigate('Main');
     };
 
-    const goto = (next: string) => {
+    const checkUserGoto = (next: string) => {
         userInfo?(navigation.navigate(next)):(navigation.navigate('Login'));
+    }
+
+    const checkDisabledGoto = (next: string) => {
+        userInfo?
+            (userInfo.disabled&&navigation.navigate(next))
+            :
+            (navigation.navigate('Login'));
     }
 
     const moveSettingPage = () => {
@@ -121,7 +128,7 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
                                 <>
                                     {
                                         userInfo?.disabled && (
-                                            <TouchableOpacity activeOpacity={0.7} onPress={()=>goto("CreateHelp")}>
+                                            <TouchableOpacity activeOpacity={0.7} onPress={()=>checkDisabledGoto("CreateHelp")}>
                                                 <View style={[SideMenuStyle.menuList, nowPage==="Help" && SideMenuStyle.menuListActive]}>
                                                     <SvgXml
                                                         xml={peace}
@@ -133,7 +140,7 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
                                             </TouchableOpacity>
                                         )
                                     }
-                                    <TouchableOpacity activeOpacity={0.7} onPress={()=>goto("ChatList")}>
+                                    <TouchableOpacity activeOpacity={0.7} onPress={()=>checkUserGoto("ChatList")}>
                                         <View style={[SideMenuStyle.menuList, nowPage==="Chat" && SideMenuStyle.menuListActive]}>
                                             <SvgXml
                                                 xml={chat}
@@ -143,7 +150,7 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
                                             <Text style={[SideMenuStyle.menuItemText]}>채팅</Text>
                                         </View>
                                     </TouchableOpacity>
-                                    <TouchableOpacity activeOpacity={0.7} onPress={()=>goto("MyPage")}>
+                                    <TouchableOpacity activeOpacity={0.7} onPress={()=>checkUserGoto("MyPage")}>
                                         <View style={[SideMenuStyle.menuList, nowPage==="MyPage" && SideMenuStyle.menuListActive]}>
                                             <SvgXml
                                                 xml={user}
@@ -163,7 +170,7 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
                                     {/*        <Text style={[SideMenuStyle.menuItemText]}>정보수정</Text>*/}
                                     {/*    </View>*/}
                                     {/*</TouchableOpacity>*/}
-                                    <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Certificate')}>
+                                    <TouchableOpacity activeOpacity={0.7} onPress={() => checkUserGoto('Certificate')}>
                                         <View style={[SideMenuStyle.menuList]}>
                                             <SvgXml
                                                 xml={menuDocs}
