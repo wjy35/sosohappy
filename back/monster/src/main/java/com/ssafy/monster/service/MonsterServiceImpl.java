@@ -174,6 +174,7 @@ public class MonsterServiceImpl implements MonsterService{
         List<MonsterType> types = typeRepository.findAll();
 
         for(MonsterType t : types) {
+            if(t.getTypeId() == types.size()) continue;
             growthRepository.save(GrowthMapper.INSTANCE.toGrowthEntity(profile, t, 0));
         }
 
