@@ -30,7 +30,6 @@ interface propsType{
 
 const Chat = ({helpSocket, chatSocket}: propsType) => {
   const [msg, setMsg] = useState<string>("");
-  const [msgList, setMsgList] = useState<Object[]>([]);
   const [roomNo, setroomNo] = useState<number|null>(null);
   const route = useRoute();
   const [otherMemberId, setOtherMemberId] = useState<string>(route.params?.otherMemberId);
@@ -51,11 +50,6 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
     if(roomNo){
       const sendChatRes = await chatApi.sendChat({roomNo: roomNo, sendMemberId: userInfo.memberId, receiveMemberId:otherMemberId, content:msg});
       if(sendChatRes.status === 200){
-        chatSocket.addMsg({
-          content: msg,
-          memberId: userInfo.memberId,
-          timestamp: new Date(),
-        })
         setMsg("");
       }else{
         Alert.alert("시스템 에러, 관리자에게 문의하세요.");
@@ -67,17 +61,6 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
     const roomNoRes = await chatApi.makeChatRoom({senderMemberId:userInfo.memberId, receiveMemberId:otherMemberId});
     if(roomNoRes.data.status === "success"){
       setroomNo(roomNoRes.data.result.chatRoomId);
-    }
-  }
-
-  const getChatListApi = async () => {
-    if(roomNo){
-      const chatListRes = await chatApi.getChatList({roomNo: roomNo});
-      if(chatListRes.status === 200){
-        setMsgList(chatListRes.data.result.chatResponseList);
-        chatSocket.getMsgList(chatListRes.data.result.chatResponseList);
-        chatSocket.getDetail(roomNo);
-      }
     }
   }
 

@@ -20,12 +20,6 @@ const ChatList = ({socket, chatSocket}: propsType) => {
   const navigation = useNavigation();
   const {userInfo} = useStore();
 
-  const getChatRoomList = async () => {
-    const chatListApi = await chatApi.getChatRoomList(userInfo.memberId);
-    chatSocket.getHelpChatList(chatListApi.data.result.chatRoomList);
-    chatSocket.getList();
-  }
-
   useFocusEffect(
       useCallback(() => {
         const disConnect = () => {
@@ -47,10 +41,6 @@ const ChatList = ({socket, chatSocket}: propsType) => {
         return () => {};
       }, [chatSocket.connected])
   )
-
-  useEffect(() => {
-    getChatRoomList();
-  },[]);
 
   return (
     <CommonLayout footer={true} headerType={0}>
