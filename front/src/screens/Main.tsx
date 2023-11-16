@@ -95,11 +95,7 @@ const Main = ({socket, chatSocket}: propsType) => {
         if (userInfo){
           getHelpStatus();
         }
-        const disConnect = () => {
-          if (!socket.connected) return;
-          socket.disConnect();
-        }
-        disConnect();
+        socket.connected&&socket.disConnect();
         return () => {};
       }, [socket.connected])
   )
