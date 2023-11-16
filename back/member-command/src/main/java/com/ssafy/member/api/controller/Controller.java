@@ -20,7 +20,6 @@ public class Controller {
     private final MemberManageService memberManageService;
 
     @PostMapping("/sign-in")
-    @CrossOrigin(origins = "*")
     ResponseEntity<FormattedResponse> singIn(@RequestBody SignInRequest signInRequest){
         AuthTokenDTO authTokenDTO = memberSignService.signIn(signInRequest);
 
