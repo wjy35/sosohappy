@@ -8,6 +8,7 @@ import Modal from "react-native-modal";
 import useStore from "@/store/store";
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
 import RNSecureStorage from "rn-secure-storage";
+import {useEffect, useState} from "react";
 
 interface props {
     closeSide: Function;
@@ -18,6 +19,7 @@ interface props {
 const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
     const navigation = useNavigation();
     const {userInfo, logout} = useStore();
+    const [src, setSrc] = useState();
 
     const userLogout = async () => {
         await logout();
@@ -35,25 +37,24 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
 
     const whatIsMyThumbnail = () => {
         if(userInfo && userInfo.profileMonsterId != null){
-            let tempMonsterId = userInfo.profileMonsterId;
-            const animalType = Math.floor((tempMonsterId-1) / 10) + 1;
-            const animalLevel = (tempMonsterId % 10 === 0)?10:(tempMonsterId%10);
-            switch(animalType){
-                case 1:
-                    return type1[animalLevel-1];
-                    break;
-                case 2:
-                    return type2[animalLevel-1];
-                    break;
-                case 3:
-                    return type3[animalLevel-1];
-                    break;
-                case 4:
-                    return type4[animalLevel-1];
-                    break;
+            const type = Math.floor((userInfo.profileMonsterId-1)/10) + 1;
+            const level = (userInfo.profileMonsterId % 10 === 0)?10:userInfo.profileMonsterId%10;
+            // console.log(type, level)
+            if (type === 1){
+                setSrc(type1[level-1])
+            } else if (type === 2){
+                setSrc(type2[level-1])
+            } else if (type === 3){
+                setSrc(type3[level-1])
+            } else {
+                setSrc(type4[0])
             }
         }
     }
+
+    useEffect(() => {
+        whatIsMyThumbnail();
+    }, [userInfo]);
 
     return(
         <>
@@ -88,7 +89,7 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
                         <View style={SideMenuStyle.profileWrap}>
                             <View style={SideMenuStyle.profileImgWrap}>
                                 <Image
-                                    source={whatIsMyThumbnail()}
+                                    source={src?src:type4[0]}
                                     style={SideMenuStyle.profileImg}
                                 />
                             </View>
