@@ -32,4 +32,8 @@ public class ChatPublish implements Serializable {
     public String getChatRoomListDestination(){
         return "/topic/"+this.receiveMemberId;
     }
+
+    public String getChatRoomSelfDestination(){
+        return "/topic/"+this.sendMemberId+"/"+this.chatRoomId;
+    }
 }
