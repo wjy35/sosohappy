@@ -53,6 +53,20 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    public void sendForSelf(ChatPublish chatPublish) {
+        ChatResponse chatResponse = ChatResponse.builder()
+                .memberId(chatPublish.getSendMemberId())
+                .content(chatPublish.getContent())
+                .timestamp(chatPublish.getTimestamp())
+                .build();
+
+        simpMessageSendingOperations.convertAndSend(
+                chatPublish.getChatRoomSelfDestination(),
+                objectSerializer.serialize(chatResponse)
+        );
+    }
+
+    @Override
     public void saveChat(ChatEntity chatEntity, int roomId) {
         chatRepository.saveChat(chatEntity, roomId);
     }
@@ -70,5 +84,13 @@ public class ChatServiceImpl implements ChatService {
                             .build();
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void sendChatList(List<ChatResponse> chatResponseList, long memberId, int chatRoomId) {
+        simpMessageSendingOperations.convertAndSend(
+                "/topic/"+memberId+"/"+chatRoomId,
+                objectSerializer.serialize(chatResponseList)
+        );
     }
 }

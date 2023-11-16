@@ -20,6 +20,7 @@ public class ChatMessageListener implements MessageListener {
     public void onMessage(Message message, byte[] pattern) {
         ChatPublish chatPublish = objectSerializer.deserialize(message.toString(), ChatPublish.class);
 
+        chatService.sendForSelf(chatPublish);
         chatService.sendForDetail(chatPublish);
         chatService.sendForList(chatPublish);
     }
