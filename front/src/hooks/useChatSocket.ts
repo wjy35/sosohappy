@@ -7,7 +7,6 @@ function useChatSocket() {
     const [client, setClient] = useState(null);
     const {userInfo} = useStore();
     const [connected, setConnected] = useState(false);
-    const [subscribe, setSubscribe] = useState('');
     const [helpChatList, setHelpChatList] = useState<SingleChatInfo[]>([]);
     const [msgList, setMsgList] = useState([]);
 
@@ -19,6 +18,7 @@ function useChatSocket() {
                 memberId: userInfo.memberId,
             },
             (frame) => {
+                console.log('chatSocket connected')
                 setConnected(true);
             },
             (error) => {
@@ -28,7 +28,9 @@ function useChatSocket() {
     }
 
     function getList() {
-        subscribe && client.unsubscribe(subscribe);
+        client.unsubscribe('list');
+        client.unsubscribe('detail');
+        setMsgList([]);
         client.subscribe(
             `/topic/${userInfo.memberId}`,
             (frame) => {
@@ -38,44 +40,34 @@ function useChatSocket() {
             {
                 id: "list"
             });
-        setSubscribe('list');
     }
 
     function getDetail(chatRoomId: number) {
-        subscribe && client.unsubscribe(subscribe);
+        client.unsubscribe('list');
+        client.unsubscribe('detail');
+        setHelpChatList([]);
         client.subscribe(
             `/topic/${userInfo.memberId}/${chatRoomId}`,
             (frame) => {
                 const body = JSON.parse(frame.body);
-                setMsgList([...msgList, body])
+                setMsgList([...msgList, ...body])
             },
             {
                 id: "detail"
             });
-        setSubscribe('detail');
+
     }
 
     function disConnect() {
         if (!client) return;
+        client.unsubscribe('list')
+        client.unsubscribe('detail')
         setConnected(false);
-        setSubscribe('');
         client.disconnect(() => {
-            console.log('socket disconnect')
+            console.log('chatSocket disconnect')
         });
     }
 
-    function getHelpChatList (chatList: any[]) {
-        setHelpChatList(chatList);
-    }
-
-    function getMsgList (MsgList: any[]) {
-        setMsgList(MsgList);
-    }
-
-    function addMsg (Msg: any) {
-        setMsgList([...msgList, Msg]);
-    }
-
-    return {connect, connected, disConnect, getList, getDetail, getHelpChatList, helpChatList, getMsgList, msgList, addMsg}
+    return {connect, connected, disConnect, getList, getDetail, helpChatList, msgList}
 }
 export default useChatSocket;
