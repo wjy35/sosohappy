@@ -1,27 +1,23 @@
-import { View, Text, Image, TouchableOpacity } from "react-native"
+import {useEffect, useState} from "react";
+import { View, Text, TouchableOpacity } from "react-native"
 
 import HistoryItemStyle from "@/styles/HistoryItemStyle"
 import {lock, fortuneCookie, clover} from "@/assets/icons/icons";
 import {SvgXml} from "react-native-svg";
-import {useState} from "react";
 import helpMatchApi from "@/apis/helpMatchApi";
+import helpCategoryApi from "@/apis/helpCategoryApi";
 
 interface propsType{
-    thumbnail: string,
+    categoryId: number,
     content: string,
     createdDate: string,
-    openCookie: Function,
     updateFortuneModalState: Function,
     fortuneCookieId: number,
 }
 
-const HistoryItem = ({thumbnail, content, createdDate, openCookie, updateFortuneModalState, fortuneCookieId} : propsType) => {
+const HistoryItem = ({categoryId, content, createdDate, updateFortuneModalState, fortuneCookieId} : propsType) => {
     const [cookie, setCookie] = useState(true);
-
-    const clickOpenCookie = () => {
-        setCookie(false);
-        openCookie();
-    }
+    const [myThumbnailInfo, setMyThumbnailInfo] = useState([]);
 
     const openFortuneCookie = async () => {
         
@@ -31,20 +27,35 @@ const HistoryItem = ({thumbnail, content, createdDate, openCookie, updateFortune
             updateFortuneModalState(true);
             setCookie(false);
         }
-
+        
     }
+
+    const findMyThumbnail = async () => {
+        try{
+            const res = await helpCategoryApi.findCategoryById({categoryId: categoryId});
+            if(res.status === 200){
+                setMyThumbnailInfo(res.data.result.category);
+            }
+        }catch(err){
+            console.error(err);
+        }
+    }
+
+    useEffect(() => {
+        findMyThumbnail();
+    }, []);
 
     return(
         <>
             <TouchableOpacity activeOpacity={0.7} onPress={() => openFortuneCookie()}>
                 <View style={HistoryItemStyle.historyItemWrap}>
                     <View style={HistoryItemStyle.historyItemProfileBg}>
-                        {/* <SvgXml
-                            xml={thumbnail}
+                        <SvgXml
+                            xml={myThumbnailInfo.categoryImage}
                             style={HistoryItemStyle.historyItemProfileImg}
                             width={40}
                             height={40}
-                        /> */}
+                        />
                     </View>
                     <View style={HistoryItemStyle.historyItemInfo}>
                         <Text style={HistoryItemStyle.historyItemContent}>{content}</Text>
@@ -53,7 +64,7 @@ const HistoryItem = ({thumbnail, content, createdDate, openCookie, updateFortune
                     <View style={HistoryItemStyle.historyItemStateWrap}>
                         {
                             cookie ? (
-                                <TouchableOpacity activeOpacity={0.7} onPress={clickOpenCookie}>
+                                <TouchableOpacity activeOpacity={0.7}>
                                     <SvgXml
                                         xml={fortuneCookie}
                                         width={30}
