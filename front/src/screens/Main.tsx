@@ -1,4 +1,4 @@
-import {View, Text, Image, TouchableOpacity, Alert} from "react-native";
+import {View, Text, Image, TouchableOpacity, Alert, ToastAndroid} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import MainImg from "@/assets/img/main-img.png"
 import HandShakeIcon from "@/assets/img/handshake-icon.png"
@@ -24,6 +24,14 @@ const Main = ({socket, chatSocket}: propsType) => {
   const {userInfo, login, logout} = useStore();
   const navigation =  useNavigation();
   const [helpStatus, setHelpStatus] = useState('');
+
+  const onToast = (text: string) => {
+    ToastAndroid.showWithGravity(
+        text,
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP,
+    )
+  }
 
   const checkUserGoto = (next: string) => {
     userInfo?(navigation.navigate(next)):(navigation.navigate('Login'));

@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity, Alert, Image} from "react-native"
+import {View, Text, TouchableOpacity, Alert, Image, ToastAndroid} from "react-native"
 import SideMenuStyle from "@/styles/SideMenuStyle";
 import {useNavigation} from "@react-navigation/native";
 import { sosohappyWhiteLogo, user, gear, chat, peace, home, close, menuDocs } from "@/assets/icons/icons";
@@ -32,6 +32,14 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
 
     const checkUserGoto = (next: string) => {
         userInfo?(navigation.navigate(next)):(navigation.navigate('Login'));
+    }
+
+    const onToast = (text: string) => {
+        ToastAndroid.showWithGravity(
+            text,
+            ToastAndroid.SHORT,
+            ToastAndroid.TOP,
+        )
     }
 
     const checkDisabledGoto = (next: string) => {
