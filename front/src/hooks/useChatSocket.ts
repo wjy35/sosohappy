@@ -7,7 +7,6 @@ function useChatSocket() {
     const [client, setClient] = useState(null);
     const {userInfo} = useStore();
     const [connected, setConnected] = useState(false);
-    const [subscribe, setSubscribe] = useState('');
     const [helpChatList, setHelpChatList] = useState<SingleChatInfo[]>([]);
     const [msgList, setMsgList] = useState([]);
 
@@ -19,6 +18,7 @@ function useChatSocket() {
                 memberId: userInfo.memberId,
             },
             (frame) => {
+                console.log('chatSocket connected')
                 setConnected(true);
             },
             (error) => {
@@ -28,54 +28,63 @@ function useChatSocket() {
     }
 
     function getList() {
-        subscribe && client.unsubscribe(subscribe);
+        client.unsubscribe('list');
+        client.unsubscribe('detail');
+        setMsgList([]);
         client.subscribe(
             `/topic/${userInfo.memberId}`,
             (frame) => {
                 const body = JSON.parse(frame.body);
-                console.log(body);
+                setHelpChatList((prev) => {
+                    if (prev.length === 0){
+                        return [...body];
+                    }
+                    const target = body[0];
+                    const _helpChatList = [...prev]
+                    const targetIdx = prev.findIndex((el)=> el.chatRoomId === target.chatRoomId)
+                    if (targetIdx !== -1){
+                        _helpChatList[targetIdx] = {...target}
+                    } else {
+                        _helpChatList.push(target)
+                    }
+                    const compare = (a: any, b: any) => {
+                        return Date.parse(b.currentChat.timestamp) - Date.parse(a.currentChat.timestamp)
+                    }
+                    _helpChatList.sort(compare);
+                    return [..._helpChatList]
+                })
             },
             {
                 id: "list"
             });
-        setSubscribe('list');
     }
 
     function getDetail(chatRoomId: number) {
-        subscribe && client.unsubscribe(subscribe);
+        client.unsubscribe('list');
+        client.unsubscribe('detail');
+        setHelpChatList([]);
         client.subscribe(
             `/topic/${userInfo.memberId}/${chatRoomId}`,
             (frame) => {
                 const body = JSON.parse(frame.body);
-                setMsgList([...msgList, body])
+                setMsgList([...msgList, ...body])
             },
             {
                 id: "detail"
             });
-        setSubscribe('detail');
+
     }
 
     function disConnect() {
         if (!client) return;
+        client.unsubscribe('list')
+        client.unsubscribe('detail')
         setConnected(false);
-        setSubscribe('');
         client.disconnect(() => {
-            console.log('socket disconnect')
+            console.log('chatSocket disconnect')
         });
     }
 
-    function getHelpChatList (chatList: any[]) {
-        setHelpChatList(chatList);
-    }
-
-    function getMsgList (MsgList: any[]) {
-        setMsgList(MsgList);
-    }
-
-    function addMsg (Msg: any) {
-        setMsgList([...msgList, Msg]);
-    }
-
-    return {connect, connected, disConnect, getList, getDetail, getHelpChatList, helpChatList, getMsgList, msgList, addMsg}
+    return {connect, connected, disConnect, getList, getDetail, helpChatList, msgList}
 }
 export default useChatSocket;

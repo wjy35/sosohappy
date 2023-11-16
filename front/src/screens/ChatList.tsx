@@ -2,12 +2,6 @@ import {useCallback, useEffect, useState} from "react"
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 
 import CommonLayout from "@/components/CommonLayout";
-import Footer from "@/components/Footer";
-
-import PreArrowIcon from "@/assets/img/pre-arrow.png"
-import HamburgerMenuIcon from "@/assets/img/hamburger-menu.png"
-import SearchIcon from "@/assets/img/search-icon.png"
-import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 
 import ChatListStyle from "@/styles/ChatListStyle"
 import ChatListItem from "@/components/ChatListItem";
@@ -23,18 +17,8 @@ interface propsType{
 }
 
 const ChatList = ({socket, chatSocket}: propsType) => {
-  const [noneCheckedState, setNoneCheckedState] = useState<Boolean>(true);
-  const [allMsgState, setAllMsgState] = useState<Boolean>(false);
   const navigation = useNavigation();
   const {userInfo} = useStore();
-
-
-
-  const getChatRoomList = async () => {
-    const chatListApi = await chatApi.getChatRoomList(userInfo.memberId);
-    chatSocket.getHelpChatList(chatListApi.data.result.chatRoomList);
-    chatSocket.getList();
-  }
 
   useFocusEffect(
       useCallback(() => {
@@ -50,17 +34,16 @@ const ChatList = ({socket, chatSocket}: propsType) => {
   useFocusEffect(
       useCallback(() => {
         const connect = () => {
-          if (chatSocket.connected) return;
+          if (chatSocket.connected) {
+              chatSocket.getList();
+              return;
+          }
           chatSocket.connect();
         }
         connect();
         return () => {};
       }, [chatSocket.connected])
   )
-
-  useEffect(() => {
-    getChatRoomList();
-  },[]);
 
   return (
     <CommonLayout footer={true} headerType={0}>
@@ -91,13 +74,19 @@ const ChatList = ({socket, chatSocket}: propsType) => {
         {/*</View>*/}
 
         <View style={ChatListStyle.chatListItemWrap}>
-          {
-            chatSocket.helpChatList.map((chatListItem: any, index: number) => {
-              return(
-                  <ChatListItem chatInfo={chatListItem} key={`chatlist${index}`}/>
-              );
-            })
-          }
+            {
+                chatSocket.helpChatList.length > 0 ? (
+                    chatSocket.helpChatList.map((chatListItem: any, index: number) => {
+                        return(
+                            <ChatListItem chatInfo={chatListItem} key={`chatlist${index}`}/>
+                        );
+                    })
+                ):(
+                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                        <Text>생성된 채팅방이 없습니다.</Text>
+                    </View>
+                )
+            }
         </View>
       </View>
     </CommonLayout>

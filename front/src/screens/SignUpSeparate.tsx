@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react"
+import {useCallback, useEffect, useState} from "react"
 import { Text, View, Image} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import AuthTitle from "@/components/AuthTitle";
@@ -41,10 +41,27 @@ const SignUpSeparate = ({socket, chatSocket}: propsType) => {
     }
   }
 
-  useFocusEffect(()=>{
-    if (!socket.connected) return;
-    socket.disConnect();
-  })
+  useFocusEffect(
+      useCallback(() => {
+        const disConnect = () => {
+          if (!socket.connected) return;
+          socket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [socket.connected])
+  )
+
+  useFocusEffect(
+      useCallback(() => {
+        const disConnect = () => {
+          if (!chatSocket.connected) return;
+          chatSocket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [chatSocket.connected])
+  )
 
   return (
     <CommonLayout headerType={0} footer={true}>
