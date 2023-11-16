@@ -125,6 +125,22 @@ const BottomSheetStyle = StyleSheet.create({
         color:"#ACADBF",
     },
 
+    sirenWrap:{
+        marginLeft:6,
+        paddingHorizontal:14,
+        paddingVertical:6,
+        backgroundColor:"#E3F6FF",
+        borderRadius:50,
+    },
+    sirenButton:{
+
+    },
+    sirenText:{
+        fontSize:12,
+        fontWeight:"700",
+        color:"#8CA8DA",
+    },
+
     connectButton:{
         width:"100%",
         // flex: 1,
