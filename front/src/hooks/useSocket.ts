@@ -56,10 +56,13 @@ function useSocket(){
 
     function disConnect() {
         if (!client) return;
+        client.unsubscribe('status');
+        subscribe&&client.unsubscribe(subscribe);
         setConnected(false);
         setStatus('');
         setSubscribe('');
         client.disconnect(()=>{console.log('socket disconnect')});
+        setClient()
     }
 
     function getList(){

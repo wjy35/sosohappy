@@ -20,12 +20,6 @@ const ChatList = ({socket, chatSocket}: propsType) => {
   const navigation = useNavigation();
   const {userInfo} = useStore();
 
-  const getChatRoomList = async () => {
-    const chatListApi = await chatApi.getChatRoomList(userInfo.memberId);
-    chatSocket.getHelpChatList(chatListApi.data.result.chatRoomList);
-    chatSocket.getList();
-  }
-
   useFocusEffect(
       useCallback(() => {
         const disConnect = () => {
@@ -40,17 +34,16 @@ const ChatList = ({socket, chatSocket}: propsType) => {
   useFocusEffect(
       useCallback(() => {
         const connect = () => {
-          if (chatSocket.connected) return;
+          if (chatSocket.connected) {
+              chatSocket.getList();
+              return;
+          }
           chatSocket.connect();
         }
         connect();
         return () => {};
       }, [chatSocket.connected])
   )
-
-  useEffect(() => {
-    getChatRoomList();
-  },[]);
 
   return (
     <CommonLayout footer={true} headerType={0}>
@@ -81,13 +74,19 @@ const ChatList = ({socket, chatSocket}: propsType) => {
         {/*</View>*/}
 
         <View style={ChatListStyle.chatListItemWrap}>
-          {
-            chatSocket.helpChatList.map((chatListItem: any, index: number) => {
-              return(
-                  <ChatListItem chatInfo={chatListItem} key={`chatlist${index}`}/>
-              );
-            })
-          }
+            {
+                chatSocket.helpChatList.length > 0 ? (
+                    chatSocket.helpChatList.map((chatListItem: any, index: number) => {
+                        return(
+                            <ChatListItem chatInfo={chatListItem} key={`chatlist${index}`}/>
+                        );
+                    })
+                ):(
+                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                        <Text>생성된 채팅방이 없습니다.</Text>
+                    </View>
+                )
+            }
         </View>
       </View>
     </CommonLayout>

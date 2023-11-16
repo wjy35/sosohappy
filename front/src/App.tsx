@@ -23,17 +23,22 @@ function App(): JSX.Element {
     usePermissions();
 
     const autologin = async () => {
-        const token = await RNSecureStorage.get("accessToken");
-        if (token){
-            try {
-                const userRes = await memberApi.getMember();
-                if (userRes.status === 200){
-                    login(userRes.data.result.member);
+        try {
+            const token = await RNSecureStorage.get("accessToken");
+            if (token){
+                try {
+                    const userRes = await memberApi.getMember();
+                    if (userRes.status === 200){
+                        login(userRes.data.result.member);
+                    }
+                } catch (err) {
+                    console.log(err);
                 }
-            } catch (err) {
-                console.log(err);
             }
+        } catch (err) {
+            console.log(err);
         }
+
     }
 
     useEffect(() => {

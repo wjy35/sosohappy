@@ -25,9 +25,9 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
 
 
     const userLogout = async () => {
+        navigation.navigate('Main');
         await logout();
         await RNSecureStorage.remove("accessToken");
-        navigation.navigate('Main');
     };
 
     const checkUserGoto = (next: string) => {
