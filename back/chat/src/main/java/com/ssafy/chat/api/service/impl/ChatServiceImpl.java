@@ -2,6 +2,8 @@ package com.ssafy.chat.api.service.impl;
 
 import com.ssafy.chat.api.dto.ChatPublish;
 import com.ssafy.chat.api.response.ChatResponse;
+import com.ssafy.chat.api.response.ChatRoomList;
+import com.ssafy.chat.api.response.CurrentChat;
 import com.ssafy.chat.api.service.ChatService;
 import com.ssafy.chat.db.entity.ChatEntity;
 import com.ssafy.chat.db.repository.ChatRepository;
@@ -43,13 +45,24 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void sendForList(ChatPublish chatPublish) {
-        ChatResponse chatResponse = ChatResponse.builder()
-                .memberId(chatPublish.getSendMemberId())
+        CurrentChat currentChat = CurrentChat.builder()
                 .content(chatPublish.getContent())
-                .timestamp(chatPublish.getTimestamp())
-                .build();
-        List<ChatResponse> chatResponseList = new ArrayList<>();
-        chatResponseList.add(chatResponse);
+                .memberId(chatPublish.getSendMemberId())
+                .timestamp(chatPublish.getTimestamp()).build();
+
+        List<Long> memberList = new ArrayList<>();
+
+        memberList.add(chatPublish.getSendMemberId());
+        memberList.add(chatPublish.getReceiveMemberId());
+
+        ChatRoomList chatRoomList = ChatRoomList.builder()
+                .chatRoomId(chatPublish.getChatRoomId())
+                .currentChat(currentChat)
+                .memberList(memberList).build();
+
+
+        List<ChatRoomList> chatResponseList = new ArrayList<>();
+        chatResponseList.add(chatRoomList);
         simpMessageSendingOperations.convertAndSend(
                 chatPublish.getChatRoomListDestination(),
                 objectSerializer.serialize(chatResponseList)
