@@ -14,4 +14,6 @@ public interface ChatRoomService {
     List<ChatRoomList> getChatRoomListParams(long memberId) throws JsonProcessingException;
 
     List<ChatRoomEntity> getChatRoomList(long memberId);
+
+    void sendChatRoomList(List<ChatRoomList>chatRoomLists, long memberId);
 }

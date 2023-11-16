@@ -2,6 +2,8 @@ package com.ssafy.chat.api.service.impl;
 
 import com.ssafy.chat.api.dto.ChatPublish;
 import com.ssafy.chat.api.response.ChatResponse;
+import com.ssafy.chat.api.response.ChatRoomList;
+import com.ssafy.chat.api.response.CurrentChat;
 import com.ssafy.chat.api.service.ChatService;
 import com.ssafy.chat.db.entity.ChatEntity;
 import com.ssafy.chat.db.repository.ChatRepository;
@@ -10,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,25 +33,56 @@ public class ChatServiceImpl implements ChatService {
                 .timestamp(chatPublish.getTimestamp())
                 .build();
 
+        List<ChatResponse> chatResponseList = new ArrayList<>();
+        chatResponseList.add(chatResponse);
 
         simpMessageSendingOperations.convertAndSend(
                 chatPublish.getChatRoomDetailDestination(),
-                objectSerializer.serialize(chatResponse)
+                objectSerializer.serialize(chatResponseList)
         );
 
     }
 
     @Override
     public void sendForList(ChatPublish chatPublish) {
+        CurrentChat currentChat = CurrentChat.builder()
+                .content(chatPublish.getContent())
+                .memberId(chatPublish.getSendMemberId())
+                .timestamp(chatPublish.getTimestamp()).build();
+
+        List<Long> memberList = new ArrayList<>();
+
+        memberList.add(chatPublish.getSendMemberId());
+        memberList.add(chatPublish.getReceiveMemberId());
+
+        ChatRoomList chatRoomList = ChatRoomList.builder()
+                .chatRoomId(chatPublish.getChatRoomId())
+                .currentChat(currentChat)
+                .memberList(memberList).build();
+
+
+        List<ChatRoomList> chatResponseList = new ArrayList<>();
+        chatResponseList.add(chatRoomList);
+        simpMessageSendingOperations.convertAndSend(
+                chatPublish.getChatRoomListDestination(),
+                objectSerializer.serialize(chatResponseList)
+        );
+    }
+
+    @Override
+    public void sendForSelf(ChatPublish chatPublish) {
         ChatResponse chatResponse = ChatResponse.builder()
                 .memberId(chatPublish.getSendMemberId())
                 .content(chatPublish.getContent())
                 .timestamp(chatPublish.getTimestamp())
                 .build();
 
+        List<ChatResponse> chatResponseList = new ArrayList<>();
+        chatResponseList.add(chatResponse);
+
         simpMessageSendingOperations.convertAndSend(
-                chatPublish.getChatRoomListDestination(),
-                objectSerializer.serialize(chatResponse)
+                chatPublish.getChatRoomSelfDestination(),
+                objectSerializer.serialize(chatResponseList)
         );
     }
 
@@ -62,13 +96,19 @@ public class ChatServiceImpl implements ChatService {
         List<ChatEntity> chatEntityList = chatRepository.getChatList(chatRoomId);
 
         return chatEntityList.stream()
-                .map(chatEntity -> {
-                    return ChatResponse.builder()
-                            .memberId(chatEntity.getSendMemberId())
-                            .content(chatEntity.getContent())
-                            .timestamp(chatEntity.getTimestamp())
-                            .build();
-                })
+                .map(chatEntity -> ChatResponse.builder()
+                        .memberId(chatEntity.getSendMemberId())
+                        .content(chatEntity.getContent())
+                        .timestamp(chatEntity.getTimestamp())
+                        .build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void sendChatList(List<ChatResponse> chatResponseList, long memberId, int chatRoomId) {
+        simpMessageSendingOperations.convertAndSend(
+                "/topic/"+memberId+"/"+chatRoomId,
+                objectSerializer.serialize(chatResponseList)
+        );
     }
 }
