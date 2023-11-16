@@ -52,11 +52,10 @@
                 },
                 body: JSON.stringify({
                     id:String(process.env.ADMIN_ID),
-                    password: String(process.env.ADMIN_PASSWORD),
+                    password:String(process.env.ADMIN_PASSWORD),
                 })
             }).then((res) => res.json()).then(data => {
                 const accessToken = data.result.authorization.accessToken;
-                console.log(accessToken);
                 fetch("https://sosohappy.co.kr/member-report/report/",{
                     method:"GET",
                     headers: {
@@ -65,7 +64,6 @@
                     }
                 }).then((res) => res.json()).then(data => {
                     const sirenList = data.result.reportedMember;
-                    console.log(sirenList);
                     const ul = document.querySelector(".siren-item-list");
                     for(let i=0; i<sirenList.length; i++){
                         ul.insertAdjacentHTML("beforeend",`<li class="siren-item-li">
