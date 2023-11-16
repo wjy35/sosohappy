@@ -4,7 +4,7 @@ import {baseURL, recommendURL} from "@/apis/BASEURL";
 import RNSecureStorage, {ACCESSIBLE} from "rn-secure-storage";
 
 const CONTENT_TYPE = "application/json; charset=utf-8";
-const TIMEOUT = 1000;
+const TIMEOUT = 10000;
 const Multipart = 'multipart/form-data'
 
 export const PublicInstance = axios.create({

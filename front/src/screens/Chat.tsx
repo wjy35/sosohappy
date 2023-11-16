@@ -19,7 +19,6 @@ import useStore from "@/store/store";
 import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
 import Header from "@/components/Header";
 import SideMenu from "@/components/SideMenu";
-import Footer from "@/components/Footer";
 
 interface propsType{
   helpSocket: helpSocket;
@@ -30,7 +29,6 @@ interface propsType{
 
 const Chat = ({helpSocket, chatSocket}: propsType) => {
   const [msg, setMsg] = useState<string>("");
-  const [msgList, setMsgList] = useState<Object[]>([]);
   const [roomNo, setroomNo] = useState<number|null>(null);
   const route = useRoute();
   const [otherMemberId, setOtherMemberId] = useState<string>(route.params?.otherMemberId);
@@ -51,11 +49,6 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
     if(roomNo){
       const sendChatRes = await chatApi.sendChat({roomNo: roomNo, sendMemberId: userInfo.memberId, receiveMemberId:otherMemberId, content:msg});
       if(sendChatRes.status === 200){
-        chatSocket.addMsg({
-          content: msg,
-          memberId: userInfo.memberId,
-          timestamp: new Date(),
-        })
         setMsg("");
       }else{
         Alert.alert("시스템 에러, 관리자에게 문의하세요.");
@@ -70,23 +63,13 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
     }
   }
 
-  const getChatListApi = async () => {
-    if(roomNo){
-      const chatListRes = await chatApi.getChatList({roomNo: roomNo});
-      if(chatListRes.status === 200){
-        setMsgList(chatListRes.data.result.chatResponseList);
-        chatSocket.getMsgList(chatListRes.data.result.chatResponseList);
-        chatSocket.getDetail(roomNo);
-      }
-    }
-  }
-
   useEffect(() => {
     connectChatRoom();
   },[])
 
   useEffect(() => {
-    getChatListApi();
+    if (!roomNo) return;
+    chatSocket.getDetail(roomNo);
   },[roomNo]);
 
   useFocusEffect(
@@ -126,16 +109,20 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
                 <FlatList
                     data={[...chatSocket.msgList].reverse()}
                     showsVerticalScrollIndicator={false}
-                    windowSize={3}
+                    windowSize={5}
                     inverted={true}
-                    initialNumToRender={5}
+                    initialNumToRender={10}
                     renderItem={(item) => {
                       if (item.item.memberId === userInfo.memberId){
                         return <MyChat content={item.item.content}/>
                       } else if (item.item.memberId === otherMemberId) {
                         return <YourChat thumbnail={FishThumbnail} content={item.item.content}/>
                       } else {
-                        return <Text>{item.item.content}</Text>
+                        return (
+                            <View style={{justifyContent: 'center', alignItems: 'center', marginVertical: 5}}>
+                              <Text>{item.item.content}</Text>
+                            </View>
+                        )
                       }
                     }}
                     keyExtractor={(item) => String(item.timestamp)+String(item.memberId)+String(item.content)}
