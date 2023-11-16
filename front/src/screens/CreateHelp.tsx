@@ -8,7 +8,7 @@ import CategoryWrapStyle from "@/styles/CategoryWrapStyle";
 import {SvgXml} from "react-native-svg";
 import RecommendCategoryWrap from "@/components/RecommendCategoryWrap";
 import SimilarRecommendCategoryWrap from "@/components/SimilarRecommendCategoryWrap";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import useStore from "@/store/store";
 import useInput from "@/hooks/useInput";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
@@ -100,6 +100,17 @@ const CreateHelp = (({location, socket, chatSocket}: propsType) => {
             connect();
             return () => {};
         }, [socket.connected])
+    )
+
+    useFocusEffect(
+        useCallback(() => {
+            const disConnect = () => {
+                if (!chatSocket.connected) return;
+                chatSocket.disConnect();
+            }
+            disConnect();
+            return () => {};
+        }, [chatSocket.connected])
     )
 
     return (
