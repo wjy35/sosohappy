@@ -8,6 +8,8 @@ import com.ssafy.chat.api.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,9 +33,8 @@ public class ChatRoomController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/chatroom")
-    public ResponseEntity<?> getChatRoomList(@RequestHeader("memberId") long memberId){
-
+    @SubscribeMapping("/topic/{memberId}")
+    public void subscribeChatRoomList(@DestinationVariable("memberId") long memberId){
         List<ChatRoomList> chatRoomLists;
         try {
             chatRoomLists = chatRoomService.getChatRoomListParams(memberId);
@@ -41,12 +42,6 @@ public class ChatRoomController {
             throw new RuntimeException(e);
         }
 
-        FormattedResponse response = FormattedResponse.builder()
-                .status("success")
-                .message("GET CHATROOM lIST")
-                .result("chatRoomList",chatRoomLists)
-                .build();
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        chatRoomService.sendChatRoomList(chatRoomLists, memberId);
     }
 }

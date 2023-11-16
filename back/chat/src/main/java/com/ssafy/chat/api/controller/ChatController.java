@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,6 +55,8 @@ public class ChatController {
                             );
                         }
                         ,()->{
+                            chatService.sendForSelf(chatPublish);
+
                             ChatSendEventDTO chatSendEventDTO = ChatSendEventDTO.builder()
                                     .sendMemberId(chatRequest.getSendMemberId())
                                     .receiveMemberId(chatRequest.getReceiveMemberId())
@@ -77,17 +81,12 @@ public class ChatController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/chat/{chatRoomId}")
-    public ResponseEntity<?> getChatList(@PathVariable int chatRoomId){
+    @SubscribeMapping("/topic/{memberId}/{chatRoomId}")
+    public void subscribeChatRoom(@DestinationVariable("memberId") long memberId,
+                                  @DestinationVariable("chatRoomId") int chatRoomId){
 
         List<ChatResponse> chatResponseList = chatService.getChatList(chatRoomId);
-
-        FormattedResponse response = FormattedResponse.builder()
-                .status("success")
-                .message("GET Chat List")
-                .result("chatResponseList", chatResponseList)
-                .build();
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        chatService.sendChatList(chatResponseList, memberId, chatRoomId);
     }
+
 }
