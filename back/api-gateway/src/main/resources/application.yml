@@ -5,7 +5,7 @@ spring:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
       globalcors:
         cors-configurations:
-          '[/**]':
+          '/member-command/sign-in':
             allowedOrigins: "*"
       routes:
         - id: member-query
