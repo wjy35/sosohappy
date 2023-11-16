@@ -105,16 +105,21 @@ const MyPage = ({socket, chatSocket}: propsType) => {
     setMyClover(res.data.result.clover);
   }
 
-  const whatIsMyThumbnail = () => {
-    if(userInfo.profileMonsterId){
-      setProfileMonsterType(Math.floor((userInfo.profileMonsterId-1)/10) + 1);
-      setProfileMonsterLevel((userInfo.profileMonsterId % 10 === 0)?10:(userInfo.profileMonsterId%10));
+  const setSosomon = (type:number, level:number) => {
+    if (type === 1){
+      setSrc(type1[level-1])
+    } else if (type === 2){
+      setSrc(type2[level-1])
+    } else if (type === 3){
+      setSrc(type3[level-1])
+    } else {
+      setSrc(type4[0])
     }
   }
 
-  useEffect(() => {
-    whatIsMyThumbnail();
-  }, [])
+  useEffect(()=>{
+    setSosomon(profileMonsterType, profileMonsterLevel);
+  }, [profileMonsterType, profileMonsterLevel])
 
   const police = () => {
     setIsDialogState(true);
