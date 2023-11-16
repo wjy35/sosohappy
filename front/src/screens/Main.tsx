@@ -1,4 +1,4 @@
-import {View, Text, Image, TouchableOpacity, Alert} from "react-native";
+import {View, Text, Image, TouchableOpacity, Alert, ToastAndroid} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import MainImg from "@/assets/img/main-img.png"
 import HandShakeIcon from "@/assets/img/handshake-icon.png"
@@ -10,7 +10,7 @@ import MainStyle from "@/styles/MainStyle";
 
 import useStore from "@/store/store"
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {ChatSocket, helpSocket} from "@/types";
 import helpMatchApi from "@/apis/helpMatchApi";
 import memberApi from "@/apis/memberApi";
@@ -25,8 +25,35 @@ const Main = ({socket, chatSocket}: propsType) => {
   const navigation =  useNavigation();
   const [helpStatus, setHelpStatus] = useState('');
 
-  const goto = (next: string) => {
+  const onToast = (text: string) => {
+    ToastAndroid.showWithGravity(
+        text,
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP,
+    )
+  }
+
+  const checkUserGoto = (next: string) => {
     userInfo?(navigation.navigate(next)):(navigation.navigate('Login'));
+  }
+
+  const checkDisabledGoto = (next: string) => {
+    if (userInfo) {
+      if (userInfo.disabled){
+        if (helpStatus === 'WAIT_COMPLETE'){
+          Alert.alert("도움요청 알림", "진행중인 도움요청이 있습니다. 완료하시겠습니까?",[
+            {text: '완료하기', onPress: () => completeHelp()},
+            {text: '지도로 가기', onPress: () => navigation.navigate('Map')},
+          ])
+        } else {
+          navigation.navigate(next)
+        }
+      } else {
+        onToast('나눔이만 가능한 기능입니다');
+      }
+    } else {
+      navigation.navigate('Login')
+    }
   }
 
   const getHelpStatus = async () => {
@@ -52,29 +79,14 @@ const Main = ({socket, chatSocket}: propsType) => {
     }
   }
 
-  const getMatchingStatus = async () => {
-
-    const matchingStatusRes = await helpMatchApi.getHelpStatus();
-    const matchingStatus = matchingStatusRes.data.result.matchStatus.helpMatchStatus
-    // TODO 추후 WAIT로 변경
-    if(matchingStatus === "WAIT"){
-      Alert.alert("도움요청 알림", "진행되었으나 완료되지 않은 도움요청이 있어요. 완료하시겠습니까?",[
-        {text: '완료하기', onPress: () => completeHelp()}
-      ])
-    }else if(matchingStatus === "ON_MOVE"){
-      Alert.alert("도움요청 알림", "도움요청 진행중입니다. 지도화면으로 이동합니다.", [
-        {text: '이동하기', onPress: () => navigation.navigate('Map')}
-      ]);
-    }
-  }
-
   const completeHelp = async () => {
-    const getMyInfo = await memberApi.getMember();
-    if(getMyInfo.status === 200){
-      const myMemberId = getMyInfo.data.result.member.memberId;
-
-      const completeRes = await helpMatchApi.helpComplete({memberId: myMemberId});
-      console.log("completeRes", completeRes);
+    try {
+      const res = await helpMatchApi.helpComplete({memberId: userInfo.memberId});
+      if (res.status === 200){
+        console.log(res)
+      }
+    } catch (err) {
+      console.log(err)
     }
   }
 
@@ -83,22 +95,40 @@ const Main = ({socket, chatSocket}: propsType) => {
         if (userInfo){
           getHelpStatus();
         }
-        const disConnect = () => {
-          if (!socket.connected) return;
-          socket.disConnect();
-        }
-        disConnect();
+        socket.connected&&socket.disConnect();
         return () => {};
       }, [socket.connected])
   )
 
-  useEffect(() => {
-    getFortuneList();
+  useFocusEffect(
+      useCallback(() => {
+        const disConnect = () => {
+          if (!chatSocket.connected) return;
+          chatSocket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [chatSocket.connected])
+  )
 
-    if(userInfo){
-      getMatchingStatus();
+  useEffect(() => {
+    if (!userInfo) return
+    getFortuneList();
+    getHelpStatus();
+  }, [userInfo])
+
+  useEffect(() => {
+    if(helpStatus === "WAIT_COMPLETE"){
+      Alert.alert("도움요청 알림", "진행중인 도움요청이 있습니다. 완료하시겠습니까?",[
+        {text: '완료하기', onPress: () => completeHelp()},
+        {text: '지도로 가기', onPress: () => navigation.navigate('Map')},
+      ])
+    }else if(helpStatus === "ON_MOVE"){
+      Alert.alert("도움요청 알림", "도움요청 진행중입니다. 지도화면으로 이동합니다.", [
+        {text: '이동하기', onPress: () => navigation.navigate('Map')}
+      ]);
     }
-  }, [])
+  }, [helpStatus]);
 
   return (
     <CommonLayout footer={true} headerType={0} nowPage={'Main'}>
@@ -113,7 +143,7 @@ const Main = ({socket, chatSocket}: propsType) => {
           source={MainImg}
           style={MainStyle.mainImg}
         />
-        <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Map')}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => checkUserGoto('Map')}>
           <View style={MainStyle.helpButton}>
             <Text style={MainStyle.helpButtonText}>도움 찾아가기</Text>
           </View>
@@ -136,7 +166,7 @@ const Main = ({socket, chatSocket}: propsType) => {
           <Text style={MainStyle.boxSubTitle}>소소한 행복이 행운을 가져다줘요</Text>
         </View>
         <View style={MainStyle.boxFlexWrap}>
-          <TouchableOpacity activeOpacity={0.7} onPress={() => goto('CreateHelp')}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => checkDisabledGoto('CreateHelp')}>
             <View style={MainStyle.boxContentWrap}>
               <Text style={MainStyle.boxContentTitle}>
                 도움이{"\n"}
@@ -150,7 +180,7 @@ const Main = ({socket, chatSocket}: propsType) => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Map')}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => checkUserGoto('Map')}>
             <View style={MainStyle.boxContentWrap}>
               <Text style={MainStyle.boxContentTitle}>
                 소소한 행복을{"\n"}
@@ -188,7 +218,7 @@ const Main = ({socket, chatSocket}: propsType) => {
           }
 
 
-        <TouchableOpacity activeOpacity={0.7} onPress={() => goto('MyPage')}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => checkUserGoto('MyPage')}>
           <View style={MainStyle.moveMypageButton}>
             <Image
               source={CloverIcon}

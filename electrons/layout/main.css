@@ -1,9 +1,9 @@
 .section-flex-wrap {
   width: 800px;
-  height: 500px;
+  height: 100%;
   display: flex;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
 }
 .section-flex-wrap .section-left {
   width: 260px;
@@ -59,6 +59,7 @@
   width: 540px;
   height: 100%;
   background: #F0F4F7;
+  padding-bottom: 30px;
 }
 .section-flex-wrap .section-right .section-padding-wrap {
   padding-left: 44px;
