@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,10 +31,12 @@ public class ChatServiceImpl implements ChatService {
                 .timestamp(chatPublish.getTimestamp())
                 .build();
 
+        List<ChatResponse> chatResponseList = new ArrayList<>();
+        chatResponseList.add(chatResponse);
 
         simpMessageSendingOperations.convertAndSend(
                 chatPublish.getChatRoomDetailDestination(),
-                objectSerializer.serialize(chatResponse)
+                objectSerializer.serialize(chatResponseList)
         );
 
     }
@@ -45,10 +48,11 @@ public class ChatServiceImpl implements ChatService {
                 .content(chatPublish.getContent())
                 .timestamp(chatPublish.getTimestamp())
                 .build();
-
+        List<ChatResponse> chatResponseList = new ArrayList<>();
+        chatResponseList.add(chatResponse);
         simpMessageSendingOperations.convertAndSend(
                 chatPublish.getChatRoomListDestination(),
-                objectSerializer.serialize(chatResponse)
+                objectSerializer.serialize(chatResponseList)
         );
     }
 
@@ -60,9 +64,12 @@ public class ChatServiceImpl implements ChatService {
                 .timestamp(chatPublish.getTimestamp())
                 .build();
 
+        List<ChatResponse> chatResponseList = new ArrayList<>();
+        chatResponseList.add(chatResponse);
+
         simpMessageSendingOperations.convertAndSend(
                 chatPublish.getChatRoomSelfDestination(),
-                objectSerializer.serialize(chatResponse)
+                objectSerializer.serialize(chatResponseList)
         );
     }
 
@@ -76,13 +83,11 @@ public class ChatServiceImpl implements ChatService {
         List<ChatEntity> chatEntityList = chatRepository.getChatList(chatRoomId);
 
         return chatEntityList.stream()
-                .map(chatEntity -> {
-                    return ChatResponse.builder()
-                            .memberId(chatEntity.getSendMemberId())
-                            .content(chatEntity.getContent())
-                            .timestamp(chatEntity.getTimestamp())
-                            .build();
-                })
+                .map(chatEntity -> ChatResponse.builder()
+                        .memberId(chatEntity.getSendMemberId())
+                        .content(chatEntity.getContent())
+                        .timestamp(chatEntity.getTimestamp())
+                        .build())
                 .collect(Collectors.toList());
     }
 
