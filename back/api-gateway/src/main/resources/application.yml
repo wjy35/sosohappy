@@ -5,8 +5,10 @@ spring:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
       globalcors:
         cors-configurations:
-          '/member-command/sign-in':
+          '[/**]':
             allowedOrigins: "*"
+            allowedMethods: 
+              - OPTIONS
       routes:
         - id: member-query
           uri: lb://MEMBER-QUERY-SERVICE/
