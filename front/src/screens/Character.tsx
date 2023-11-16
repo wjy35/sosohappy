@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import {useEffect, useState, useRef, useCallback} from "react";
 import { View, Text, TouchableOpacity, ScrollView, ImageBackground, Image, Alert, Animated } from "react-native"
 import CommonLayout from "@/components/CommonLayout";
 import monsterApi from "@/apis/monsterApi";
@@ -129,10 +129,27 @@ const Character = ({socket, chatSocket}: propsType) => {
         getMyDict();
     }, [])
 
-    useFocusEffect(()=>{
-        if (!socket.connected) return;
-        socket.disConnect();
-    })
+    useFocusEffect(
+        useCallback(() => {
+            const disConnect = () => {
+                if (!socket.connected) return;
+                socket.disConnect();
+            }
+            disConnect();
+            return () => {};
+        }, [socket.connected])
+    )
+
+    useFocusEffect(
+        useCallback(() => {
+            const disConnect = () => {
+                if (!chatSocket.connected) return;
+                chatSocket.disConnect();
+            }
+            disConnect();
+            return () => {};
+        }, [chatSocket.connected])
+    )
 
     return(
         <>

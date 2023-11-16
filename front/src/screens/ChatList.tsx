@@ -2,12 +2,6 @@ import {useCallback, useEffect, useState} from "react"
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 
 import CommonLayout from "@/components/CommonLayout";
-import Footer from "@/components/Footer";
-
-import PreArrowIcon from "@/assets/img/pre-arrow.png"
-import HamburgerMenuIcon from "@/assets/img/hamburger-menu.png"
-import SearchIcon from "@/assets/img/search-icon.png"
-import FishThumbnail from "@/assets/img/fish-thumbnail.png"
 
 import ChatListStyle from "@/styles/ChatListStyle"
 import ChatListItem from "@/components/ChatListItem";
@@ -23,12 +17,8 @@ interface propsType{
 }
 
 const ChatList = ({socket, chatSocket}: propsType) => {
-  const [noneCheckedState, setNoneCheckedState] = useState<Boolean>(true);
-  const [allMsgState, setAllMsgState] = useState<Boolean>(false);
   const navigation = useNavigation();
   const {userInfo} = useStore();
-
-
 
   const getChatRoomList = async () => {
     const chatListApi = await chatApi.getChatRoomList(userInfo.memberId);

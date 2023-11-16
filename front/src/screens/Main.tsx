@@ -10,7 +10,7 @@ import MainStyle from "@/styles/MainStyle";
 
 import useStore from "@/store/store"
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {ChatSocket, helpSocket} from "@/types";
 import helpMatchApi from "@/apis/helpMatchApi";
 import memberApi from "@/apis/memberApi";
@@ -97,6 +97,17 @@ const Main = ({socket, chatSocket}: propsType) => {
         disConnect();
         return () => {};
       }, [socket.connected])
+  )
+
+  useFocusEffect(
+      useCallback(() => {
+        const disConnect = () => {
+          if (!chatSocket.connected) return;
+          chatSocket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [chatSocket.connected])
   )
 
   useEffect(() => {
