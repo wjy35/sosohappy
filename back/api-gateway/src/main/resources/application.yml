@@ -6,11 +6,10 @@ spring:
       globalcors:
         add-to-simple-url-handler-mapping: true
         cors-configurations:
-          '[/**]':
+          '/member-command/sign-in':
             allowedOrigins: '*'
             allowedHeaders: '*'
             allowedMethods: 
-              - GET
               - POST
               - OPTIONS
       routes:
