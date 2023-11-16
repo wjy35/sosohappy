@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from "react"
+import React, {useEffect, useState, useRef, useCallback} from "react"
 import {View, Text, Image, TouchableOpacity, Animated, Alert} from "react-native";
 import CommonLayout from "@/components/CommonLayout";
 import History from "@/components/History";
@@ -145,6 +145,17 @@ const MyPage = ({socket, chatSocket}: propsType) => {
         disConnect();
         return () => {};
       }, [socket.connected])
+  )
+
+  useFocusEffect(
+      useCallback(() => {
+        const disConnect = () => {
+          if (!chatSocket.connected) return;
+          chatSocket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [chatSocket.connected])
   )
 
   return (

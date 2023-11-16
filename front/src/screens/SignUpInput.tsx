@@ -4,7 +4,7 @@ import AuthTitle from "@/components/AuthTitle";
 import AuthButton from "@/components/AuthButton";
 
 import SignUpInputStyle from "@/styles/SignUpInputStyle";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import PlainInput from "@/components/PlainInput";
 import useInput from "@/hooks/useInput";
 import {useFocusEffect, useNavigation, useRoute} from "@react-navigation/native";
@@ -137,10 +137,27 @@ const SignUpInput = ({socket, chatSocket}: propsType) => {
     setSelectedGender(gender);
   }
 
-  useFocusEffect(()=>{
-    if (!socket.connected) return;
-    socket.disConnect();
-  })
+  useFocusEffect(
+      useCallback(() => {
+        const disConnect = () => {
+          if (!socket.connected) return;
+          socket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [socket.connected])
+  )
+
+  useFocusEffect(
+      useCallback(() => {
+        const disConnect = () => {
+          if (!chatSocket.connected) return;
+          chatSocket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [chatSocket.connected])
+  )
 
   return (
     <CommonLayout headerType={0} footer={true}>

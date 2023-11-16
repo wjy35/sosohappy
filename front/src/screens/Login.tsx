@@ -9,7 +9,7 @@ import RNSecureStorage, {ACCESSIBLE} from "rn-secure-storage";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import messaging from '@react-native-firebase/messaging'
 import useStore from "@/store/store";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import {useEffect} from "react";
 import {ChatSocket, helpSocket} from "@/types";
 
@@ -79,10 +79,27 @@ const Login = ({socket, chatSocket}: propsType) => {
     }
   };
 
-  useFocusEffect(()=>{
-    if (!socket.connected) return;
-    socket.disConnect();
-  })
+  useFocusEffect(
+      useCallback(() => {
+        const disConnect = () => {
+          if (!socket.connected) return;
+          socket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [socket.connected])
+  )
+
+  useFocusEffect(
+      useCallback(() => {
+        const disConnect = () => {
+          if (!chatSocket.connected) return;
+          chatSocket.disConnect();
+        }
+        disConnect();
+        return () => {};
+      }, [chatSocket.connected])
+  )
 
   return (
     <CommonLayout headerType={0} footer={true}>
