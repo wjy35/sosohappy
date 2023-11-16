@@ -26,6 +26,11 @@ interface feedTypes{
     feedType: number,
 }
 
+interface feedManyTypes{
+    feedType: number,
+    feedClovers: number,
+}
+
 interface propsType{
     socket: helpSocket;
     chatSocket: ChatSocket
@@ -59,8 +64,47 @@ const Character = ({socket, chatSocket}: propsType) => {
         }
     }
 
+    const feedManyCloversCommon = async ({feedType, feedClovers}: feedManyTypes) => {
+        if(myMonsters){
+            const levelUpApi = await monsterApi.levelUp({
+                memberMonsterId: myMonsters[feedType].memberMonsterId,
+                clover: feedClovers,
+            });
+            if(levelUpApi.status === 200){
+                if(levelUpApi.data.message === "보유중인 클로버가 부족합니다."){
+                    Alert.alert("보유중인 클로버가 부족하여 먹이를 줄 수 없습니다.");
+                }else if(levelUpApi.data.message === "클로버를 성공적으로 반영하였습니다."){
+                    Alert.alert("먹이를 성공적으로 주었습니다.");
+                    getMyDict();
+                }
+            }else{
+                Alert.alert("시스템 오류, 관리자에게 문의하세요.");
+            }
+        }
+    }
+
     const feedManyCloversApi = async (inputText: string) => {
-        console.log("clover", inputText);
+        switch(categoryType){
+            case CategoryType.army:
+                feedManyCloversCommon({
+                    feedType:0,
+                    feedClovers:Number(inputText),
+                });
+                break;
+            case CategoryType.navy:
+                feedManyCloversCommon({
+                    feedType:1,
+                    feedClovers:Number(inputText),
+                });
+                break;
+            case CategoryType.airForce:
+                feedManyCloversCommon({
+                    feedType:2,
+                    feedClovers:Number(inputText),
+                });
+                break;
+        }
+        
     }
 
     const feedSosomon = async () => {
@@ -344,6 +388,8 @@ const Character = ({socket, chatSocket}: propsType) => {
                     title={"소소몬에게 먹이주기"}
                     message={"몇 개의 clover를 소소몬에게 주겠습니까?"}
                     hintInput ={"clover 개수 입력"}
+                    submitText={'먹이주기'}
+                    cancelText={'돌아가기'}
                     submitInput={ (inputText: string) => feedManyCloversApi(inputText) }
                     closeDialog={ () => setIsDialogState(false) }>
                 </DialogInput>
