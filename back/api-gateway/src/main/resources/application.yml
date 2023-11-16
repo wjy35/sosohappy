@@ -10,6 +10,7 @@ spring:
             allowedOrigins: '*'
             allowedMethods: 
               - POST
+              - OPTIONS
       routes:
         - id: member-query
           uri: lb://MEMBER-QUERY-SERVICE/
