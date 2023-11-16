@@ -19,7 +19,6 @@ import useStore from "@/store/store";
 import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
 import Header from "@/components/Header";
 import SideMenu from "@/components/SideMenu";
-import Footer from "@/components/Footer";
 
 interface propsType{
   helpSocket: helpSocket;
@@ -109,9 +108,9 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
                 <FlatList
                     data={[...chatSocket.msgList].reverse()}
                     showsVerticalScrollIndicator={false}
-                    windowSize={3}
+                    windowSize={5}
                     inverted={true}
-                    initialNumToRender={5}
+                    initialNumToRender={10}
                     renderItem={(item) => {
                       if (item.item.memberId === userInfo.memberId){
                         return <MyChat content={item.item.content}/>
