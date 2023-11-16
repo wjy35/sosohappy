@@ -35,7 +35,24 @@ function useChatSocket() {
             `/topic/${userInfo.memberId}`,
             (frame) => {
                 const body = JSON.parse(frame.body);
-                console.log(body);
+                setHelpChatList((prev) => {
+                    if (prev.length === 0){
+                        return [...body];
+                    }
+                    const target = body[0];
+                    const _helpChatList = [...prev]
+                    const targetIdx = prev.findIndex((el)=> el.chatRoomId === target.chatRoomId)
+                    if (targetIdx !== -1){
+                        _helpChatList[targetIdx] = {...target}
+                    } else {
+                        _helpChatList.push(target)
+                    }
+                    const compare = (a: any, b: any) => {
+                        return Date.parse(b.currentChat.timestamp) - Date.parse(a.currentChat.timestamp)
+                    }
+                    _helpChatList.sort(compare);
+                    return [..._helpChatList]
+                })
             },
             {
                 id: "list"
