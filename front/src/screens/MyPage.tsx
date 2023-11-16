@@ -33,7 +33,7 @@ interface propsType{
 const MyPage = ({socket, chatSocket}: propsType) => {
   const navigation = useNavigation();
   const [modalState, setModalState] = useState<Boolean>(false);
-  const {userInfo} = useStore();
+  const {userInfo, updateSosomon} = useStore();
   const [myProfile, setMyProfile] = useState<any>(null);
   const [defaultSosomon, setDefaultSosomon] = useState<any>(null);
   const [fortuneModalState, setFortuneModalState] = useState<Boolean>(false);
@@ -42,6 +42,7 @@ const MyPage = ({socket, chatSocket}: propsType) => {
   const [profileMonsterType, setProfileMonsterType] = useState<number>(Math.floor((userInfo.profileMonsterId-1)/10) + 1);
   const [profileMonsterLevel, setProfileMonsterLevel] = useState<number>((userInfo.profileMonsterId % 10 === 0)?10:(userInfo.profileMonsterId%10));
   const [isDialogState, setIsDialogState] = useState<Boolean>(false);
+  const [src, setSrc] = useState();
 
   const load = (initialWidth: number) => {
     Animated.timing(loaderValue, {
@@ -61,17 +62,6 @@ const MyPage = ({socket, chatSocket}: propsType) => {
     setModalState(status);
   }
 
-  const getProfileMonster = async () => {
-    try {
-      const res = await monsterApi.getMyDetail();
-      if (res.status === 200){
-        setDefaultSosomon(res.data.result.monster);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
   const changeProfileMonster = async (profileType: number, profileLevel: number) => {
     const profileMonsterId = (profileType-1)*10 + profileLevel;
     try {
@@ -81,6 +71,7 @@ const MyPage = ({socket, chatSocket}: propsType) => {
       if (res.status === 200){
         setProfileMonsterType(profileType)
         setProfileMonsterLevel(profileLevel)
+        updateSosomon(profileMonsterId)
       }
     } catch (err){
       console.log(err);
@@ -115,16 +106,21 @@ const MyPage = ({socket, chatSocket}: propsType) => {
     setMyClover(res.data.result.clover);
   }
 
-  const whatIsMyThumbnail = () => {
-    if(userInfo.profileMonsterId){
-      setProfileMonsterType(Math.floor((userInfo.profileMonsterId-1)/10) + 1);
-      setProfileMonsterLevel((userInfo.profileMonsterId % 10 === 0)?10:(userInfo.profileMonsterId%10));
+  const setSosomon = (type:number, level:number) => {
+    if (type === 1){
+      setSrc(type1[level-1])
+    } else if (type === 2){
+      setSrc(type2[level-1])
+    } else if (type === 3){
+      setSrc(type3[level-1])
+    } else {
+      setSrc(type4[0])
     }
   }
 
-  useEffect(() => {
-    whatIsMyThumbnail();
-  }, [])
+  useEffect(()=>{
+    setSosomon(profileMonsterType, profileMonsterLevel);
+  }, [profileMonsterType, profileMonsterLevel])
 
   const police = () => {
     setIsDialogState(true);
@@ -137,11 +133,8 @@ const MyPage = ({socket, chatSocket}: propsType) => {
   }, [defaultSosomon]);
 
   useEffect(()=>{
-    getProfileMonster();
     getMyCloverApi();
   }, [])
-
-
 
   useFocusEffect(
       React.useCallback(() => {
@@ -158,35 +151,10 @@ const MyPage = ({socket, chatSocket}: propsType) => {
     <>
     <CommonLayout headerType={0} footer={true}>
       <View style={MyPageStyle.myProfileWrap}>
-        {
-          profileMonsterType === 1 &&
-          <Image
-            source={type1[profileMonsterLevel-1]}
+        <Image
+            source={src?src:type4[0]}
             style={MyPageStyle.myProfileImg}
-          />
-        }
-        {
-          profileMonsterType === 2 &&
-          <Image
-            source={type2[profileMonsterLevel-1]}
-            style={MyPageStyle.myProfileImg}
-          />
-        }
-        {
-          profileMonsterType === 3 &&
-          <Image
-            source={type3[profileMonsterLevel-1]}
-            style={MyPageStyle.myProfileImg}
-          />
-        }
-        {
-          profileMonsterType === 4 &&
-          <Image
-            source={type4[profileMonsterLevel-1]}
-            style={MyPageStyle.myProfileImg}
-          />
-        }
-
+        />
         <View style={MyPageStyle.myProfileInfo}>
           {
             userInfo &&
@@ -238,7 +206,6 @@ const MyPage = ({socket, chatSocket}: propsType) => {
             profileMonsterType && (
                 <WebView
                     source={{uri: `http://sosohappy.co.kr:8888/sosomon/${profileMonsterType}/${profileMonsterLevel}`}}
-                    // source={{uri: `http://sosohappy.co.kr:8888/sosomon/2/5`}}
                     style={MyPageStyle.MySelectedCharImg}
                     nestedScrollEnabled
                 />
