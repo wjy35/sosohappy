@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity, Alert, Image} from "react-native"
+import {View, Text, TouchableOpacity, Alert, Image, ToastAndroid} from "react-native"
 import SideMenuStyle from "@/styles/SideMenuStyle";
 import {useNavigation} from "@react-navigation/native";
 import { sosohappyWhiteLogo, user, gear, chat, peace, home, close, menuDocs } from "@/assets/icons/icons";
@@ -9,6 +9,7 @@ import useStore from "@/store/store";
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
 import RNSecureStorage from "rn-secure-storage";
 import {useEffect, useState} from "react";
+import helpMatchApi from "@/apis/helpMatchApi";
 
 interface props {
     closeSide: Function;
@@ -20,6 +21,8 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
     const navigation = useNavigation();
     const {userInfo, logout} = useStore();
     const [src, setSrc] = useState();
+    const [helpStatus, setHelpStatus] = useState('');
+
 
     const userLogout = async () => {
         await logout();
@@ -31,15 +34,57 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
         userInfo?(navigation.navigate(next)):(navigation.navigate('Login'));
     }
 
+    const onToast = (text: string) => {
+        ToastAndroid.showWithGravity(
+            text,
+            ToastAndroid.SHORT,
+            ToastAndroid.TOP,
+        )
+    }
+
     const checkDisabledGoto = (next: string) => {
-        userInfo?
-            (userInfo.disabled&&navigation.navigate(next))
-            :
-            (navigation.navigate('Login'));
+        if (userInfo) {
+            if (userInfo.disabled){
+                if (helpStatus === 'WAIT_COMPLETE'){
+                    Alert.alert("도움요청 알림", "진행중인 도움요청이 있습니다. 완료하시겠습니까?",[
+                        {text: '완료하기', onPress: () => completeHelp()},
+                        {text: '지도로 가기', onPress: () => navigation.navigate('Map')},
+                    ])
+                } else {
+                    navigation.navigate(next)
+                }
+            } else {
+                onToast('나눔이만 가능한 기능입니다');
+            }
+        } else {
+            navigation.navigate('Login')
+        }
     }
 
     const moveSettingPage = () => {
         Alert.alert('향후 업데이트 예정입니다.');
+    }
+
+    const getHelpStatus = async () => {
+        try {
+            const res = helpMatchApi.getHelpStatus();
+            if (res.status === 200){
+                setHelpStatus(res.data.result.helpMatchStatus)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const completeHelp = async () => {
+        try {
+            const res = await helpMatchApi.helpComplete({memberId: userInfo.memberId});
+            if (res.status === 200){
+                console.log(res)
+            }
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     const whatIsMyThumbnail = () => {
@@ -60,7 +105,9 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
     }
 
     useEffect(() => {
+        if (!userInfo) return
         whatIsMyThumbnail();
+        getHelpStatus();
     }, [userInfo]);
 
     return(
