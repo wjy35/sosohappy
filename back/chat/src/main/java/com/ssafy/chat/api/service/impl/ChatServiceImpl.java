@@ -83,13 +83,11 @@ public class ChatServiceImpl implements ChatService {
         List<ChatEntity> chatEntityList = chatRepository.getChatList(chatRoomId);
 
         return chatEntityList.stream()
-                .map(chatEntity -> {
-                    return ChatResponse.builder()
-                            .memberId(chatEntity.getSendMemberId())
-                            .content(chatEntity.getContent())
-                            .timestamp(chatEntity.getTimestamp())
-                            .build();
-                })
+                .map(chatEntity -> ChatResponse.builder()
+                        .memberId(chatEntity.getSendMemberId())
+                        .content(chatEntity.getContent())
+                        .timestamp(chatEntity.getTimestamp())
+                        .build())
                 .collect(Collectors.toList());
     }
 
