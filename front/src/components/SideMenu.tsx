@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity, Alert, Image} from "react-native"
+import {View, Text, TouchableOpacity, Alert, Image, ToastAndroid} from "react-native"
 import SideMenuStyle from "@/styles/SideMenuStyle";
 import {useNavigation} from "@react-navigation/native";
 import { sosohappyWhiteLogo, user, gear, chat, peace, home, close, menuDocs } from "@/assets/icons/icons";
@@ -8,6 +8,8 @@ import Modal from "react-native-modal";
 import useStore from "@/store/store";
 import { type1, type2, type3, type4 } from "@/assets/sosomon";
 import RNSecureStorage from "rn-secure-storage";
+import {useEffect, useState} from "react";
+import helpMatchApi from "@/apis/helpMatchApi";
 
 interface props {
     closeSide: Function;
@@ -18,42 +20,95 @@ interface props {
 const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
     const navigation = useNavigation();
     const {userInfo, logout} = useStore();
+    const [src, setSrc] = useState();
+    const [helpStatus, setHelpStatus] = useState('');
+
 
     const userLogout = async () => {
+        navigation.navigate('Main');
         await logout();
         await RNSecureStorage.remove("accessToken");
-        navigation.navigate('Main');
     };
 
-    const goto = (next: string) => {
+    const checkUserGoto = (next: string) => {
         userInfo?(navigation.navigate(next)):(navigation.navigate('Login'));
+    }
+
+    const onToast = (text: string) => {
+        ToastAndroid.showWithGravity(
+            text,
+            ToastAndroid.SHORT,
+            ToastAndroid.TOP,
+        )
+    }
+
+    const checkDisabledGoto = (next: string) => {
+        if (userInfo) {
+            if (userInfo.disabled){
+                if (helpStatus === 'WAIT_COMPLETE'){
+                    Alert.alert("도움요청 알림", "진행중인 도움요청이 있습니다. 완료하시겠습니까?",[
+                        {text: '완료하기', onPress: () => completeHelp()},
+                        {text: '지도로 가기', onPress: () => navigation.navigate('Map')},
+                    ])
+                } else {
+                    navigation.navigate(next)
+                }
+            } else {
+                onToast('나눔이만 가능한 기능입니다');
+            }
+        } else {
+            navigation.navigate('Login')
+        }
     }
 
     const moveSettingPage = () => {
         Alert.alert('향후 업데이트 예정입니다.');
     }
 
+    const getHelpStatus = async () => {
+        try {
+            const res = helpMatchApi.getHelpStatus();
+            if (res.status === 200){
+                setHelpStatus(res.data.result.helpMatchStatus)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const completeHelp = async () => {
+        try {
+            const res = await helpMatchApi.helpComplete({memberId: userInfo.memberId});
+            if (res.status === 200){
+                console.log(res)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     const whatIsMyThumbnail = () => {
         if(userInfo && userInfo.profileMonsterId != null){
-            let tempMonsterId = userInfo.profileMonsterId;
-            const animalType = Math.floor((tempMonsterId-1) / 10) + 1;
-            const animalLevel = (tempMonsterId % 10 === 0)?10:(tempMonsterId%10);
-            switch(animalType){
-                case 1:
-                    return type1[animalLevel-1];
-                    break;
-                case 2:
-                    return type2[animalLevel-1];
-                    break;
-                case 3:
-                    return type3[animalLevel-1];
-                    break;
-                case 4:
-                    return type4[animalLevel-1];
-                    break;
+            const type = Math.floor((userInfo.profileMonsterId-1)/10) + 1;
+            const level = (userInfo.profileMonsterId % 10 === 0)?10:userInfo.profileMonsterId%10;
+            // console.log(type, level)
+            if (type === 1){
+                setSrc(type1[level-1])
+            } else if (type === 2){
+                setSrc(type2[level-1])
+            } else if (type === 3){
+                setSrc(type3[level-1])
+            } else {
+                setSrc(type4[0])
             }
         }
     }
+
+    useEffect(() => {
+        if (!userInfo) return
+        whatIsMyThumbnail();
+        getHelpStatus();
+    }, [userInfo]);
 
     return(
         <>
@@ -88,7 +143,7 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
                         <View style={SideMenuStyle.profileWrap}>
                             <View style={SideMenuStyle.profileImgWrap}>
                                 <Image
-                                    source={whatIsMyThumbnail()}
+                                    source={src?src:type4[0]}
                                     style={SideMenuStyle.profileImg}
                                 />
                             </View>
@@ -120,7 +175,7 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
                                 <>
                                     {
                                         userInfo?.disabled && (
-                                            <TouchableOpacity activeOpacity={0.7} onPress={()=>goto("CreateHelp")}>
+                                            <TouchableOpacity activeOpacity={0.7} onPress={()=>checkDisabledGoto("CreateHelp")}>
                                                 <View style={[SideMenuStyle.menuList, nowPage==="Help" && SideMenuStyle.menuListActive]}>
                                                     <SvgXml
                                                         xml={peace}
@@ -132,7 +187,7 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
                                             </TouchableOpacity>
                                         )
                                     }
-                                    <TouchableOpacity activeOpacity={0.7} onPress={()=>goto("ChatList")}>
+                                    <TouchableOpacity activeOpacity={0.7} onPress={()=>checkUserGoto("ChatList")}>
                                         <View style={[SideMenuStyle.menuList, nowPage==="Chat" && SideMenuStyle.menuListActive]}>
                                             <SvgXml
                                                 xml={chat}
@@ -142,7 +197,7 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
                                             <Text style={[SideMenuStyle.menuItemText]}>채팅</Text>
                                         </View>
                                     </TouchableOpacity>
-                                    <TouchableOpacity activeOpacity={0.7} onPress={()=>goto("MyPage")}>
+                                    <TouchableOpacity activeOpacity={0.7} onPress={()=>checkUserGoto("MyPage")}>
                                         <View style={[SideMenuStyle.menuList, nowPage==="MyPage" && SideMenuStyle.menuListActive]}>
                                             <SvgXml
                                                 xml={user}
@@ -162,7 +217,7 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
                                     {/*        <Text style={[SideMenuStyle.menuItemText]}>정보수정</Text>*/}
                                     {/*    </View>*/}
                                     {/*</TouchableOpacity>*/}
-                                    <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Certificate')}>
+                                    <TouchableOpacity activeOpacity={0.7} onPress={() => checkUserGoto('Certificate')}>
                                         <View style={[SideMenuStyle.menuList]}>
                                             <SvgXml
                                                 xml={menuDocs}

@@ -2,8 +2,8 @@ import {PrivateInstance, PublicInstance} from "@/apis/AXIOSUTILS";
 
 const domain = 'category';
 
-interface recommendProps{
-  memberId: number,
+interface findByIdProps{
+  categoryId: number,
 }
 
 const helpCategoryApi = {
@@ -24,7 +24,13 @@ const helpCategoryApi = {
       `${domain}/categories`,
     );
     return res;
-  }
+  },
+  findCategoryById: async ({categoryId}: findByIdProps) => {
+    const res = PrivateInstance.get(
+      `${domain}//getCategoryInfo/${categoryId}`
+    )
+    return res;
+  },
 
 };
 

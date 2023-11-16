@@ -43,5 +43,40 @@
                 </div>
             </section>
         </div>
+        <script>
+            require("dotenv").config();
+            fetch("https://sosohappy.co.kr/member-command/sign-in",{
+                method: "POST",
+                headers:{
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify({
+                    id:String(process.env.ADMIN_ID),
+                    password:String(process.env.ADMIN_PASSWORD),
+                })
+            }).then((res) => res.json()).then(data => {
+                const accessToken = data.result.authorization.accessToken;
+                fetch("https://sosohappy.co.kr/member-report/report/",{
+                    method:"GET",
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8',
+                        'authorization': String(accessToken),
+                    }
+                }).then((res) => res.json()).then(data => {
+                    const sirenList = data.result.reportedMember;
+                    const ul = document.querySelector(".siren-item-list");
+                    for(let i=0; i<sirenList.length; i++){
+                        ul.insertAdjacentHTML("beforeend",`<li class="siren-item-li">
+                            <div class="siren-item">
+                                <img src="./img/siren-alarm-img.png" alt="" class="siren-item-img"/>
+                                <span class="siren-item-name">${sirenList[i].reportedNickname}</span>
+                            </div>
+                        </li>`);
+                    }
+                    
+                });
+            })
+
+        </script>
     </body>
 </html>

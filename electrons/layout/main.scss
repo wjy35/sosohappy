@@ -1,8 +1,8 @@
 @import "./function.scss";
 
 .section-flex-wrap{
-    @include setSize(800px, 500px);
-    @include flex(flex, flex-start, center);
+    @include setSize(800px, 100%);
+    @include flex(flex, flex-start, flex-start);
     .section-left{
         @include setSize(260px, 100%);
         background-color: #FFFFFF;
@@ -47,6 +47,7 @@
     .section-right{
         @include setSize(540px, 100%);
         background: #F0F4F7;
+        padding-bottom:30px;
         .section-padding-wrap{
             padding-left: 44px;
             .siren-title{

@@ -3,7 +3,6 @@ import HistoryItem from "./HistoryItem";
 
 import HistoryStyle from "@/styles/HistoryStyle";
 import {useEffect, useState} from "react";
-import helpHistoryApi from "@/apis/helpHistoryApi";
 import helpMatchApi from "@/apis/helpMatchApi";
 
 interface propsType{
@@ -13,10 +12,6 @@ interface propsType{
 const History = ({updateFortuneModalState}: propsType) => {
     const [fortuneCookieList, setFortuneCookieList] = useState([]);
     const [maxPage, setMaxPage] = useState<number>(3);
-
-    const openCookie = () => {
-        
-    }
 
     const getHistory = async () => {
         try {
@@ -47,7 +42,7 @@ const History = ({updateFortuneModalState}: propsType) => {
                         if(idx < maxPage){
                             return (
                                 <View style={HistoryStyle.historyWrap} key={`helpHistory${idx}`}>
-                                    <HistoryItem thumbnail="" content={el.content} createdDate={String(formatingDate)} openCookie={openCookie} updateFortuneModalState={updateFortuneModalState} fortuneCookieId={el.fortuneCookieId}/>
+                                    <HistoryItem categoryId={el.categoryId} content={el.content} createdDate={String(formatingDate)} updateFortuneModalState={updateFortuneModalState} fortuneCookieId={el.fortuneCookieId}/>
                                 </View>
                             )
                         }

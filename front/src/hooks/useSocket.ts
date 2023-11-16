@@ -49,17 +49,20 @@ function useSocket(){
                 );
             },
             (error) => {
-                console.log(error)
+                connect();
             },
         );
     }
 
     function disConnect() {
         if (!client) return;
+        client.unsubscribe('status');
+        subscribe&&client.unsubscribe(subscribe);
         setConnected(false);
         setStatus('');
         setSubscribe('');
         client.disconnect(()=>{console.log('socket disconnect')});
+        setClient()
     }
 
     function getList(){
@@ -133,6 +136,7 @@ function useSocket(){
             client.unsubscribe(subscribe);
             // console.log(subscribe);
         }
+        setHelpList([]);
         if (status === 'DEFAULT'){
             setIsSearching(false);
             getList();
@@ -141,10 +145,8 @@ function useSocket(){
             setIsSearching(true);
             getProgress();
         } else if (status === 'ON_MOVE'){
-            // setHelpList([]);
         } else if (status === 'WAIT_COMPLETE'){
             setIsSearching(false);
-            // setHelpList([]);
             getOtherPoint();
         }
     }, [status]);

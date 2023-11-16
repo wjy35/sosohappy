@@ -8,7 +8,7 @@ import {SvgXml} from "react-native-svg";
 import {addPlus, camera, gallery} from "@/assets/icons/icons";
 
 import SignUpAuthStyle from "@/styles/SignUpAuthStyle";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useFocusEffect, useNavigation, useRoute} from "@react-navigation/native";
 import {launchCamera, launchImageLibrary} from "react-native-image-picker";
 import PlainInput from "@/components/PlainInput";
@@ -130,10 +130,27 @@ const SignUpAuth = ({socket, chatSocket}: propsType) => {
         // console.log(image.assets[0])
     }, [image]);
 
-    useFocusEffect(()=>{
-        if (!socket.connected) return;
-        socket.disConnect();
-    })
+    useFocusEffect(
+        useCallback(() => {
+            const disConnect = () => {
+                if (!socket.connected) return;
+                socket.disConnect();
+            }
+            disConnect();
+            return () => {};
+        }, [socket.connected])
+    )
+
+    useFocusEffect(
+        useCallback(() => {
+            const disConnect = () => {
+                if (!chatSocket.connected) return;
+                chatSocket.disConnect();
+            }
+            disConnect();
+            return () => {};
+        }, [chatSocket.connected])
+    )
 
     const checkMemberName = (newText: string) => {
         // TODO: 글자수제한 필요 5글자 넘어가면 에러남
