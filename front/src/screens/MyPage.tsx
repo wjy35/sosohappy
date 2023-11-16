@@ -33,7 +33,7 @@ interface propsType{
 const MyPage = ({socket, chatSocket}: propsType) => {
   const navigation = useNavigation();
   const [modalState, setModalState] = useState<Boolean>(false);
-  const {userInfo} = useStore();
+  const {userInfo, updateSosomon} = useStore();
   const [myProfile, setMyProfile] = useState<any>(null);
   const [defaultSosomon, setDefaultSosomon] = useState<any>(null);
   const [fortuneModalState, setFortuneModalState] = useState<Boolean>(false);
@@ -71,6 +71,7 @@ const MyPage = ({socket, chatSocket}: propsType) => {
       if (res.status === 200){
         setProfileMonsterType(profileType)
         setProfileMonsterLevel(profileLevel)
+        updateSosomon(profileMonsterId)
       }
     } catch (err){
       console.log(err);
