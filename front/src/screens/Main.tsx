@@ -25,8 +25,15 @@ const Main = ({socket, chatSocket}: propsType) => {
   const navigation =  useNavigation();
   const [helpStatus, setHelpStatus] = useState('');
 
-  const goto = (next: string) => {
+  const checkUserGoto = (next: string) => {
     userInfo?(navigation.navigate(next)):(navigation.navigate('Login'));
+  }
+
+  const checkDisabledGoto = (next: string) => {
+    userInfo?
+        (userInfo.disabled&&navigation.navigate(next))
+        :
+        (navigation.navigate('Login'));
   }
 
   const getHelpStatus = async () => {
@@ -113,7 +120,7 @@ const Main = ({socket, chatSocket}: propsType) => {
           source={MainImg}
           style={MainStyle.mainImg}
         />
-        <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Map')}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => checkUserGoto('Map')}>
           <View style={MainStyle.helpButton}>
             <Text style={MainStyle.helpButtonText}>도움 찾아가기</Text>
           </View>
@@ -136,7 +143,7 @@ const Main = ({socket, chatSocket}: propsType) => {
           <Text style={MainStyle.boxSubTitle}>소소한 행복이 행운을 가져다줘요</Text>
         </View>
         <View style={MainStyle.boxFlexWrap}>
-          <TouchableOpacity activeOpacity={0.7} onPress={() => goto('CreateHelp')}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => checkDisabledGoto('CreateHelp')}>
             <View style={MainStyle.boxContentWrap}>
               <Text style={MainStyle.boxContentTitle}>
                 도움이{"\n"}
@@ -150,7 +157,7 @@ const Main = ({socket, chatSocket}: propsType) => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.7} onPress={() => goto('Map')}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => checkUserGoto('Map')}>
             <View style={MainStyle.boxContentWrap}>
               <Text style={MainStyle.boxContentTitle}>
                 소소한 행복을{"\n"}
@@ -188,7 +195,7 @@ const Main = ({socket, chatSocket}: propsType) => {
           }
 
 
-        <TouchableOpacity activeOpacity={0.7} onPress={() => goto('MyPage')}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => checkUserGoto('MyPage')}>
           <View style={MainStyle.moveMypageButton}>
             <Image
               source={CloverIcon}
