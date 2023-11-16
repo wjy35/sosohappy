@@ -68,7 +68,8 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
   },[])
 
   useEffect(() => {
-    getChatListApi();
+    if (!roomNo) return;
+    chatSocket.getDetail(roomNo);
   },[roomNo]);
 
   useFocusEffect(
@@ -117,7 +118,11 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
                       } else if (item.item.memberId === otherMemberId) {
                         return <YourChat thumbnail={FishThumbnail} content={item.item.content}/>
                       } else {
-                        return <Text>{item.item.content}</Text>
+                        return (
+                            <View style={{justifyContent: 'center', alignItems: 'center', marginVertical: 5}}>
+                              <Text>{item.item.content}</Text>
+                            </View>
+                        )
                       }
                     }}
                     keyExtractor={(item) => String(item.timestamp)+String(item.memberId)+String(item.content)}
