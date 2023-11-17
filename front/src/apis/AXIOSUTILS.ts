@@ -111,6 +111,9 @@ const handleResponseError = async (error: AxiosError) => {
         // case 500:
         //     Alert.alert("시스템 에러, 관리자에게 문의 바랍니다.");
         //     break;
+        case 418:
+            Alert.alert("보유한 클로버가 부족합니다.");
+            break;
         default:
             console.error(error);
             return Promise.reject(error);
