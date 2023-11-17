@@ -19,14 +19,21 @@ interface propsType{
 const HistoryItem = ({categoryId, content, createdDate, updateFortuneModalState, fortuneCookieId, addClover} : propsType) => {
     const [cookie, setCookie] = useState(true);
     const [myThumbnailInfo, setMyThumbnailInfo] = useState([]);
+    const [addCountStatus, setAddCountStatus] = useState<Boolean>(false);
 
     const openFortuneCookie = async () => {
+        if(addCountStatus){
+            updateFortuneModalState(true);
+            setCookie(false);
+            return;
+        }
         const deleteFortuneCookie = await helpMatchApi.openFortuneCookie({fortuneCookieId: fortuneCookieId});
         
         if(deleteFortuneCookie.status === 200){
             updateFortuneModalState(true);
             setCookie(false);
             addClover();
+            setAddCountStatus(true);
         }
     }
 
