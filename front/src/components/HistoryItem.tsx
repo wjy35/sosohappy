@@ -81,7 +81,6 @@ const HistoryItem = ({categoryId, content, createdDate, updateFortuneModalState,
                                 />
                             )
                         }
-
                     </View>
                 </View>
             </TouchableOpacity>
