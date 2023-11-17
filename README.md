@@ -17,6 +17,16 @@
 ### 기획 배경
 오타니 쇼헤이의 "행운을 주워 담는 행위"에서 착안하여 선행을 베풀면 그 행위가 다시 사회에 남아 나에게 돌아 온다는 것을 컨셉으로 사용자들이 부담없이 도움을 주고 받을 수 있는 매개체를 만드는 것을 목표하였습니다.
 
+<img src="exec/capture/research1.PNG" width="250"/>
+<img src="exec/capture/research2.PNG" width="250"/>
+
+### RESEARCH
+2022년 장애인이 겪는 고용차별, 직장생활 내 차별을 스스로 헤쳐가는 드라마 '이상한 변호사 우영우'의 등장으로 많은 사람들에게 장애에 대한 인식을 다시 생각해볼 수 있는 한 해가 되었습니다. 하지만 해당 우영우는 판타지라는 의견도 분분합니다. 이유인 즉슨, 대형 로펌의 동료 직원들에게 도움을 받지만, 현실은 우영우처럼 장애인 스스로 현실을 극복하기 어려운 상황들이 여러 직면하기 때문입니다. 특히나 거리에는 장애인이 쉽게 보이지 않는데 이유는 장애인에게 선의를 베푸는 것을 봉사활동이라고 생각하는 사회적 풍토가 만연하기 때문입니다. 저희 A509팀은 일상생활에서의 선의가 봉사라는 의미가 아닌 '공존'이라는 의미를 상기시켜 특별함이 아닌 일상생활에서의 관계맺기 및 도움요청 어플리케이션을 개발하였습니다.
+
+### 페르소나 분석
+
+1. 
+
 ### 서비스 특징
 - 부담없는 도움 요청
   <br> 장애인에 대한 인식이 두려워 간단한 도움도 쉽게 요청하지 못하는 장애인이 부담없이 도움을 요청할 수 있도록 하였습니다.
@@ -136,16 +146,29 @@ __요구사항 명세서__
 
 <img src="exec/capture/포춘쿠키.jpg" width="250"/>
 
+### 소소몬 키우기
+- 마이페이지에서 귀여운 소소몬의 애니메이션을 통해 소소몬을 키워나갈 수 있습니다.
+<img src="exec/capture/sosomon-nurture.mp4" width="250"/>
+<img src="exec/capture/feed-clover.mp4" width="250"/>
+
+### 관리자 페이지
+- 어플리케이션에서 신고한 사용자들의 신고내용 및 신고 누적을 볼 수 있습니다.
+
+<img src="exec/capture/admin1.PNG" width="250"/>
+<img src="exec/capture/admin2.PNG" width="250"/>
+
 
 ## 개발환경
 ### FrontEnd
-![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
 ![Node.js](https://camo.githubusercontent.com/ab61fce6586c27e04d8ac35d0a77a20b78eb57de63ac2243353f23d3752b1fc3/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4e6f64652e6a732d3333393933333f7374796c653d666f722d7468652d6261646765266c6f676f3d4e6f64652e6a73266c6f676f436f6c6f723d7768697465)
 ![NPM](https://img.shields.io/badge/NPM-%23CB3837.svg?style=for-the-badge&logo=npm&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![React Native](https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![svelte](https://img.shields.io/badge/svelte-FF3E00.svg?style=for-the-badge&logo=svelte&logoColor=white)
 ![threedotjs](https://img.shields.io/badge/threedotjs-000000.svg?style=for-the-badge&logo=threedotjs&logoColor=white)
+![sentry](https://img.shields.io/badge/sentry-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![electron](https://img.shields.io/badge/electron-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![zustand](https://img.shields.io/badge/zustand-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![IntelliJ](https://camo.githubusercontent.com/d479352761a86806b779129f4be8909d1c8c1fb1e2805bbd86cacd276f831cfa/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f496e74656c6c696a5f494445412d3337373641423f7374796c653d666f722d7468652d6261646765266c6f676f3d496e74656c6c696a49444541266c6f676f436f6c6f723d7768697465)
 ![Android Studio](https://img.shields.io/badge/Android_Studio-%232022a.svg?style=for-the-badge&logo=androidstudio&logoColor=white)
 
