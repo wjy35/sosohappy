@@ -40,24 +40,14 @@ const CreateHelp = (({location, socket, chatSocket}: propsType) => {
         setCategory(categoryInfo);
     }
 
-    const checkContent = (newText: string) => {
-        helpContent.updateIsValid(newText !== "");
-    };
-
-    const checkLocationDetail = (newText: string) => {
-        locationDetail.updateIsValid(newText !== "");
-    };
-
     const helpContent = useInput({
         placeholder: 'ex) 보행이 불편합니다',
-        initialIsValid: false,
-        onChange: checkContent,
+        initialIsValid: true,
     });
 
     const locationDetail = useInput({
         placeholder: 'ex) 지하철역 1번 출구',
-        initialIsValid: false,
-        onChange: checkLocationDetail,
+        initialIsValid: true,
     });
 
     const sendHelp = () => {
@@ -85,7 +75,7 @@ const CreateHelp = (({location, socket, chatSocket}: propsType) => {
             },
             longitude: location.longitude,
             latitude: location.latitude,
-            content: helpContent.text,
+            content: helpContent.text?helpContent.text:category.categoryName,
             place: locationDetail.text,
         };
         socket.send(payload);
@@ -134,10 +124,12 @@ const CreateHelp = (({location, socket, chatSocket}: propsType) => {
                             <View style={CreateHelpStyle.detailInputWrap}>
                                 <View style={CreateHelpStyle.inputTitle}>
                                     <Text style={CreateHelpStyle.inputTitleText}>도움 내용을 입력해 주세요</Text>
+                                    <Text style={{fontSize: 12}}>도움 내용을 입력하지 않을 시 카테고리 명으로 요청됩니다.</Text>
                                 </View>
                                 <PlainInput {...helpContent}/>
                                 <View style={CreateHelpStyle.inputTitle}>
                                     <Text style={CreateHelpStyle.inputTitleText}>상세 위치를 입력해 주세요</Text>
+                                    <Text style={{fontSize: 12}}>상세 위치 입력시 모음이가 편하게 도와줄 수 있습니다.</Text>
                                 </View>
                                 <PlainInput {...locationDetail}/>
                                 <View style={CreateHelpStyle.categoryWrap}>

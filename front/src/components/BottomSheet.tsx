@@ -186,7 +186,7 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
                                 }
                                 {
                                     status === 'DEFAULT' ?
-                                        <Text style={BottomSheetStyle.modalTitleDescription}>약 {Math.round(selectedHelp.distance)}m · {selectedHelp.place}</Text>
+                                        <Text style={BottomSheetStyle.modalTitleDescription}>약 {Math.round(selectedHelp.distance)}m {selectedHelp.place&&('· '+selectedHelp.place)}</Text>
                                         :
                                         <Text style={BottomSheetStyle.modalTitleDescription}>도움을 제공하고, 승인해주세요.</Text>
                                 }
