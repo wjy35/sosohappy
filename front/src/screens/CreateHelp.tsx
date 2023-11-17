@@ -28,11 +28,14 @@ const CreateHelp = (({location, socket, chatSocket}: propsType) => {
 
     useEffect(() => {
         if (socket.status === 'WAIT_COMPLETE'){
-            navigation.navigate('Map');
+            navigation.replace('Map');
         } else if (socket.status === 'ON_MATCH_PROGRESS'){
             // navigation.navigate('Main');
         } else if (socket.status === 'ON_MOVE'){
-            navigation.navigate('Map');
+            Alert.alert('도움 완료', '완료되지 않은 도움이 있습니다', [{
+                text: '확인',
+                onPress: () => navigation.replace('Map')
+            }])
         }
     }, [socket.status]);
 
