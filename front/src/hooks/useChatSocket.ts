@@ -85,6 +85,8 @@ function useChatSocket() {
         if (!client) return;
         client.unsubscribe('list')
         client.unsubscribe('detail')
+        setHelpChatList([]);
+        setMsgList([]);
         setConnected(false);
         client.disconnect(() => {
             console.log('chatSocket disconnect')
