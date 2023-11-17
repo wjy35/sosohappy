@@ -1,5 +1,6 @@
-# 소소행
-- 장애인을 위한 실시간 도움 요청 서비스
+
+![main](https://github.com/ZZOL-zzol/sizzang/assets/116516400/f365e28a-3fa4-438c-81ab-01b9397065a2)
+
 
 ## 목차
 1. 프로젝트 소개
@@ -28,12 +29,17 @@
   <br> 포춘 쿠키 및 클로버 지급, 캐릭터 성장 컨텐츠로 도움을 주는 사용자가 선행을 수치화 할 수 있고, 선행을 쌓아가는 데 즐거움을 느낄 수 있도록 하였습니다.
 
 ## 설계
-__시스템 아키텍처__
+### 시스템 아키텍처
 ![System Architecture](https://github.com/ZZOL-zzol/sizzang/assets/116516400/cd25f055-20b4-47a7-8518-0b48b70b1818)
-__ERD__
+
+### ERD
 ![ERD](https://github.com/ZZOL-zzol/sizzang/assets/116516400/906914ab-417a-4755-8b96-0e22394a74e7)
-__요구사항 명세서__
-![요구사항 명세서]()
+
+### 요구사항 명세서
+![요구사항 명세서](https://github.com/ZZOL-zzol/sizzang/assets/116516400/f234deda-b7c7-43ac-bfb9-aa05c8b5c82a)
+
+### API 명세서
+![API 명세서](https://github.com/ZZOL-zzol/sizzang/assets/116516400/2c2f9de3-a079-41ee-a2bb-c546983e43cd)
 
 ## 주요 기능
 - 장애인 인증
@@ -64,6 +70,8 @@ __요구사항 명세서__
 <img src="exec/capture/홈.jpg" width="250"/>
 
 ### 지도
+- 도움 요청 현황이 핀으로 표시되며 각 핀을 누르면 도움 내용을 상세히 볼 수 있습니다. 
+- 매칭 시에는 상대방의 위치까지 길안내를 제공합니다. 
 <img src="exec/capture/지도.jpg" width="250"/>
 
 ### 사이드바
