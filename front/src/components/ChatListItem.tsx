@@ -43,7 +43,7 @@ const ChatListItem = ({chatInfo} :propsType) => {
 
     useEffect(() => {
         getOtherUserInfo(chatInfo.memberList[0]===userInfo.memberId?chatInfo.memberList[1]:chatInfo.memberList[0])
-    }, []);
+    }, [chatInfo]);
 
 
     return(
@@ -60,9 +60,9 @@ const ChatListItem = ({chatInfo} :propsType) => {
                             <View style={ChatListItemStyle.charInfoRank}>
                                 <Text style={ChatListItemStyle.chatInfoRankText}>{otherMemberInfo?.disabled?'나눔이':'모음이'}</Text>
                             </View>
-                            <View style={ChatListItemStyle.msgAlarm}>
-                                <Text style={ChatListItemStyle.msgAlarmText}>1</Text>
-                            </View>
+                            {/*<View style={ChatListItemStyle.msgAlarm}>*/}
+                            {/*    <Text style={ChatListItemStyle.msgAlarmText}>1</Text>*/}
+                            {/*</View>*/}
                         </View>
                         <Text style={ChatListItemStyle.recentMessageText}>{chatInfo.currentChat.content}</Text>
                     </View>

@@ -7,9 +7,10 @@ import helpMatchApi from "@/apis/helpMatchApi";
 
 interface propsType{
     updateFortuneModalState: Function,
+    addClover: Function,
 }
 
-const History = ({updateFortuneModalState}: propsType) => {
+const History = ({updateFortuneModalState, addClover}: propsType) => {
     const [fortuneCookieList, setFortuneCookieList] = useState([]);
     const [maxPage, setMaxPage] = useState<number>(3);
 
@@ -42,13 +43,14 @@ const History = ({updateFortuneModalState}: propsType) => {
                         if(idx < maxPage){
                             return (
                                 <View style={HistoryStyle.historyWrap} key={`helpHistory${idx}`}>
-                                    <HistoryItem categoryId={el.categoryId} content={el.content} createdDate={String(formatingDate)} updateFortuneModalState={updateFortuneModalState} fortuneCookieId={el.fortuneCookieId}/>
+                                    <HistoryItem categoryId={el.categoryId} content={el.content} createdDate={String(formatingDate)} updateFortuneModalState={updateFortuneModalState} fortuneCookieId={el.fortuneCookieId} addClover={addClover}/>
                                 </View>
                             )
                         }
                     })
                 }
                 {
+                    fortuneCookieList &&
                     maxPage < fortuneCookieList.length &&
                     <TouchableOpacity activeOpacity={0.7} onPress={() => showFortuneMore()}>
                         <View style={HistoryStyle.moreButton}>

@@ -87,8 +87,8 @@ const CreateHelpStyle = StyleSheet.create({
         marginBottom:4,
     },
     inputTitleText:{
-        fontSize:14,
-        fontWeight:"700",
+        fontSize:16,
+        fontWeight:"900",
         color:"#7C7C88",
     },
     categoryWrap:{

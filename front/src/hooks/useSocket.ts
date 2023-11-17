@@ -70,13 +70,16 @@ function useSocket(){
             `/topic/match/list/${memberId}`,
             (frame) => {
                 const body = JSON.parse(frame.body);
-                if (body.matchListCommand === 'PUSH'){
-                    setHelpList([...helpList, ...body.receiveMatchList])
-                } else if (body.matchListCommand === 'POP') {
-                    const _matchList = helpList.filter(el => !body.memberIdList.includes(el.memberId))
-                    setHelpList(_matchList);
-                }
-                console.log(body);
+                setHelpList((prev) => {
+                    if (body.matchListCommand === 'PUSH'){
+                        return [...prev, ...body.receiveMatchList]
+                    } else if (body.matchListCommand === 'POP') {
+                        const _matchList = prev.filter(el => !body.memberIdList.includes(el.memberId))
+                        return _matchList
+                    } else {
+                        return [...prev]
+                    }
+                })
             },
             {
                 id:"list"

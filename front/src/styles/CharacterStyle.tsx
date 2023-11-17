@@ -93,6 +93,34 @@ const CharacterStyle = StyleSheet.create({
         position:"absolute",
     },
 
+    myPointInfo:{
+        width:responsiveWidth(92),
+        marginHorizontal:responsiveWidth(4),
+        marginTop:25,
+    },
+    myPoint:{
+        fontSize:26,
+        fontWeight:"700",
+        color:"#97989D",
+        textAlign:"center",
+    },
+    myAllPoint:{
+        fontSize:24,
+        fontWeight:"700",
+        color:"#404C4C",
+    },
+    myPointDesc:{
+        fontSize:14,
+        fontWeight:"400",
+        color:"#A0ABAF",
+        textAlign:"center",
+    },
+    myPointDescPoint:{
+        fontSize:14,
+        fontWeight:"500",
+        color:"#DFACB1"
+    },
+
     animationButtonWrap:{
         marginHorizontal:responsiveWidth(4),
         display:"flex",

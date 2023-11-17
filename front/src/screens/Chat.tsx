@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react"
-import {View, Text, TouchableOpacity, TextInput, ScrollView, Alert, FlatList} from "react-native";
+import {View, Text, TouchableOpacity, TextInput, ScrollView, Alert, FlatList, KeyboardAvoidingView} from "react-native";
 
 import CommonLayout from "@/components/CommonLayout";
 import MyChat from "@/components/MyChat";
@@ -19,6 +19,7 @@ import useStore from "@/store/store";
 import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
 import Header from "@/components/Header";
 import SideMenu from "@/components/SideMenu";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 interface propsType{
   helpSocket: helpSocket;
@@ -31,7 +32,7 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
   const [msg, setMsg] = useState<string>("");
   const [roomNo, setroomNo] = useState<number|null>(null);
   const route = useRoute();
-  const [otherMemberId, setOtherMemberId] = useState<string>(route.params?.otherMemberId);
+  // const [otherMemberId, setOtherMemberId] = useState<string>(route.params?.otherMemberId);
   const {userInfo} = useStore();
   const navigation = useNavigation();
   const [isVisible, setIsVisible] = useState(false);
@@ -47,7 +48,7 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
 
   const sendMsg = async () => {
     if(roomNo){
-      const sendChatRes = await chatApi.sendChat({roomNo: roomNo, sendMemberId: userInfo.memberId, receiveMemberId:otherMemberId, content:msg});
+      const sendChatRes = await chatApi.sendChat({roomNo: roomNo, sendMemberId: userInfo.memberId, receiveMemberId:route.params?.otherMemberId, content:msg});
       if(sendChatRes.status === 200){
         setMsg("");
       }else{
@@ -56,21 +57,16 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
     }
   }
 
-  const connectChatRoom = async () => {
+  const connectChatRoom = async (otherMemberId: number) => {
     const roomNoRes = await chatApi.makeChatRoom({senderMemberId:userInfo.memberId, receiveMemberId:otherMemberId});
     if(roomNoRes.data.status === "success"){
-      setroomNo(roomNoRes.data.result.chatRoomId);
+      chatSocket.getDetail(roomNoRes.data.result.chatRoomId);
     }
   }
 
-  useEffect(() => {
-    connectChatRoom();
-  },[])
-
-  useEffect(() => {
-    if (!roomNo) return;
-    chatSocket.getDetail(roomNo);
-  },[roomNo]);
+  useEffect(()=>{
+    connectChatRoom(route.params?.otherMemberId);
+  }, [chatSocket.connected, route.params?.otherMemberId])
 
   useFocusEffect(
     useCallback(() => {
@@ -96,6 +92,7 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
 
   return (
     <>
+    {/*<KeyboardAwareScrollView>*/}
       <SafeAreaProvider>
         <SafeAreaView
             edges={["top", "right", "bottom", "left"]}
@@ -103,78 +100,81 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
         >
           <Header headerType={1} openSide={openSide}/>
           <SideMenu closeSide={closeSide} nowPage={'Chat'} isVisible={isVisible}/>
-          <View>
-            <View style={ChatStyle.heightWrap}>
-              <View style={ChatStyle.chatContentWrap}>
-                <FlatList
-                    data={[...chatSocket.msgList].reverse()}
-                    showsVerticalScrollIndicator={false}
-                    windowSize={5}
-                    inverted={true}
-                    initialNumToRender={10}
-                    renderItem={(item) => {
-                      if (item.item.memberId === userInfo.memberId){
-                        return <MyChat content={item.item.content}/>
-                      } else if (item.item.memberId === otherMemberId) {
-                        return <YourChat thumbnail={FishThumbnail} content={item.item.content}/>
-                      } else {
-                        return (
-                            <View style={{justifyContent: 'center', alignItems: 'center', marginVertical: 5}}>
-                              <Text>{item.item.content}</Text>
-                            </View>
-                        )
-                      }
-                    }}
-                    keyExtractor={(item) => String(item.timestamp)+String(item.memberId)+String(item.content)}
-                    onEndReachedThreshold={0.1}
-                    contentContainerStyle={{paddingHorizontal: 10}}
-                />
-              </View>
-              <View style={ChatStyle.agreeWrap}>
-                <SvgXml
-                    xml={people}
-                    width={45}
-                    height={45}
-                />
-                <Text style={ChatStyle.agreeInfoText}>매칭하기 버튼을 통해 상대방의 요청을 승인해주세요.</Text>
-                <TouchableOpacity activeOpacity={0.7}>
-                  <View style={ChatStyle.agreeButton}>
-                    <Text style={ChatStyle.agreeButtonText}>승인하기</Text>
+          <KeyboardAvoidingView style={{flex: 1}} behavior={'height'}>
+            <View style={{flex: 1}}>
+                <View style={ChatStyle.heightWrap}>
+                  <View style={ChatStyle.chatContentWrap}>
+                    <FlatList
+                        data={[...chatSocket.msgList].reverse()}
+                        showsVerticalScrollIndicator={false}
+                        windowSize={5}
+                        inverted={true}
+                        initialNumToRender={10}
+                        renderItem={(item) => {
+                          if (item.item.memberId === userInfo.memberId){
+                            return <MyChat content={item.item.content}/>
+                          } else if (item.item.memberId === route.params?.otherMemberId) {
+                            return <YourChat thumbnail={FishThumbnail} content={item.item.content}/>
+                          } else {
+                            return (
+                                <View style={{justifyContent: 'center', alignItems: 'center', marginVertical: 5}}>
+                                  <Text>{item.item.content}</Text>
+                                </View>
+                            )
+                          }
+                        }}
+                        keyExtractor={(item) => String(item.timestamp)+String(item.memberId)+String(item.content)}
+                        onEndReachedThreshold={0.1}
+                        contentContainerStyle={{paddingHorizontal: 10}}
+                    />
                   </View>
-                </TouchableOpacity>
-              </View>
+                  {/*<View style={ChatStyle.agreeWrap}>*/}
+                  {/*  <SvgXml*/}
+                  {/*      xml={people}*/}
+                  {/*      width={45}*/}
+                  {/*      height={45}*/}
+                  {/*  />*/}
+                  {/*  <Text style={ChatStyle.agreeInfoText}>매칭하기 버튼을 통해 상대방의 요청을 승인해주세요.</Text>*/}
+                  {/*  <TouchableOpacity activeOpacity={0.7}>*/}
+                  {/*    <View style={ChatStyle.agreeButton}>*/}
+                  {/*      <Text style={ChatStyle.agreeButtonText}>승인하기</Text>*/}
+                  {/*    </View>*/}
+                  {/*  </TouchableOpacity>*/}
+                  {/*</View>*/}
 
-              <View style={ChatStyle.controlWrap}>
-                <TouchableOpacity activeOpacity={0.7}>
-                  <View style={ChatStyle.exitFlexWrap}>
-                    <SvgXml
-                        xml={exit}
-                        width={20}
-                        height={20}
+                  <View style={ChatStyle.controlWrap}>
+                    <TouchableOpacity activeOpacity={0.7} onPress={()=>navigation.goBack()}>
+                      <View style={ChatStyle.exitFlexWrap}>
+                        <SvgXml
+                            xml={exit}
+                            width={20}
+                            height={20}
+                        />
+                        <Text style={ChatStyle.exitText}>채팅방 나가기</Text>
+                      </View>
+                    </TouchableOpacity>
+                    <TextInput
+                        placeholder="메시지 내용을 입력하세요."
+                        style={ChatStyle.chanMsgInput}
+                        onChangeText={(text) => setMsg(text)}
+                        value={msg}
                     />
-                    <Text style={ChatStyle.exitText}>채팅방 나가기</Text>
+                    <TouchableOpacity activeOpacity={0.7} onPress={sendMsg}>
+                      <View style={ChatStyle.sendButton}>
+                        <SvgXml
+                            xml={send2}
+                            width={20}
+                            height={20}
+                        />
+                      </View>
+                    </TouchableOpacity>
                   </View>
-                </TouchableOpacity>
-                <TextInput
-                    placeholder="메시지 내용을 입력하세요."
-                    style={ChatStyle.chanMsgInput}
-                    onChangeText={(text) => setMsg(text)}
-                    value={msg}
-                />
-                <TouchableOpacity activeOpacity={0.7} onPress={sendMsg}>
-                  <View style={ChatStyle.sendButton}>
-                    <SvgXml
-                        xml={send2}
-                        width={20}
-                        height={20}
-                    />
-                  </View>
-                </TouchableOpacity>
-              </View>
+                </View>
             </View>
-          </View>
+          </KeyboardAvoidingView>
         </SafeAreaView>
       </SafeAreaProvider>
+    {/*</KeyboardAwareScrollView>*/}
     </>
   );
 };
