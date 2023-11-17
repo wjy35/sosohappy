@@ -13,21 +13,28 @@ interface propsType{
     createdDate: string,
     updateFortuneModalState: Function,
     fortuneCookieId: number,
+    addClover: Function,
 }
 
-const HistoryItem = ({categoryId, content, createdDate, updateFortuneModalState, fortuneCookieId} : propsType) => {
+const HistoryItem = ({categoryId, content, createdDate, updateFortuneModalState, fortuneCookieId, addClover} : propsType) => {
     const [cookie, setCookie] = useState(true);
     const [myThumbnailInfo, setMyThumbnailInfo] = useState([]);
+    const [addCountStatus, setAddCountStatus] = useState<Boolean>(false);
 
     const openFortuneCookie = async () => {
-        
+        if(addCountStatus){
+            updateFortuneModalState(true);
+            setCookie(false);
+            return;
+        }
         const deleteFortuneCookie = await helpMatchApi.openFortuneCookie({fortuneCookieId: fortuneCookieId});
-        
+
         if(deleteFortuneCookie.status === 200){
             updateFortuneModalState(true);
             setCookie(false);
+            addClover();
+            setAddCountStatus(true);
         }
-        
     }
 
     const findMyThumbnail = async () => {
@@ -50,12 +57,16 @@ const HistoryItem = ({categoryId, content, createdDate, updateFortuneModalState,
             <TouchableOpacity activeOpacity={0.7} onPress={() => openFortuneCookie()}>
                 <View style={HistoryItemStyle.historyItemWrap}>
                     <View style={HistoryItemStyle.historyItemProfileBg}>
-                        <SvgXml
-                            xml={myThumbnailInfo.categoryImage}
-                            style={HistoryItemStyle.historyItemProfileImg}
-                            width={40}
-                            height={40}
-                        />
+                        {
+                            myThumbnailInfo?.categoryImage && (
+                                <SvgXml
+                                    xml={myThumbnailInfo.categoryImage}
+                                    style={HistoryItemStyle.historyItemProfileImg}
+                                    width={40}
+                                    height={40}
+                                />
+                            )
+                        }
                     </View>
                     <View style={HistoryItemStyle.historyItemInfo}>
                         <Text style={HistoryItemStyle.historyItemContent}>{content}</Text>
@@ -64,13 +75,11 @@ const HistoryItem = ({categoryId, content, createdDate, updateFortuneModalState,
                     <View style={HistoryItemStyle.historyItemStateWrap}>
                         {
                             cookie ? (
-                                <TouchableOpacity activeOpacity={0.7}>
-                                    <SvgXml
-                                        xml={fortuneCookie}
-                                        width={30}
-                                        height={30}
-                                    />
-                                </TouchableOpacity>
+                                <SvgXml
+                                    xml={fortuneCookie}
+                                    width={30}
+                                    height={30}
+                                />
                             ):(
                                 <SvgXml
                                     xml={clover}
@@ -79,7 +88,6 @@ const HistoryItem = ({categoryId, content, createdDate, updateFortuneModalState,
                                 />
                             )
                         }
-
                     </View>
                 </View>
             </TouchableOpacity>

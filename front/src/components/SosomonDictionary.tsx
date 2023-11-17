@@ -12,6 +12,7 @@ import monsterApi from "@/apis/monsterApi";
 interface propsType{
     updateModalState: Function,
     changeProfileMonster: Function,
+    modalState: boolean,
 }
 
 enum CategoryEnum{
@@ -20,7 +21,7 @@ enum CategoryEnum{
     "airForce",
 }
 
-const SosomonDictionary = ({updateModalState, changeProfileMonster}: propsType) => {
+const SosomonDictionary = ({updateModalState, changeProfileMonster, modalState}: propsType) => {
     const [categoryType, setCategoryType] = useState<CategoryEnum>(CategoryEnum.navy);
     const [dict, setDict] = useState({
         1: 1,
@@ -39,6 +40,7 @@ const SosomonDictionary = ({updateModalState, changeProfileMonster}: propsType) 
                 res.data.result.monsterList.forEach((el, idx)=>{
                     newDict[el.typeId] = el.levelInfo.currentLevel
                 })
+                console.log(newDict)
                 setDict(newDict);
             }
         } catch (err) {
@@ -48,7 +50,7 @@ const SosomonDictionary = ({updateModalState, changeProfileMonster}: propsType) 
 
     useEffect(() => {
         getDictionary();
-    }, []);
+    }, [modalState]);
 
     return (
         <>
@@ -96,7 +98,7 @@ const SosomonDictionary = ({updateModalState, changeProfileMonster}: propsType) 
                                 <React.Fragment key={`type3${index}`}>
                                     <SosomonCard
                                         src={object}
-                                        isLocked={(index+1>dict[1])?true:false}
+                                        isLocked={(index+1>dict[3])?true:false}
                                         level={index+1}
                                         type='공중'
                                         changeProfileMonster={()=>{changeProfileMonster(3, index+1)}}
@@ -112,7 +114,7 @@ const SosomonDictionary = ({updateModalState, changeProfileMonster}: propsType) 
                                 <React.Fragment key={`type2${index}`}>
                                     <SosomonCard
                                         src={object}
-                                        isLocked={(index+1>dict[1])?true:false}
+                                        isLocked={(index+1>dict[2])?true:false}
                                         level={index+1}
                                         type='해양'
                                         changeProfileMonster={()=>{changeProfileMonster(2, index+1)}}
