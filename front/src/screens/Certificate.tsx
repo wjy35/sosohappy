@@ -37,7 +37,7 @@ const Certificate = ({socket, chatSocket}: propsType) => {
     return(
         <CommonLayout headerType={0} footer={true}>
             <WebView
-                source={{uri:`http://70.12.247.139:5173/docs`}}
+                source={{uri:`http://sosohappy.co.kr:8888/docs`}}
                 style={CertificateStyle.webView}
             />
         </CommonLayout>

@@ -42,7 +42,7 @@ const Character = ({socket, chatSocket}: propsType) => {
     const loaderValue = useRef(new Animated.Value(0)).current;
     const {userInfo} = useStore();
     const navigation = useNavigation();
-    const [myClover, setMyClover] = useState(0);
+    const [myClover, setMyClover] = useState({});
     const [isDialogState, setIsDialogState] = useState<Boolean>();
 
     const feedSosomonCommon = async ({feedType}: feedTypes) => {
@@ -166,11 +166,17 @@ const Character = ({socket, chatSocket}: propsType) => {
 
         if(collectedMonsterApi.status === 200){
             setMyMonsters(collectedMonsterApi.data.result?.monsterList);
-            // console.log("myMonsters", myMonsters);
         }
     }
+
+    const getMyCloverApi = async () => {
+        const res = await monsterApi.getMyClover();
+        setMyClover(res.data.result.clover);
+    }
+
     useEffect(() => {
         getMyDict();
+        getMyCloverApi();
     }, [])
 
     useFocusEffect(
@@ -361,6 +367,18 @@ const Character = ({socket, chatSocket}: propsType) => {
                 {/*    <Text>현재 보유한 클로버: {myClover}</Text>*/}
                 {/*</View>*/}
 
+                <View style={CharacterStyle.myPointInfo}>
+                    {
+                        myClover &&
+                        <Text style={CharacterStyle.myPoint}>{myClover.memberClover} Clover /{" "}
+                        <Text style={CharacterStyle.myAllPoint}>
+                            {myClover.memberAccruedClover} Clover
+                        </Text>
+                        </Text>
+                    }
+                    <Text style={CharacterStyle.myPointDesc}><Text style={CharacterStyle.myPointDescPoint}>행운력을</Text> 통해 성장시키세요!</Text>
+                </View>
+
                 <View style={CharacterStyle.animationButtonWrap}>
                     <TouchableOpacity activeOpacity={0.7} onPress={() => feedSosomon()}>
                         <View style={CharacterStyle.animationButton}>
@@ -390,6 +408,7 @@ const Character = ({socket, chatSocket}: propsType) => {
                     hintInput ={"clover 개수 입력"}
                     submitText={'먹이주기'}
                     cancelText={'돌아가기'}
+                    textInputProps={{keyboardType:'numeric'}}
                     submitInput={ (inputText: string) => feedManyCloversApi(inputText) }
                     closeDialog={ () => setIsDialogState(false) }>
                 </DialogInput>

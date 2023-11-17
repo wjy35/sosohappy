@@ -19,6 +19,7 @@ import useStore from "@/store/store";
 import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
 import Header from "@/components/Header";
 import SideMenu from "@/components/SideMenu";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 interface propsType{
   helpSocket: helpSocket;
@@ -96,6 +97,7 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
 
   return (
     <>
+    <KeyboardAwareScrollView>
       <SafeAreaProvider>
         <SafeAreaView
             edges={["top", "right", "bottom", "left"]}
@@ -175,6 +177,7 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
           </View>
         </SafeAreaView>
       </SafeAreaProvider>
+    </KeyboardAwareScrollView>
     </>
   );
 };
