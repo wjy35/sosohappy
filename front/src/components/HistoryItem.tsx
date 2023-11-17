@@ -28,7 +28,7 @@ const HistoryItem = ({categoryId, content, createdDate, updateFortuneModalState,
             return;
         }
         const deleteFortuneCookie = await helpMatchApi.openFortuneCookie({fortuneCookieId: fortuneCookieId});
-        
+
         if(deleteFortuneCookie.status === 200){
             updateFortuneModalState(true);
             setCookie(false);
@@ -57,12 +57,16 @@ const HistoryItem = ({categoryId, content, createdDate, updateFortuneModalState,
             <TouchableOpacity activeOpacity={0.7} onPress={() => openFortuneCookie()}>
                 <View style={HistoryItemStyle.historyItemWrap}>
                     <View style={HistoryItemStyle.historyItemProfileBg}>
-                        <SvgXml
-                            xml={myThumbnailInfo.categoryImage}
-                            style={HistoryItemStyle.historyItemProfileImg}
-                            width={40}
-                            height={40}
-                        />
+                        {
+                            myThumbnailInfo?.categoryImage && (
+                                <SvgXml
+                                    xml={myThumbnailInfo.categoryImage}
+                                    style={HistoryItemStyle.historyItemProfileImg}
+                                    width={40}
+                                    height={40}
+                                />
+                            )
+                        }
                     </View>
                     <View style={HistoryItemStyle.historyItemInfo}>
                         <Text style={HistoryItemStyle.historyItemContent}>{content}</Text>
@@ -84,7 +88,6 @@ const HistoryItem = ({categoryId, content, createdDate, updateFortuneModalState,
                                 />
                             )
                         }
-
                     </View>
                 </View>
             </TouchableOpacity>
