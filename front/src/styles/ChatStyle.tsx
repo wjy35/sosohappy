@@ -3,7 +3,8 @@ import { responsiveWidth, responsiveHeight } from "react-native-responsive-dimen
 
 const ChatStyle = StyleSheet.create({
     heightWrap:{
-        height:responsiveHeight(100) - 80,
+        // height:responsiveHeight(100) - 80,
+        flex: 1
     },
     chatTitleWrap:{
         paddingHorizontal:responsiveWidth(4),
@@ -30,10 +31,12 @@ const ChatStyle = StyleSheet.create({
     },
 
     chatContentWrap:{
-        height:responsiveHeight(56),
+        // height:responsiveHeight(56),
+        flex: 1,
         paddingTop:"auto",
         marginTop:"auto",
         marginHorizontal:responsiveWidth(4),
+        paddingVertical: 10,
     },
 
 
@@ -68,9 +71,8 @@ const ChatStyle = StyleSheet.create({
         height:responsiveHeight(10),
         display:"flex",
         flexDirection:"row",
-        justifyContent:"flex-start",
+        justifyContent:"center",
         alignItems:"center",
-        paddingHorizontal:responsiveWidth(4),
         backgroundColor:"#FFF",
     },
     exitFlexWrap:{
