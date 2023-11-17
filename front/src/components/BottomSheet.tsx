@@ -81,6 +81,12 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
             }
         } catch (err) {
             console.log(err)
+            if (err.response.status === 406) {
+                Alert.alert('도움 요청', '만료된 도움 요청입니다', [
+                    {text: '확인', onPress: () => updateBottomSheetStatus(false)}
+                ])
+
+            }
         }
     }
 
@@ -130,7 +136,7 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
                 const myInfoRes = await memberApi.getMember();
                 if(myInfoRes.status === 200){
                 const myMemberId = myInfoRes.data.result.member.memberId;
-        
+
                 const sirenRes = await memberReportApi.siren({reportingMemberId: myMemberId, reportedMemberId:selectedHelp.data.helpEntity.otherMemberId});
                     if(sirenRes.status === 200){
                         Alert.alert("신고 접수가 성공적으로 처리되었습니다.");
@@ -180,7 +186,7 @@ const BottomSheet = ({updateBottomSheetStatus, selectedHelp, status}: propsType)
                                 }
                                 {
                                     status === 'DEFAULT' ?
-                                        <Text style={BottomSheetStyle.modalTitleDescription}>약 {Math.round(selectedHelp.distance)}m · {selectedHelp.place}</Text>
+                                        <Text style={BottomSheetStyle.modalTitleDescription}>약 {Math.round(selectedHelp.distance)}m {selectedHelp.place&&('· '+selectedHelp.place)}</Text>
                                         :
                                         <Text style={BottomSheetStyle.modalTitleDescription}>도움을 제공하고, 승인해주세요.</Text>
                                 }
