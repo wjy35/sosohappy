@@ -60,7 +60,7 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
   const connectChatRoom = async (otherMemberId: number) => {
     const roomNoRes = await chatApi.makeChatRoom({senderMemberId:userInfo.memberId, receiveMemberId:otherMemberId});
     if(roomNoRes.data.status === "success"){
-      setroomNo(roomNoRes.data.result.chatRoomId);
+      chatSocket.getDetail(roomNoRes.data.result.chatRoomId);
     }
   }
 
