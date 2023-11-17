@@ -40,7 +40,7 @@
 
 ## 설계
 ### 시스템 아키텍처
-![System Architecture](https://github.com/ZZOL-zzol/sizzang/assets/116516400/cd25f055-20b4-47a7-8518-0b48b70b1818)
+<img src="exec/capture/a509.drawio.png"/>
 
 ### ERD
 ![ERD](https://github.com/ZZOL-zzol/sizzang/assets/116516400/906914ab-417a-4755-8b96-0e22394a74e7)
