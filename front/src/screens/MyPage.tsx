@@ -231,7 +231,7 @@ const MyPage = ({socket, chatSocket}: propsType) => {
       </View>
 
       {
-          modalState && <SosomonDictionary updateModalState={updateModalState} changeProfileMonster={changeProfileMonster}/>
+          modalState && <SosomonDictionary updateModalState={updateModalState} changeProfileMonster={changeProfileMonster} modalState={modalState}/>
       }
 
       <View style={MyPageStyle.expWrap}>

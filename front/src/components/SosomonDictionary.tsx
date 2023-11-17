@@ -12,6 +12,7 @@ import monsterApi from "@/apis/monsterApi";
 interface propsType{
     updateModalState: Function,
     changeProfileMonster: Function,
+    modalState: boolean,
 }
 
 enum CategoryEnum{
@@ -20,7 +21,7 @@ enum CategoryEnum{
     "airForce",
 }
 
-const SosomonDictionary = ({updateModalState, changeProfileMonster}: propsType) => {
+const SosomonDictionary = ({updateModalState, changeProfileMonster, modalState}: propsType) => {
     const [categoryType, setCategoryType] = useState<CategoryEnum>(CategoryEnum.navy);
     const [dict, setDict] = useState({
         1: 1,
@@ -48,7 +49,7 @@ const SosomonDictionary = ({updateModalState, changeProfileMonster}: propsType) 
 
     useEffect(() => {
         getDictionary();
-    }, []);
+    }, [modalState]);
 
     return (
         <>
