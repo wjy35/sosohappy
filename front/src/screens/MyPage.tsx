@@ -106,6 +106,12 @@ const MyPage = ({socket, chatSocket}: propsType) => {
     setMyClover(res.data.result.clover);
   }
 
+  const addClover = async () => {
+    const res = await monsterApi.getMyClover();
+    console.log("res", res);
+    setMyClover(res.data.result.clover);
+  }
+
   const setSosomon = (type:number, level:number) => {
     if (type === 1){
       setSrc(type1[level-1])
@@ -180,7 +186,7 @@ const MyPage = ({socket, chatSocket}: propsType) => {
             </>
           }
         </View>
-        <View style={MyPageStyle.myProfileIconWrap}>
+        {/* <View style={MyPageStyle.myProfileIconWrap}>
           <TouchableOpacity activeOpacity={0.7} onPress={() => police()}>
             <View>
               <SvgXml
@@ -197,7 +203,7 @@ const MyPage = ({socket, chatSocket}: propsType) => {
               />
             </View>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
 
       <View style={MyPageStyle.myPointInfo}>
@@ -285,7 +291,7 @@ const MyPage = ({socket, chatSocket}: propsType) => {
 
       <View style={MyPageStyle.historyTitleWrap}>
         <Text style={MyPageStyle.historyTitle}>나의 최근 행운</Text>
-        <History updateFortuneModalState={updateFortuneModalState}/>
+        <History updateFortuneModalState={updateFortuneModalState} addClover={addClover}/>
       </View>
     </CommonLayout>
     {

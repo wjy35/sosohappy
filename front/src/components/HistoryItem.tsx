@@ -13,21 +13,21 @@ interface propsType{
     createdDate: string,
     updateFortuneModalState: Function,
     fortuneCookieId: number,
+    addClover: Function,
 }
 
-const HistoryItem = ({categoryId, content, createdDate, updateFortuneModalState, fortuneCookieId} : propsType) => {
+const HistoryItem = ({categoryId, content, createdDate, updateFortuneModalState, fortuneCookieId, addClover} : propsType) => {
     const [cookie, setCookie] = useState(true);
     const [myThumbnailInfo, setMyThumbnailInfo] = useState([]);
 
     const openFortuneCookie = async () => {
-        
         const deleteFortuneCookie = await helpMatchApi.openFortuneCookie({fortuneCookieId: fortuneCookieId});
         
         if(deleteFortuneCookie.status === 200){
             updateFortuneModalState(true);
             setCookie(false);
+            addClover();
         }
-        
     }
 
     const findMyThumbnail = async () => {
@@ -64,13 +64,11 @@ const HistoryItem = ({categoryId, content, createdDate, updateFortuneModalState,
                     <View style={HistoryItemStyle.historyItemStateWrap}>
                         {
                             cookie ? (
-                                <TouchableOpacity activeOpacity={0.7}>
-                                    <SvgXml
-                                        xml={fortuneCookie}
-                                        width={30}
-                                        height={30}
-                                    />
-                                </TouchableOpacity>
+                                <SvgXml
+                                    xml={fortuneCookie}
+                                    width={30}
+                                    height={30}
+                                />
                             ):(
                                 <SvgXml
                                     xml={clover}
