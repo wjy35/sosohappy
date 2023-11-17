@@ -36,19 +36,22 @@ function useChatSocket() {
             (frame) => {
                 const body = JSON.parse(frame.body);
                 setHelpChatList((prev) => {
-                    if (prev.length === 0){
-                        return [...body];
+                    const compare = (a: any, b: any) => {
+                        return Date.parse(b.currentChat.timestamp) - Date.parse(a.currentChat.timestamp)
                     }
-                    const target = body[0];
+
+                    if (prev.length === 0){
+                        const _helpChatList = [...body]
+                        _helpChatList.sort(compare);
+                        return [..._helpChatList];
+                    }
                     const _helpChatList = [...prev]
+                    const target = body[0];
                     const targetIdx = prev.findIndex((el)=> el.chatRoomId === target.chatRoomId)
                     if (targetIdx !== -1){
                         _helpChatList[targetIdx] = {...target}
                     } else {
                         _helpChatList.push(target)
-                    }
-                    const compare = (a: any, b: any) => {
-                        return Date.parse(b.currentChat.timestamp) - Date.parse(a.currentChat.timestamp)
                     }
                     _helpChatList.sort(compare);
                     return [..._helpChatList]
@@ -67,7 +70,7 @@ function useChatSocket() {
             `/topic/${userInfo.memberId}/${chatRoomId}`,
             (frame) => {
                 const body = JSON.parse(frame.body);
-                setMsgList([...msgList, ...body])
+                setMsgList((prev)=> [...prev, ...body]);
             },
             {
                 id: "detail"
