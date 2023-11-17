@@ -166,7 +166,6 @@ const Character = ({socket, chatSocket}: propsType) => {
 
         if(collectedMonsterApi.status === 200){
             setMyMonsters(collectedMonsterApi.data.result?.monsterList);
-            // console.log("myMonsters", myMonsters);
         }
     }
 
