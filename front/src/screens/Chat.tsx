@@ -32,7 +32,7 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
   const [msg, setMsg] = useState<string>("");
   const [roomNo, setroomNo] = useState<number|null>(null);
   const route = useRoute();
-  const [otherMemberId, setOtherMemberId] = useState<string>(route.params?.otherMemberId);
+  // const [otherMemberId, setOtherMemberId] = useState<string>(route.params?.otherMemberId);
   const {userInfo} = useStore();
   const navigation = useNavigation();
   const [isVisible, setIsVisible] = useState(false);
@@ -48,7 +48,7 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
 
   const sendMsg = async () => {
     if(roomNo){
-      const sendChatRes = await chatApi.sendChat({roomNo: roomNo, sendMemberId: userInfo.memberId, receiveMemberId:otherMemberId, content:msg});
+      const sendChatRes = await chatApi.sendChat({roomNo: roomNo, sendMemberId: userInfo.memberId, receiveMemberId:route.params?.otherMemberId, content:msg});
       if(sendChatRes.status === 200){
         setMsg("");
       }else{
@@ -57,21 +57,16 @@ const Chat = ({helpSocket, chatSocket}: propsType) => {
     }
   }
 
-  const connectChatRoom = async () => {
+  const connectChatRoom = async (otherMemberId: number) => {
     const roomNoRes = await chatApi.makeChatRoom({senderMemberId:userInfo.memberId, receiveMemberId:otherMemberId});
     if(roomNoRes.data.status === "success"){
       setroomNo(roomNoRes.data.result.chatRoomId);
     }
   }
 
-  useEffect(() => {
-    connectChatRoom();
-  },[])
-
-  useEffect(() => {
-    if (!roomNo) return;
-    chatSocket.getDetail(roomNo);
-  },[roomNo]);
+  useEffect(()=>{
+    connectChatRoom(route.params?.otherMemberId);
+  }, [chatSocket.connected, route.params?.otherMemberId])
 
   useFocusEffect(
     useCallback(() => {
