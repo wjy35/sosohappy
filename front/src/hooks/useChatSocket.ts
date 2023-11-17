@@ -22,12 +22,14 @@ function useChatSocket() {
                 setConnected(true);
             },
             (error) => {
+                console.log('chatSocket error')
                 console.log(error)
             },
         );
     }
 
     function getList() {
+        if (!connected) return
         client.unsubscribe('list');
         client.unsubscribe('detail');
         setMsgList([]);
@@ -63,6 +65,7 @@ function useChatSocket() {
     }
 
     function getDetail(chatRoomId: number) {
+        if (!connected) return
         client.unsubscribe('list');
         client.unsubscribe('detail');
         setHelpChatList([]);
@@ -82,10 +85,13 @@ function useChatSocket() {
         if (!client) return;
         client.unsubscribe('list')
         client.unsubscribe('detail')
+        setHelpChatList([]);
+        setMsgList([]);
         setConnected(false);
         client.disconnect(() => {
             console.log('chatSocket disconnect')
         });
+        setClient();
     }
 
     return {connect, connected, disConnect, getList, getDetail, helpChatList, msgList}
