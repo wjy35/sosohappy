@@ -11,11 +11,11 @@ const SosomonDictionaryStyle = StyleSheet.create({
         zIndex:9998,
     },
     modalMain:{
-        width:responsiveWidth(70),
+        width:responsiveWidth(80),
         padding:20,
         position:"absolute",
         top:"20%",
-        left:responsiveWidth(30)/2,
+        left:responsiveWidth(20)/2,
         backgroundColor:"#E8F3FE",
         zIndex:9999,
     },
@@ -46,7 +46,7 @@ const SosomonDictionaryStyle = StyleSheet.create({
     },
 
     characterScrollView:{
-        width:responsiveWidth(60),
+        width:responsiveWidth(70),
     },
     collectionCategory:{
         marginTop:21,
