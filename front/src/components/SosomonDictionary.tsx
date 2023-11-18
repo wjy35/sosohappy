@@ -2,7 +2,16 @@ import React, {useEffect, useState} from "react"
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native"
 import {type1, type2, type3, type4} from '@/assets/sosomon/index'
 import SosomonCard from "@/components/SosomaonCard"
-import {fish, fishActive, horse, horseActive, bird, birdActive} from "@/assets/icons/icons"
+import {
+    fish,
+    fishActive,
+    horse,
+    horseActive,
+    bird,
+    birdActive,
+    sosohappyColorLogo,
+    sosohappyWhiteLogo
+} from "@/assets/icons/icons"
 import { SvgXml } from "react-native-svg"
 import { close } from "@/assets/icons/icons"
 
@@ -19,6 +28,7 @@ enum CategoryEnum{
     "army",
     "navy",
     "airForce",
+    "special",
 }
 
 const SosomonDictionary = ({updateModalState, changeProfileMonster, modalState}: propsType) => {
@@ -27,7 +37,8 @@ const SosomonDictionary = ({updateModalState, changeProfileMonster, modalState}:
         1: 1,
         2: 1,
         3: 1,
-    })
+    });
+    const [isMaxLevel, setIsMaxLevel] = useState(false);
     const updateCategory = (categoryStatus: CategoryEnum) => {
         setCategoryType(categoryStatus);
     }
@@ -36,11 +47,11 @@ const SosomonDictionary = ({updateModalState, changeProfileMonster, modalState}:
         try {
             const res = await monsterApi.getMyDict();
             if (res.status === 200){
+                setIsMaxLevel(res.data.result.isMaxLevel);
                 let newDict = {}
                 res.data.result.monsterList.forEach((el, idx)=>{
                     newDict[el.typeId] = el.levelInfo.currentLevel
                 })
-                console.log(newDict)
                 setDict(newDict);
             }
         } catch (err) {
@@ -123,6 +134,16 @@ const SosomonDictionary = ({updateModalState, changeProfileMonster, modalState}:
                             );
                         })
                     }
+                        {
+                            categoryType === CategoryEnum.special &&
+                              <SosomonCard
+                                src={type4[0]}
+                                isLocked={!isMaxLevel}
+                                level={1}
+                                type='스페셜'
+                                changeProfileMonster={()=>{changeProfileMonster(4, 1)}}
+                              />
+                        }
                     </ScrollView>
                 </View>
 
@@ -191,6 +212,34 @@ const SosomonDictionary = ({updateModalState, changeProfileMonster, modalState}:
                             }
 
                         </TouchableOpacity>
+                        {
+                            isMaxLevel&&(
+                                <TouchableOpacity activeOpacity={0.7} onPress={() => updateCategory(CategoryEnum.special)}>
+                                    {
+                                        categoryType === CategoryEnum.special ?
+                                            <View style={[SosomonDictionaryStyle.categoryWrap, SosomonDictionaryStyle.categoryActiveWrap]}>
+                                                <SvgXml
+                                                    xml={sosohappyWhiteLogo}
+                                                    style={SosomonDictionaryStyle.categoryImg}
+                                                    width={30}
+                                                    height={30}
+                                                />
+                                                <Text style={[SosomonDictionaryStyle.categoryText, SosomonDictionaryStyle.categoryActiveText]}>스페셜</Text>
+                                            </View>
+                                            :
+                                            <View style={SosomonDictionaryStyle.categoryWrap}>
+                                                <SvgXml
+                                                    xml={sosohappyColorLogo}
+                                                    style={SosomonDictionaryStyle.categoryImg}
+                                                    width={30}
+                                                    height={30}
+                                                />
+                                                <Text style={SosomonDictionaryStyle.categoryText}>스페셜</Text>
+                                            </View>
+                                    }
+                                </TouchableOpacity>
+                            )
+                        }
                     </View>
                 </View>
             </View>
