@@ -115,7 +115,7 @@ const Main = ({socket, chatSocket}: propsType) => {
     if (!userInfo) return
     getFortuneList();
     getHelpStatus();
-  }, [userInfo])
+  }, [userInfo?.memberId])
 
   useEffect(() => {
     if(helpStatus === "WAIT_COMPLETE"){
