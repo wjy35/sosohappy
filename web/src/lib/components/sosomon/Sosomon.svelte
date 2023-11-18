@@ -26,8 +26,8 @@
         | 'Walk'
 
     export let sosomon: any;
-    export let type;
-    export let level;
+    export let type: number;
+    export let level: number;
     export let actionStatus: string;
     $: actionStatus;
 
@@ -99,6 +99,9 @@
         <T.Group name="Scene" >
             <T.Group name="Rig" scale={0.4} on:click={onEvent} >
                 <T is={gltf.nodes.root}/>
+                {#if type===2&&level===9}
+                    <T is={gltf.nodes.body}/>
+                {/if}
                 <T.SkinnedMesh
                     name="Mesh"
                     geometry={gltf.nodes.Mesh.geometry}
