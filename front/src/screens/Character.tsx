@@ -208,9 +208,9 @@ const Character = ({socket, chatSocket}: propsType) => {
 
                 <View style={CharacterStyle.characterTitleWrap}>
                     {
-                        userInfo.name &&
+                        userInfo.nickname &&
                         <Text style={CharacterStyle.characterTitle}>
-                            <Text style={CharacterStyle.characterTitleMyName}>{userInfo.name}</Text> 님 어떤 캐릭터를{"\n"}
+                            <Text style={CharacterStyle.characterTitleMyName}>{userInfo.nickname}</Text> 님 어떤 캐릭터를{"\n"}
                             성장시킬까요?
                         </Text>
                     }
