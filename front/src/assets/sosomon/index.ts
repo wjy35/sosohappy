@@ -1,42 +1,135 @@
 export const type1 = [
-    require('./type1/FennecFox.png'),
-    require('./type1/Rabbit.png'),
-    require('./type1/Dog.png'),
-    require('./type1/Fox.png'),
-    require('./type1/Gazelle.png'),
-    require('./type1/Zebra.png'),
-    require('./type1/Pig.png'),
-    require('./type1/Buffalo.png'),
-    require('./type1/Ox.png'),
-    require('./type1/Elephant.png'),
+    {
+        name: '',
+        src: require('./type1/FennecFox.png'),
+    },
+    {
+        name: '',
+        src: require('./type1/Rabbit.png'),
+    },
+    {
+        name: '',
+        src: require('./type1/Dog.png'),
+    },
+    {
+        name: '',
+        src: require('./type1/Fox.png'),
+    },
+    {
+        name: '',
+        src: require('./type1/Gazelle.png'),
+    },
+    {
+        name: '',
+        src: require('./type1/Zebra.png'),
+    },
+    {
+        name: '',
+        src: require('./type1/Pig.png'),
+    },
+    {
+        name: '',
+        src: require('./type1/Buffalo.png'),
+    },
+    {
+        name: '',
+        src: require('./type1/Ox.png'),
+    },
+    {
+        name: '',
+        src: require('./type1/Elephant.png'),
+    },
 ];
 
 export const type2 = [
-    require('./type2/Prawn.png'),
-    require('./type2/Catfish.png'),
-    require('./type2/Alligator.png'),
-    require('./type2/Tuna.png'),
-    require('./type2/Tortoise.png'),
-    require('./type2/Turtle.png'),
-    require('./type2/Jellyfish.png'),
-    require('./type2/Walrus.png'),
-    require('./type2/SeaLion.png'),
-    require('./type2/RiverDolphin.png'),
+    {
+        name: '',
+        src: require('./type2/Prawn.png'),
+    },
+    {
+        name: '',
+        src: require('./type2/Catfish.png'),
+    },
+    {
+        name: '',
+        src: require('./type2/Alligator.png'),
+    },
+    {
+        name: '',
+        src: require('./type2/Tuna.png'),
+    },
+    {
+        name: '',
+        src: require('./type2/Tortoise.png'),
+    },
+    {
+        name: '',
+        src: require('./type2/Turtle.png'),
+    },
+    {
+        name: '',
+        src: require('./type2/Jellyfish.png'),
+    },
+    {
+        name: '',
+        src: require('./type2/Walrus.png'),
+    },
+    {
+        name: '',
+        src: require('./type2/SeaLion.png'),
+    },
+    {
+        name: '',
+        src: require('./type2/RiverDolphin.png'),
+    },
 ];
 
 export const type3 = [
-    require('./type3/Chick.png'),
-    require('./type3/Hen.png'),
-    require('./type3/Penguin.png'),
-    require('./type3/Owl.png'),
-    require('./type3/Dove.png'),
-    require('./type3/Macaw.png'),
-    require('./type3/Kakapo.png'),
-    require('./type3/Ostrich.png'),
-    require('./type3/Flamingo.png'),
-    require('./type3/Shoebill.png'),
+    {
+        name: '',
+        src: require('./type3/Chick.png'),
+    },
+    {
+        name: '',
+        src: require('./type3/Hen.png'),
+    },
+    {
+        name: '',
+        src: require('./type3/Penguin.png'),
+    },
+    {
+        name: '',
+        src: require('./type3/Owl.png'),
+    },
+    {
+        name: '',
+        src: require('./type3/Dove.png'),
+    },
+    {
+        name: '',
+        src: require('./type3/Macaw.png'),
+    },
+    {
+        name: '',
+        src: require('./type3/Kakapo.png'),
+    },
+    {
+        name: '',
+        src: require('./type3/Ostrich.png'),
+    },
+    {
+        name: '',
+        src: require('./type3/Flamingo.png'),
+    },
+    {
+        name: '',
+        src: require('./type3/Shoebill.png'),
+    },
 ];
 
 export const type4 = [
-    require('./type4/Whale.png'),
+    {
+        name: '',
+        src: require('./type4/Whale.png'),
+    }
 ];

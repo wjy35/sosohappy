@@ -93,9 +93,10 @@ const SosomonDictionary = ({updateModalState, changeProfileMonster, modalState}:
                             return(
                                 <React.Fragment key={`type1${index}`}>
                                     <SosomonCard
-                                        src={object}
+                                        src={object.src}
                                         isLocked={(index+1>dict[1])?true:false}
                                         level={index+1}
+                                        sosomonName={object.name}
                                         type='육지'
                                         changeProfileMonster={()=>{changeProfileMonster(1, index+1)}}/>
                                 </React.Fragment>
@@ -108,9 +109,10 @@ const SosomonDictionary = ({updateModalState, changeProfileMonster, modalState}:
                             return(
                                 <React.Fragment key={`type3${index}`}>
                                     <SosomonCard
-                                        src={object}
+                                        src={object.src}
                                         isLocked={(index+1>dict[3])?true:false}
                                         level={index+1}
+                                        sosomonName={object.name}
                                         type='공중'
                                         changeProfileMonster={()=>{changeProfileMonster(3, index+1)}}
                                     />
@@ -124,9 +126,10 @@ const SosomonDictionary = ({updateModalState, changeProfileMonster, modalState}:
                             return(
                                 <React.Fragment key={`type2${index}`}>
                                     <SosomonCard
-                                        src={object}
+                                        src={object.src}
                                         isLocked={(index+1>dict[2])?true:false}
                                         level={index+1}
+                                        sosomonName={object.name}
                                         type='해양'
                                         changeProfileMonster={()=>{changeProfileMonster(2, index+1)}}
                                     />
@@ -137,9 +140,10 @@ const SosomonDictionary = ({updateModalState, changeProfileMonster, modalState}:
                         {
                             categoryType === CategoryEnum.special &&
                               <SosomonCard
-                                src={type4[0]}
+                                src={type4[0].src}
                                 isLocked={!isMaxLevel}
                                 level={1}
+                                sosomonName={type4[0].name}
                                 type='스페셜'
                                 changeProfileMonster={()=>{changeProfileMonster(4, 1)}}
                               />
