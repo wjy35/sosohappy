@@ -148,7 +148,7 @@ const SideMenu = ({closeSide, nowPage, isVisible}: props) => {
                                 />
                             </View>
                             <View style={SideMenuStyle.profileInfoWrap}>
-                                <Text style={SideMenuStyle.profileName}>{userInfo.name}</Text>
+                                <Text style={SideMenuStyle.profileName}>{userInfo.nickname}</Text>
                                     {
                                         userInfo.disabled === true ?
                                         <Text style={SideMenuStyle.profileRank}>나눔이</Text>
