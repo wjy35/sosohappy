@@ -21,7 +21,7 @@
          <div class="certificate-flex-wrap">
              <div class="certificate-title-wrap">
                  <p class="certificate-title">소소행 인증서</p>
-                 <p class="certificate-date">2024. 12. 02 열람</p>
+                 <p class="certificate-date">문서를 열람해주세요.</p>
              </div>
              <div class="certificate-img-wrap">
                  <img src={GradientCircleLogo} alt="" class="certificate-img"/>

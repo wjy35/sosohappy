@@ -16,7 +16,17 @@
             })
 
             if(myInfo.status === 200){
-                console.log(myInfo);
+                const name = document.querySelector(".cert-name");
+                const nickname = document.querySelector(".cert-rank");
+                const gender = document.querySelector(".cert-gender");
+                console.log(myInfo.data.result.member);
+                name.innerHTML = myInfo.data.result.member.name;
+                nickname.innerHTML = myInfo.data.result.member.nickname;
+                if(myInfo.data.result.member.gender === 0){
+                    gender.innerHTML = "남"; 
+                }else if(myInfo.data.result.member.gender){
+                    gender.innerHTML = "여";
+                }
             }
         }
 
@@ -65,11 +75,11 @@
         <tr class="cert-tr">
             <td rowspan="3" class="cert-td">인적사항</td>
             <td class="cert-td">이름</td>
-            <td class="cert-td cert-name">김석주</td>
+            <td class="cert-td cert-name">하창무</td>
         </tr>
         <tr class="cert-tr">
-            <td class="cert-td">생년월일</td>
-            <td class="cert-td cert-birth">2023.11.08.</td>
+            <td class="cert-td">닉네임</td>
+            <td class="cert-td cert-rank">A509김석주</td>
         </tr>
         <tr class="cert-tr">
             <td class="cert-td">성별</td>
@@ -89,7 +99,7 @@
                 <p>2023.11.07.</p>
                 <div class="stamp-wrap">
                     <p class="stamp-comp">소소행 (인)</p>
-                    <img src={GradientCircleLogo} alt="" class="stamp-img"/>
+                    <!-- <img src={GradientCircleLogo} alt="" class="stamp-img"/> -->
                 </div>
             </td>
         </tr>
