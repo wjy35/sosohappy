@@ -235,7 +235,7 @@ const Character = ({socket, chatSocket}: propsType) => {
                         myMonsters && (
                             <View style={categoryType === CategoryType.army && CharacterStyle.feedAnimalActive}>
                                 <ImageBackground
-                                    source={type1[myMonsters[0].levelInfo.currentLevel-1]}
+                                    source={type1[myMonsters[0].levelInfo.currentLevel-1].src}
                                     style={CharacterStyle.feedAnimalImg}
                                     resizeMode="cover"
                                 />
@@ -246,7 +246,7 @@ const Character = ({socket, chatSocket}: propsType) => {
                         myMonsters && (
                             <View style={categoryType === CategoryType.navy && CharacterStyle.feedAnimalActive}>
                                 <ImageBackground
-                                    source={type2[myMonsters[1].levelInfo.currentLevel-1]}
+                                    source={type2[myMonsters[1].levelInfo.currentLevel-1].src}
                                     style={CharacterStyle.feedAnimalImg}
                                     resizeMode="cover"
                                 />
@@ -257,7 +257,7 @@ const Character = ({socket, chatSocket}: propsType) => {
                         myMonsters && (
                             <View style={categoryType === CategoryType.airForce && CharacterStyle.feedAnimalActive}>
                                 <ImageBackground
-                                    source={type3[myMonsters[2].levelInfo.currentLevel-1]}
+                                    source={type3[myMonsters[2].levelInfo.currentLevel-1].src}
                                     style={CharacterStyle.feedAnimalImg}
                                     resizeMode="cover"
                                 />
@@ -271,21 +271,21 @@ const Character = ({socket, chatSocket}: propsType) => {
                 {
                     categoryType === CategoryType.army && myMonsters &&
                     <Image
-                        source={type1[myMonsters[0].levelInfo.currentLevel-1]}
+                        source={type1[myMonsters[0].levelInfo.currentLevel-1].src}
                         style={CharacterStyle.selectedCharacterImg}
                     />
                 }
                 {
                     categoryType === CategoryType.navy && myMonsters &&
                     <Image
-                        source={type2[myMonsters[1].levelInfo.currentLevel-1]}
+                        source={type2[myMonsters[1].levelInfo.currentLevel-1].src}
                         style={CharacterStyle.selectedCharacterImg}
                     />
                 }
                 {
                     categoryType === CategoryType.airForce && myMonsters &&
                     <Image
-                        source={type3[myMonsters[2].levelInfo.currentLevel-1]}
+                        source={type3[myMonsters[2].levelInfo.currentLevel-1].src}
                         style={CharacterStyle.selectedCharacterImg}
                     />
                 }

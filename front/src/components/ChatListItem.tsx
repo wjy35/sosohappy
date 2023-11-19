@@ -30,13 +30,13 @@ const ChatListItem = ({chatInfo} :propsType) => {
             const type = Math.floor((memberRes.data.result.member.profileMonsterId-1)/10) + 1;
             const level = (memberRes.data.result.member.profileMonsterId % 10 === 0)?10:memberRes.data.result.member.profileMonsterId%10;
             if (type === 1){
-                setSrc(type1[level-1])
+                setSrc(type1[level-1].src)
             } else if (type === 2){
-                setSrc(type2[level-1])
+                setSrc(type2[level-1].src)
             } else if (type === 3){
-                setSrc(type3[level-1])
+                setSrc(type3[level-1].src)
             } else {
-                setSrc(type4[0])
+                setSrc(type4[0].src)
             }
         }
     }
@@ -51,7 +51,7 @@ const ChatListItem = ({chatInfo} :propsType) => {
             <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Chat', {otherMemberId: otherMemberInfo.memberId})}>
                 <View style={ChatListItemStyle.chatListItemWrap}>
                     <Image
-                        source={src?src:type4[0]}
+                        source={src?src:type4[0].src}
                         style={ChatListItemStyle.chatListItemThumbnailImg}
                     />
                     <View style={ChatListItemStyle.chatContentWrap}>
