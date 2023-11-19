@@ -23,9 +23,9 @@
                 name.innerHTML = myInfo.data.result.member.name;
                 nickname.innerHTML = myInfo.data.result.member.nickname;
                 if(myInfo.data.result.member.gender === 0){
-                    gender.innerHTML = "여"; 
+                    gender.innerHTML = "남"; 
                 }else if(myInfo.data.result.member.gender){
-                    gender.innerHTML = "남";
+                    gender.innerHTML = "여";
                 }
             }
         }
@@ -99,7 +99,7 @@
                 <p>2023.11.07.</p>
                 <div class="stamp-wrap">
                     <p class="stamp-comp">소소행 (인)</p>
-                    <img src={GradientCircleLogo} alt="" class="stamp-img"/>
+                    <!-- <img src={GradientCircleLogo} alt="" class="stamp-img"/> -->
                 </div>
             </td>
         </tr>
