@@ -176,7 +176,7 @@ const MyPage = ({socket, chatSocket}: propsType) => {
           {
             userInfo &&
             <>
-              <Text style={[MyPageStyle.myName]}>{userInfo.name}</Text>
+              <Text style={[MyPageStyle.myName]}>{userInfo.nickname}</Text>
                 {
                   userInfo.disabled ?
                   <Text style={[MyPageStyle.myRank]}>나눔이</Text>
