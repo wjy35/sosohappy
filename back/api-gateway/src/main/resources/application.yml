@@ -18,6 +18,12 @@ spring:
             allowedMethods: 
               - GET
               - OPTIONS
+          '[/member-query/]':
+            allowedOrigins: '*'
+            allowedHeaders: '*'
+            allowedMethods: 
+              - GET
+              - OPTIONS
       routes:
         - id: member-query
           uri: lb://MEMBER-QUERY-SERVICE/
