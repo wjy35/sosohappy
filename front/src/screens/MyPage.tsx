@@ -114,13 +114,13 @@ const MyPage = ({socket, chatSocket}: propsType) => {
 
   const setSosomon = (type:number, level:number) => {
     if (type === 1){
-      setSrc(type1[level-1])
+      setSrc(type1[level-1].src)
     } else if (type === 2){
-      setSrc(type2[level-1])
+      setSrc(type2[level-1].src)
     } else if (type === 3){
-      setSrc(type3[level-1])
+      setSrc(type3[level-1].src)
     } else {
-      setSrc(type4[0])
+      setSrc(type4[0].src)
     }
   }
 
@@ -141,6 +141,13 @@ const MyPage = ({socket, chatSocket}: propsType) => {
   useEffect(()=>{
     getMyCloverApi();
   }, [])
+
+  useFocusEffect(
+      React.useCallback(() => {
+        getMyCloverApi()
+        return () => {};
+      }, [navigation])
+  )
 
   useFocusEffect(
       React.useCallback(() => {
@@ -169,14 +176,14 @@ const MyPage = ({socket, chatSocket}: propsType) => {
     <CommonLayout headerType={0} footer={true}>
       <View style={MyPageStyle.myProfileWrap}>
         <Image
-            source={src?src:type4[0]}
+            source={src?src:type4[0].src}
             style={MyPageStyle.myProfileImg}
         />
         <View style={MyPageStyle.myProfileInfo}>
           {
             userInfo &&
             <>
-              <Text style={[MyPageStyle.myName]}>{userInfo.name}</Text>
+              <Text style={[MyPageStyle.myName]}>{userInfo.nickname}</Text>
                 {
                   userInfo.disabled ?
                   <Text style={[MyPageStyle.myRank]}>나눔이</Text>
