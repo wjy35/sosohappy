@@ -10,9 +10,10 @@ interface propsType{
     level: number,
     type: string,
     changeProfileMonster: Function,
+    sosomonName: string,
 }
 
-const SosomonCard = ({src, isLocked, level, type, changeProfileMonster}: propsType) => {
+const SosomonCard = ({src, isLocked, level, type, changeProfileMonster, sosomonName}: propsType) => {
     return(
         <>
             <View style={SosomonCardStyle.cardWrap}>
@@ -34,7 +35,7 @@ const SosomonCard = ({src, isLocked, level, type, changeProfileMonster}: propsTy
                 <View style={SosomonCardStyle.cardInfoFlexWrap}>
                     <View style={SosomonCardStyle.cardInfoWrap}>
                         <Text style={SosomonCardStyle.characterTypeLevel}>Lv.{level}</Text>
-                        <Text style={SosomonCardStyle.characterName}>달에 사는 고래</Text>
+                        <Text style={SosomonCardStyle.characterName}>{sosomonName}</Text>
                     </View>
                     <View>
                         <TouchableOpacity activeOpacity={0.7}>
