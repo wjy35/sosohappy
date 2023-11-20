@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import Navigation from '@/navigators/Navigation';
 import useLocation from "@/hooks/useLocation";
-import {AppState} from "react-native";
+import {AppState, LogBox} from "react-native";
 
 import useStore from "@/store/store";
 import {Provider} from "mobx-react";
@@ -11,6 +11,8 @@ import usePermissions from "@/hooks/usePermissions";
 import {useFocusEffect} from "@react-navigation/native";
 import RNSecureStorage from "rn-secure-storage";
 import memberApi from "@/apis/memberApi";
+
+LogBox.ignoreAllLogs();
 
 function App(): JSX.Element {
     const {login} = useStore();

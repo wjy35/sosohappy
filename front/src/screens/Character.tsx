@@ -57,6 +57,7 @@ const Character = ({socket, chatSocket}: propsType) => {
                     Alert.alert("보유중인 클로버가 부족하여 먹이를 줄 수 없습니다.");
                 }else if(levelUpApi.data.message === "클로버를 성공적으로 반영하였습니다."){
                     getMyDict();
+                    getMyCloverApi();
                 }
             }else{
                 Alert.alert("시스템 오류, 관리자에게 문의하세요.");
@@ -76,6 +77,7 @@ const Character = ({socket, chatSocket}: propsType) => {
                 }else if(levelUpApi.data.message === "클로버를 성공적으로 반영하였습니다."){
                     Alert.alert("먹이를 성공적으로 주었습니다.");
                     getMyDict();
+                    getMyCloverApi();
                 }
             }else{
                 Alert.alert("시스템 오류, 관리자에게 문의하세요.");
@@ -104,7 +106,12 @@ const Character = ({socket, chatSocket}: propsType) => {
                 });
                 break;
         }
-        
+
+    }
+
+    const getMyCloverApi = async () => {
+        const res = await monsterApi.getMyClover();
+        setMyClover(res.data.result.clover);
     }
 
     const feedSosomon = async () => {
@@ -167,11 +174,6 @@ const Character = ({socket, chatSocket}: propsType) => {
         if(collectedMonsterApi.status === 200){
             setMyMonsters(collectedMonsterApi.data.result?.monsterList);
         }
-    }
-
-    const getMyCloverApi = async () => {
-        const res = await monsterApi.getMyClover();
-        setMyClover(res.data.result.clover);
     }
 
     useEffect(() => {

@@ -58,8 +58,8 @@ const MapLoading = ({socket}: propsType) => {
                     style={MapLoadingStyle.turtleLoading}
                 />
                 <Text style={MapLoadingStyle.loadingText}>
-                    <Text style={MapLoadingStyle.loadingTextBold}>50m</Text> 반경의 모음이를 찾는 중입니다.{"\n"}
-                    잠시만 기다려주세요{'.'.repeat(count)}
+                    <Text style={MapLoadingStyle.loadingTextBold}>1500m</Text> 반경 이내의 모음이를 찾는 중입니다.{"\n"}
+                    잠시만 기다려주세요{'.'.repeat(count)}{"\n"}
                 </Text>
                 <View style={MapLoadingStyle.matchCancelButton}>
                     <TouchableOpacity onPress={cancelMatch}>
