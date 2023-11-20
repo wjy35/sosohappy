@@ -144,6 +144,13 @@ const MyPage = ({socket, chatSocket}: propsType) => {
 
   useFocusEffect(
       React.useCallback(() => {
+        getMyCloverApi()
+        return () => {};
+      }, [navigation])
+  )
+
+  useFocusEffect(
+      React.useCallback(() => {
         const disConnect = () => {
           if (!socket.connected) return;
           socket.disConnect();
