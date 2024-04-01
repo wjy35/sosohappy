@@ -168,8 +168,9 @@
 
 ### 소소몬 키우기
 - 마이페이지에서 귀여운 소소몬의 애니메이션을 통해 소소몬을 키워나갈 수 있습니다.
-https://github.com/wjy35/sosohappy/assets/117064579/e2e39adf-c71b-45fa-a540-3417d3368b44
-https://github.com/wjy35/sosohappy/assets/117064579/0090486a-cf8f-4e24-82be-cb832cbb74a0
+<img src="https://github.com/wjy35/sosohappy/assets/117064579/e2e39adf-c71b-45fa-a540-3417d3368b44" />
+<img src="https://github.com/wjy35/sosohappy/assets/117064579/0090486a-cf8f-4e24-82be-cb832cbb74a0" />
+
 
 
 
