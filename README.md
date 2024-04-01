@@ -168,8 +168,11 @@
 
 ### 소소몬 키우기
 - 마이페이지에서 귀여운 소소몬의 애니메이션을 통해 소소몬을 키워나갈 수 있습니다.
-<img src="exec/capture/sosomon-nurture.mp4" width="250"/>
-<img src="exec/capture/feed-clover.mp4" width="250"/>
+https://github.com/wjy35/sosohappy/assets/117064579/e2e39adf-c71b-45fa-a540-3417d3368b44
+https://github.com/wjy35/sosohappy/assets/117064579/0090486a-cf8f-4e24-82be-cb832cbb74a0
+
+
+
 
 ### 관리자 페이지
 - 어플리케이션에서 신고한 사용자들의 신고내용 및 신고 누적을 볼 수 있습니다.
