@@ -115,7 +115,7 @@ const Main = ({socket, chatSocket}: propsType) => {
     if (!userInfo) return
     getFortuneList();
     getHelpStatus();
-  }, [userInfo])
+  }, [userInfo?.memberId])
 
   useEffect(() => {
     if(helpStatus === "WAIT_COMPLETE"){
@@ -201,9 +201,9 @@ const Main = ({socket, chatSocket}: propsType) => {
           {
             userInfo ?
             <View>
-              <Text style={MainStyle.happyMainTitle}>{userInfo.name}님, 행운을 나누세요.</Text>
+              <Text style={MainStyle.happyMainTitle}>{userInfo.nickname}님, 행운을 나누세요.</Text>
               <Text style={MainStyle.happySubTitle}>
-                    오늘도 {userInfo.name}님의 소소한 행운이 더 많이{"\n"}
+                    오늘도 {userInfo.nickname}님의 소소한 행운이 더 많이{"\n"}
                     전해질 수 있도록
               </Text>
             </View>

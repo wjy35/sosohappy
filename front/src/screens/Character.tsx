@@ -57,6 +57,7 @@ const Character = ({socket, chatSocket}: propsType) => {
                     Alert.alert("보유중인 클로버가 부족하여 먹이를 줄 수 없습니다.");
                 }else if(levelUpApi.data.message === "클로버를 성공적으로 반영하였습니다."){
                     getMyDict();
+                    getMyCloverApi();
                 }
             }else{
                 Alert.alert("시스템 오류, 관리자에게 문의하세요.");
@@ -76,6 +77,7 @@ const Character = ({socket, chatSocket}: propsType) => {
                 }else if(levelUpApi.data.message === "클로버를 성공적으로 반영하였습니다."){
                     Alert.alert("먹이를 성공적으로 주었습니다.");
                     getMyDict();
+                    getMyCloverApi();
                 }
             }else{
                 Alert.alert("시스템 오류, 관리자에게 문의하세요.");
@@ -104,7 +106,12 @@ const Character = ({socket, chatSocket}: propsType) => {
                 });
                 break;
         }
-        
+
+    }
+
+    const getMyCloverApi = async () => {
+        const res = await monsterApi.getMyClover();
+        setMyClover(res.data.result.clover);
     }
 
     const feedSosomon = async () => {
@@ -169,11 +176,6 @@ const Character = ({socket, chatSocket}: propsType) => {
         }
     }
 
-    const getMyCloverApi = async () => {
-        const res = await monsterApi.getMyClover();
-        setMyClover(res.data.result.clover);
-    }
-
     useEffect(() => {
         getMyDict();
         getMyCloverApi();
@@ -208,9 +210,9 @@ const Character = ({socket, chatSocket}: propsType) => {
 
                 <View style={CharacterStyle.characterTitleWrap}>
                     {
-                        userInfo.name &&
+                        userInfo.nickname &&
                         <Text style={CharacterStyle.characterTitle}>
-                            <Text style={CharacterStyle.characterTitleMyName}>{userInfo.name}</Text> 님 어떤 캐릭터를{"\n"}
+                            <Text style={CharacterStyle.characterTitleMyName}>{userInfo.nickname}</Text> 님 어떤 캐릭터를{"\n"}
                             성장시킬까요?
                         </Text>
                     }
@@ -235,7 +237,7 @@ const Character = ({socket, chatSocket}: propsType) => {
                         myMonsters && (
                             <View style={categoryType === CategoryType.army && CharacterStyle.feedAnimalActive}>
                                 <ImageBackground
-                                    source={type1[myMonsters[0].levelInfo.currentLevel-1]}
+                                    source={type1[myMonsters[0].levelInfo.currentLevel-1].src}
                                     style={CharacterStyle.feedAnimalImg}
                                     resizeMode="cover"
                                 />
@@ -246,7 +248,7 @@ const Character = ({socket, chatSocket}: propsType) => {
                         myMonsters && (
                             <View style={categoryType === CategoryType.navy && CharacterStyle.feedAnimalActive}>
                                 <ImageBackground
-                                    source={type2[myMonsters[1].levelInfo.currentLevel-1]}
+                                    source={type2[myMonsters[1].levelInfo.currentLevel-1].src}
                                     style={CharacterStyle.feedAnimalImg}
                                     resizeMode="cover"
                                 />
@@ -257,7 +259,7 @@ const Character = ({socket, chatSocket}: propsType) => {
                         myMonsters && (
                             <View style={categoryType === CategoryType.airForce && CharacterStyle.feedAnimalActive}>
                                 <ImageBackground
-                                    source={type3[myMonsters[2].levelInfo.currentLevel-1]}
+                                    source={type3[myMonsters[2].levelInfo.currentLevel-1].src}
                                     style={CharacterStyle.feedAnimalImg}
                                     resizeMode="cover"
                                 />
@@ -271,21 +273,21 @@ const Character = ({socket, chatSocket}: propsType) => {
                 {
                     categoryType === CategoryType.army && myMonsters &&
                     <Image
-                        source={type1[myMonsters[0].levelInfo.currentLevel-1]}
+                        source={type1[myMonsters[0].levelInfo.currentLevel-1].src}
                         style={CharacterStyle.selectedCharacterImg}
                     />
                 }
                 {
                     categoryType === CategoryType.navy && myMonsters &&
                     <Image
-                        source={type2[myMonsters[1].levelInfo.currentLevel-1]}
+                        source={type2[myMonsters[1].levelInfo.currentLevel-1].src}
                         style={CharacterStyle.selectedCharacterImg}
                     />
                 }
                 {
                     categoryType === CategoryType.airForce && myMonsters &&
                     <Image
-                        source={type3[myMonsters[2].levelInfo.currentLevel-1]}
+                        source={type3[myMonsters[2].levelInfo.currentLevel-1].src}
                         style={CharacterStyle.selectedCharacterImg}
                     />
                 }
