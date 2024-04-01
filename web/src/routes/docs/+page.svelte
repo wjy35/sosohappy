@@ -16,8 +16,7 @@
         })
 
         if(loginRes.status === 200){
-            console.log("loginRes", loginRes.data.result.authorization.accessToken);
-            location.href = "/docs/certificate"
+            location.replace(`/docs/certificate?user=${loginRes.data.result.authorization.accessToken}`);
         }
     }
 

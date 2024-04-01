@@ -1,5 +1,70 @@
 <script>
+	import { onMount } from "svelte";
     import GradientCircleLogo from "../../../../img/gradient-circle-logo.png"
+    import axios from "axios"
+
+    onMount(async () => {
+        const urlParams = new URLSearchParams(location.search);
+        const user = await urlParams.get("user");
+
+        const getMyInfo = async () => {
+            const myInfo = await axios.get("https://sosohappy.co.kr/member-query/",{
+                headers:{
+                    'Content-Type': 'application/json',
+                    'authorization': user,
+                }
+            })
+
+            if(myInfo.status === 200){
+                const name = document.querySelector(".cert-name");
+                const nickname = document.querySelector(".cert-rank");
+                const gender = document.querySelector(".cert-gender");
+                console.log(myInfo.data.result.member);
+                name.innerHTML = myInfo.data.result.member.name;
+                nickname.innerHTML = myInfo.data.result.member.nickname;
+                if(myInfo.data.result.member.gender === 0){
+                    gender.innerHTML = "남"; 
+                }else if(myInfo.data.result.member.gender){
+                    gender.innerHTML = "여";
+                }
+            }
+        }
+
+        const getHelpListApi = async () => {
+            const helpList = await axios.get("https://sosohappy.co.kr/help-history-query/certificate",{
+                headers:{
+                    'Content-Type': 'application/json',
+                    'authorization': user,
+                }
+            })
+            if(helpList.status === 200){
+                console.log(helpList.data.result.helpCertificateResponseList);
+                const certContent = document.querySelector(".cert-content");
+                for(let i=0; i<helpList.data.result.helpCertificateResponseList.length; i++){
+                    certContent?.insertAdjacentHTML("afterend", `
+                        <tr class="cert-tr" style="border: 1px solid #000">
+                            <td class="cert-td" style="padding: 10px">${helpList.data.result.helpCertificateResponseList[i].nickName}</td>
+                            <td class="cert-td" style="padding: 10px">${helpList.data.result.helpCertificateResponseList[i].categoryName}</td>
+                            <td class="cert-td" style="padding: 10px">${helpList.data.result.helpCertificateResponseList[i].createdAt.split("T")[0]}</td>
+                        </tr>
+                    `);
+                }
+
+                const htmlContent = new Array(document.documentElement.innerHTML);
+                const bl = new Blob(htmlContent, { type: 'text/html' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(bl);
+                a.download = 'test-document';
+                a.hidden = true;
+                document.body.appendChild(a);
+                a.click();
+            }
+        }
+        
+        await getMyInfo();
+        await getHelpListApi();
+    })
+
 </script>
 
 <div class="cert-container">
@@ -10,28 +75,23 @@
         <tr class="cert-tr">
             <td rowspan="3" class="cert-td">인적사항</td>
             <td class="cert-td">이름</td>
-            <td class="cert-td">김석주</td>
+            <td class="cert-td cert-name">하창무</td>
         </tr>
         <tr class="cert-tr">
-            <td class="cert-td">생년월일</td>
-            <td class="cert-td">2023.11.08.</td>
+            <td class="cert-td">닉네임</td>
+            <td class="cert-td cert-rank">A509김석주</td>
         </tr>
         <tr class="cert-tr">
             <td class="cert-td">성별</td>
-            <td class="cert-td">남</td>
+            <td class="cert-td cert-gender">남</td>
         </tr>
         <tr class="cert-tr">
             <td colspan="3" class="cert-td">봉사내역</td>
         </tr>
-        <tr class="cert-tr">
+        <tr class="cert-tr cert-content">
             <td class="cert-td">도와준 사람</td>
             <td class="cert-td">카테고리</td>
             <td class="cert-td">날짜</td>
-        </tr>
-        <tr class="cert-tr">
-            <td class="cert-td">왕준영</td>
-            <td class="cert-td">보행</td>
-            <td class="cert-td">2023.11.07</td>
         </tr>
         <tr class="cert-tr">
             <td colspan="3" class="cert-td cert-confirm">
@@ -39,7 +99,7 @@
                 <p>2023.11.07.</p>
                 <div class="stamp-wrap">
                     <p class="stamp-comp">소소행 (인)</p>
-                    <img src={GradientCircleLogo} alt="" class="stamp-img"/>
+                    <!-- <img src={GradientCircleLogo} alt="" class="stamp-img"/> -->
                 </div>
             </td>
         </tr>
