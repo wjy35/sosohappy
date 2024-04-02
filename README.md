@@ -95,6 +95,8 @@
 - 도움 요청 현황이 핀으로 표시되며 각 핀을 누르면 도움 내용을 상세히 볼 수 있습니다. 
 - 매칭 시에는 상대방의 위치까지 길안내를 제공합니다. 
 <img src="exec/capture/지도.jpg" width="250"/>
+<img width="307" alt="Screenshot 2024-04-02 at 6 45 33 PM" src="https://github.com/wjy35/sosohappy/assets/117064579/0439f8c3-d0da-44aa-a018-751992a64150">
+
 
 ### 사이드바
 - 사이드바를 통해 메뉴를 한눈에 모아볼 수 있습니다.
@@ -120,6 +122,7 @@
 - 육지동물, 해양동물, 조류 3가지 유형의 동물을 성장시킬 수 있습니다. 
 
 <img src="exec/capture/마이페이지.jpg" width="250"/>
+<img width="228" alt="Screenshot 2024-04-02 at 6 47 37 PM" src="https://github.com/wjy35/sosohappy/assets/117064579/e151f163-40bf-451a-ae31-b402ee636e0a">
 
 
 ### 도감
@@ -165,11 +168,13 @@
 - 포춘쿠키는 오픈 시 랜덤 행운 메시지를 확인할 수 있으며 확인시 포춘쿠키는 소멸됩니다.
 
 <img src="exec/capture/포춘쿠키.jpg" width="250"/>
+<img width="240" alt="Screenshot 2024-04-02 at 6 46 54 PM" src="https://github.com/wjy35/sosohappy/assets/117064579/e8fa3ae1-7601-41aa-a98a-1018d8fe703e">
 
 ### 소소몬 키우기
 - 마이페이지에서 귀여운 소소몬의 애니메이션을 통해 소소몬을 키워나갈 수 있습니다.
 <img src="https://github.com/wjy35/sosohappy/assets/117064579/d26f4ee2-0954-4048-b31a-f46a57c18050" width="250"/>
 <img src="https://github.com/wjy35/sosohappy/assets/117064579/de8d3ae3-d05f-49c3-a222-08b270eb3894" width="250"/>
+<img width="228" alt="Screenshot 2024-04-02 at 6 47 37 PM" src="https://github.com/wjy35/sosohappy/assets/117064579/36ff070d-a463-4da8-9e21-b1b37b2b58a9">
 
 
 
